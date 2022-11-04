@@ -8,7 +8,7 @@ class NumberValue implements SqlInterface
 {
     private $value;
 
-    public function __construct($value)
+    public function __construct(int|float $value)
     {
         $this->value = $value;
     }

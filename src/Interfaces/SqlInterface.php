@@ -2,7 +2,7 @@
 
 namespace QueryBuilder\Interfaces;
 
-interface SqlInterface
-{
-    public function __toString(): string;
-}
+use Stringable;
+
+interface SqlInterface extends Stringable
+{}
