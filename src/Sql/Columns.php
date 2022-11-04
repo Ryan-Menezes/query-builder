@@ -45,7 +45,7 @@ class Columns implements SqlInterface, Iterator, Countable
     {
         return array_map(function($column) {
             return "`${column}`";
-        }, $this->columns);
+        }, $this->all());
     }
 
     public function all(): array
@@ -55,16 +55,21 @@ class Columns implements SqlInterface, Iterator, Countable
 
     public function add(string $column): self
     {
-        if (!in_array($column, $this->columns)) {
+        if (!$this->has($column)) {
             $this->columns[] = $column;
         }
 
         return $this;
     }
 
+    public function has(string $column): bool
+    {
+        return in_array($column, $this->all());
+    }
+
     public function count(): int
     {
-        return count($this->columns);
+        return count($this->all());
     }
 
     public function current(): string
