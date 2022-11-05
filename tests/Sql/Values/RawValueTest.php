@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Values;
+namespace Tests\Sql\Values;
 
 use PHPUnit\Framework\TestCase;
 
@@ -12,6 +12,8 @@ class RawValueTest extends TestCase
     {
         $rawValue = new RawValue('any-value');
 
-        $this->assertEquals('any-value', $rawValue);
+        $expected = 'any-value';
+
+        $this->assertEquals($expected, $rawValue);
     }
 }

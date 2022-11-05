@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Values;
+namespace Tests\Sql\Values;
 
 use PHPUnit\Framework\TestCase;
 
@@ -12,13 +12,17 @@ class BooleanValueTest extends TestCase
     {
         $booleanValue = new BooleanValue(true);
 
-        $this->assertEquals('1', $booleanValue);
+        $expected = '1';
+
+        $this->assertEquals($expected, $booleanValue);
     }
 
     public function testShouldReturnAFalseAndValidBooleanValueForAnSqlStatement()
     {
         $booleanValue = new BooleanValue(false);
 
-        $this->assertEquals('0', $booleanValue);
+        $expected = '0';
+
+        $this->assertEquals($expected, $booleanValue);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Sql;
 
 use PHPUnit\Framework\TestCase;
 
@@ -9,13 +9,6 @@ use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 
 class ColumnsTest extends TestCase
 {
-    private $columns;
-
-    public function setUp(): void
-    {
-        $this->columns = new Columns();
-    }
-
     /**
      * @dataProvider shouldCreateAColumnsClassObjectWithThreeColumnsProvider
      */
@@ -48,7 +41,7 @@ class ColumnsTest extends TestCase
     {
         $this->expectException(InvalidArgumentColumnException::class);
 
-        $column = new Columns($invalidColumns);
+        new Columns($invalidColumns);
     }
 
     public function shouldThrowAnExceptionIfColumnArrayHasAnyInvalidColumnProvider()
@@ -81,7 +74,7 @@ class ColumnsTest extends TestCase
             ->add('new-column1')
             ->add('new-column2')
             ->add('new-column3');
-    
+
         return [
             [3, $columns->count()],
             ['`new-column1`, `new-column2`, `new-column3`', $columns],
@@ -105,18 +98,5 @@ class ColumnsTest extends TestCase
 
         $this->assertEquals(3, $columns->count());
         $this->assertEquals('`new-column1`, `new-column2`, `new-column3`', $columns);
-    }
-
-    public function testShouldIterateWithAForeachLoop()
-    {
-        $this->columns
-            ->add('new-column1')
-            ->add('new-column2')
-            ->add('new-column3');
-
-        foreach($this->columns as $key => $value) {
-            $this->assertEquals($key, $this->columns->key());
-            $this->assertEquals($value, $this->columns->current());
-        }
     }
 }

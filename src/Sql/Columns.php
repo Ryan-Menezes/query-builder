@@ -2,33 +2,31 @@
 
 namespace QueryBuilder\Sql;
 
-use Iterator;
-use Countable;
 use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
+use QueryBuilder\Utils\SimpleIterator;
+use Stringable;
 
-class Columns implements SqlInterface, Iterator, Countable
+class Columns extends SimpleIterator implements SqlInterface
 {
-    private $columns = [];
-
-    public function __construct(array $columns = [])
+    public function __construct(array $items = [])
     {
-        $this->validateColumns($columns);
-        $this->columns = array_unique($columns);
+        $this->validateColumns($items);
+        parent::__construct(array_unique($items));
     }
 
-    private function validateColumns(array $columns): void
+    private function validateColumns(array $items): void
     {
-        foreach($columns as $key => $column) {
-            if($this->isNotValidColumn($column)) {
+        foreach($items as $key => $item) {
+            if($this->isNotValidColumn($item)) {
                 throw new InvalidArgumentColumnException($key);
             }
         }
     }
 
-    private function isNotValidColumn($column): bool
+    private function isNotValidColumn($item): bool
     {
-        return !is_string($column) || empty($column);
+        return !is_string($item) || empty($item);
     }
 
     public function __toString(): string
@@ -37,63 +35,33 @@ class Columns implements SqlInterface, Iterator, Countable
     }
 
     private function parseColumnsToSTring() {
-        $columns = $this->addBacktickAtTheBeginningAtTheEndOfEachColumn();
-        return implode(', ', $columns);;
+        $items = $this->addBacktickAtTheBeginningAtTheEndOfEachColumn();
+        return implode(', ', $items);;
     }
 
     private function addBacktickAtTheBeginningAtTheEndOfEachColumn(): array
     {
-        return array_map(function($column) {
-            return "`${column}`";
+        return array_map(function($item) {
+            return "`${item}`";
         }, $this->all());
     }
 
     public function all(): array
     {
-        return $this->columns;
+        return $this->items;
     }
 
-    public function add(string $column): self
+    public function add(string|Stringable $item): self
     {
-        if (!$this->has($column)) {
-            $this->columns[] = $column;
+        if ($this->hasNotColumn($item)) {
+            $this->items[] = $item;
         }
 
         return $this;
     }
 
-    public function has(string $column): bool
+    private function hasNotColumn(string|Stringable $item): bool
     {
-        return in_array($column, $this->all());
-    }
-
-    public function count(): int
-    {
-        return count($this->all());
-    }
-
-    public function current(): string
-    {
-        return current($this->columns);
-    }
-
-    public function key(): int
-    {
-        return key($this->columns);
-    }
-
-    public function next(): void
-    {
-        next($this->columns);
-    }
-
-    public function rewind(): void
-    {
-        reset($this->columns);
-    }
-
-    public function valid(): bool
-    {
-        return key($this->columns) !== null;
+        return !in_array($item, $this->all());
     }
 }

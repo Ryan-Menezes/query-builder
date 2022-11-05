@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Values;
+namespace Tests\Sql\Values;
 
 use PHPUnit\Framework\TestCase;
 
@@ -12,13 +12,17 @@ class NumberValueTest extends TestCase
     {
         $numberValue = new NumberValue(5);
 
-        $this->assertEquals('5', $numberValue);
+        $expected = '5';
+
+        $this->assertEquals($expected, $numberValue);
     }
 
     public function testShouldReturnAFormattedFloatForASqlStatement()
     {
         $numberValue = new NumberValue(5.5);
 
-        $this->assertEquals('5.5', $numberValue);
+        $expected = '5.5';
+
+        $this->assertEquals($expected, $numberValue);
     }
 }

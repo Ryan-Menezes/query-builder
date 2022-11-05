@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Values;
+namespace Tests\Sql\Values;
 
 use PHPUnit\Framework\TestCase;
 
@@ -12,6 +12,8 @@ class StringValueTest extends TestCase
     {
         $stringValue = new StringValue('any-string');
 
-        $this->assertEquals('\'any-string\'', $stringValue);
+        $expected = '\'any-string\'';
+
+        $this->assertEquals($expected, $stringValue);
     }
 }
