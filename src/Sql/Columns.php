@@ -25,48 +25,51 @@ class Columns extends SimpleIterator implements SqlInterface
                 throw new InvalidArgumentColumnException($key);
             }
 
-            $this->add($item);
+            $this->addColumnToItemsArrayAndParse($item);
         }
     }
 
-    private function isNotValidColumn($item): bool
+    private function isNotValidColumn(mixed $item): bool
     {
         return !is_string($item) || empty($item);
     }
 
-    public function __toString(): string
+    private function addColumnToItemsArrayAndParse(string|Stringable $item): self
     {
-        return $this->parseColumnsToSTring();
-    }
+        $itemWithBacktick = $this->addBacktickToItem($item);
 
-    private function parseColumnsToSTring() {
-        $items = $this->addBacktickAtTheBeginningAtTheEndOfEachColumn();
-        return implode(', ', $items);
-    }
-
-    private function addBacktickAtTheBeginningAtTheEndOfEachColumn(): array
-    {
-        return array_map(function($item) {
-            return "`${item}`";
-        }, $this->all());
-    }
-
-    public function all(): array
-    {
-        return $this->items;
-    }
-
-    public function add(string|Stringable $item): self
-    {
-        if ($this->hasNotColumn($item)) {
-            $this->items[] = $item;
+        if ($this->hasNotColumn($itemWithBacktick)) {
+            $this->items[] = $itemWithBacktick;
         }
 
         return $this;
     }
 
+    private function addBacktickToItem(string|Stringable $item): string
+    {
+        if(!str_starts_with($item, '`')) {
+            $item = "`${item}";
+        }
+
+        if(!str_ends_with($item, '`')) {
+            $item = "${item}`";
+        }
+
+        return $item;
+    }
+
     private function hasNotColumn(string|Stringable $item): bool
     {
         return !in_array($item, $this->all());
+    }
+
+    public function __toString(): string
+    {
+        return implode(', ', $this->all());
+    }
+
+    public function all(): array
+    {
+        return $this->items;
     }
 }

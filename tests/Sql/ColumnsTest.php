@@ -10,27 +10,25 @@ use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 class ColumnsTest extends TestCase
 {
     /**
-     * @dataProvider shouldCreateAColumnsClassObjectWithThreeColumnsProvider
+     * @dataProvider shouldFormatTheColumnsWithQuotesAtTheBeginningAndAtTheEndProvider
      */
-    public function testShouldCreateAColumnsClassObjectWithThreeColumnsFromItsConstructor($expected, $actual)
+    public function testShouldFormatTheColumnsWithQuotesAtTheBeginningAndAtTheEnd($expected, $actual)
     {
         $this->assertEquals($expected, $actual);
     }
 
-    public function shouldCreateAColumnsClassObjectWithThreeColumnsProvider()
+    public function shouldFormatTheColumnsWithQuotesAtTheBeginningAndAtTheEndProvider()
     {
-        $list = [
+        $columns = new Columns([
             'any-column1',
             'any-column2',
             'any-column3',
-        ];
-
-        $columns = new Columns($list);
+        ]);
 
         return [
             [3, $columns->count()],
             ['`any-column1`, `any-column2`, `any-column3`', $columns],
-            [$list, $columns->all()],
+            [['`any-column1`', '`any-column2`', '`any-column3`'], $columns->all()],
         ];
     }
 
@@ -58,31 +56,6 @@ class ColumnsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider shouldAddNewColumnsProvider
-     */
-    public function testShouldAddNewColumns($expected, $actual)
-    {
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function shouldAddNewColumnsProvider()
-    {
-        $list = [
-            'any-column1',
-            'any-column2',
-            'any-column3',
-        ];
-
-        $columns = new Columns($list);
-
-        return [
-            [3, $columns->count()],
-            ['`any-column1`, `any-column2`, `any-column3`', $columns],
-            [$list, $columns->all()],
-        ];
-    }
-
     public function testShouldNotContainRepeatedColumns()
     {
         $columns = new Columns([
@@ -97,5 +70,6 @@ class ColumnsTest extends TestCase
 
         $this->assertEquals(3, $columns->count());
         $this->assertEquals('`any-column1`, `any-column2`, `any-column3`', $columns);
+        $this->assertEquals(['`any-column1`', '`any-column2`', '`any-column3`'], $columns->all());
     }
 }

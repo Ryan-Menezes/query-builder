@@ -23,21 +23,11 @@ class Values extends SimpleIterator implements SqlInterface
         parent::__construct([]);
 
         foreach($items as $item) {
-            $this->add($item);
+            $this->addValueToItemsArrayAndParse($item);
         }
     }
 
-    public function __toString(): string
-    {
-        return implode(', ', $this->all());
-    }
-
-    public function all(): array
-    {
-        return $this->items;
-    }
-
-    public function add(mixed $item): self
+    private function addValueToItemsArrayAndParse(mixed $item): self
     {
         $this->items[] = $this->parseItem($item);
         return $this;
@@ -62,5 +52,15 @@ class Values extends SimpleIterator implements SqlInterface
         }
 
         throw new InvalidArgumentValueException();
+    }
+
+    public function __toString(): string
+    {
+        return implode(', ', $this->all());
+    }
+
+    public function all(): array
+    {
+        return $this->items;
     }
 }
