@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace QueryBuilder\Sql\Values;
 
-use QueryBuilder\Interfaces\SqlInterface;
+use QueryBuilder\Interfaces\{
+    SqlInterface,
+    ValueInterface,
+};
 use Stringable;
 
-class RawValue implements SqlInterface
+class RawValue implements SqlInterface, ValueInterface
 {
     private $value;
 

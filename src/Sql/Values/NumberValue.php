@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace QueryBuilder\Sql\Values;
 
-use QueryBuilder\Interfaces\SqlInterface;
+use QueryBuilder\Interfaces\{
+    SqlInterface,
+    ValueInterface,
+};
 
-class NumberValue implements SqlInterface
+class NumberValue implements SqlInterface, ValueInterface
 {
     private $value;
 

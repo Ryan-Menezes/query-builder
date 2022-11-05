@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace QueryBuilder\Sql;
 
 use QueryBuilder\Interfaces\SqlInterface;
@@ -11,16 +13,19 @@ class Columns extends SimpleIterator implements SqlInterface
 {
     public function __construct(array $items = [])
     {
-        $this->validateColumns($items);
-        parent::__construct(array_unique($items));
+        parent::__construct([]);
+
+        $this->validateColumnsAndAdd($items);
     }
 
-    private function validateColumns(array $items): void
+    private function validateColumnsAndAdd(array $items): void
     {
         foreach($items as $key => $item) {
             if($this->isNotValidColumn($item)) {
                 throw new InvalidArgumentColumnException($key);
             }
+
+            $this->add($item);
         }
     }
 
@@ -36,7 +41,7 @@ class Columns extends SimpleIterator implements SqlInterface
 
     private function parseColumnsToSTring() {
         $items = $this->addBacktickAtTheBeginningAtTheEndOfEachColumn();
-        return implode(', ', $items);;
+        return implode(', ', $items);
     }
 
     private function addBacktickAtTheBeginningAtTheEndOfEachColumn(): array

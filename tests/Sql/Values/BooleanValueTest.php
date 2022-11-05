@@ -3,7 +3,6 @@
 namespace Tests\Sql\Values;
 
 use PHPUnit\Framework\TestCase;
-
 use QueryBuilder\Sql\Values\BooleanValue;
 
 class BooleanValueTest extends TestCase

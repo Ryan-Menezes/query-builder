@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace QueryBuilder\Utils;
 
 use Iterator;

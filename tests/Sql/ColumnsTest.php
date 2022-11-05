@@ -20,16 +20,16 @@ class ColumnsTest extends TestCase
     public function shouldCreateAColumnsClassObjectWithThreeColumnsProvider()
     {
         $list = [
-            'new-column1',
-            'new-column2',
-            'new-column3',
+            'any-column1',
+            'any-column2',
+            'any-column3',
         ];
 
         $columns = new Columns($list);
 
         return [
             [3, $columns->count()],
-            ['`new-column1`, `new-column2`, `new-column3`', $columns],
+            ['`any-column1`, `any-column2`, `any-column3`', $columns],
             [$list, $columns->all()],
         ];
     }
@@ -68,35 +68,34 @@ class ColumnsTest extends TestCase
 
     public function shouldAddNewColumnsProvider()
     {
-        $columns = new Columns();
+        $list = [
+            'any-column1',
+            'any-column2',
+            'any-column3',
+        ];
 
-        $columns
-            ->add('new-column1')
-            ->add('new-column2')
-            ->add('new-column3');
+        $columns = new Columns($list);
 
         return [
             [3, $columns->count()],
-            ['`new-column1`, `new-column2`, `new-column3`', $columns],
-            [['new-column1','new-column2','new-column3'], $columns->all()],
+            ['`any-column1`, `any-column2`, `any-column3`', $columns],
+            [$list, $columns->all()],
         ];
     }
 
     public function testShouldNotContainRepeatedColumns()
     {
         $columns = new Columns([
-            'new-column1',
-            'new-column1',
-            'new-column2',
+            'any-column1',
+            'any-column1',
+            'any-column2',
+            'any-column2',
+            'any-column2',
+            'any-column3',
+            'any-column3',
         ]);
 
-        $columns
-            ->add('new-column2')
-            ->add('new-column2')
-            ->add('new-column3')
-            ->add('new-column3');
-
         $this->assertEquals(3, $columns->count());
-        $this->assertEquals('`new-column1`, `new-column2`, `new-column3`', $columns);
+        $this->assertEquals('`any-column1`, `any-column2`, `any-column3`', $columns);
     }
 }
