@@ -23,7 +23,7 @@ class Field implements SqlInterface
         return "{$this->column} {$this->operator} ?";
     }
 
-    public function getColumn(): string
+    public function getColumnName(): string
     {
         return $this->column->getColumnName();
     }

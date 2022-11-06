@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Values;
 
-use QueryBuilder\Interfaces\{
-    SqlInterface,
-    ValueInterface,
-};
+use QueryBuilder\Interfaces\ValueInterface;
 use Stringable;
 
-class RawValue implements SqlInterface, ValueInterface
+class RawValue implements ValueInterface
 {
     private $value;
 

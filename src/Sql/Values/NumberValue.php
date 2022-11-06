@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Values;
 
-use QueryBuilder\Interfaces\{
-    SqlInterface,
-    ValueInterface,
-};
+use QueryBuilder\Interfaces\ValueInterface;
 
-class NumberValue implements SqlInterface, ValueInterface
+class NumberValue implements ValueInterface
 {
     private $value;
 

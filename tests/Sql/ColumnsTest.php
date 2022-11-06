@@ -11,25 +11,27 @@ use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 class ColumnsTest extends TestCase
 {
     /**
-     * @dataProvider shouldFormatTheColumnsWithQuotesAtTheBeginningAndAtTheEndProvider
+     * @dataProvider shouldAcceptColumnAndStringTypeValues​InTheArrayPassedToTheConstructorAndFormatTheDataCorrectlyProvider
      */
-    public function testShouldFormatTheColumnsWithQuotesAtTheBeginningAndAtTheEnd($expected, $actual)
+    public function testShouldAcceptColumnAndStringTypeValues​InTheArrayPassedToTheConstructorAndFormatTheDataCorrectly($expected, $actual)
     {
         $this->assertEquals($expected, $actual);
     }
 
-    public function shouldFormatTheColumnsWithQuotesAtTheBeginningAndAtTheEndProvider()
+    public function shouldAcceptColumnAndStringTypeValues​InTheArrayPassedToTheConstructorAndFormatTheDataCorrectlyProvider()
     {
         $columns = new Columns([
             new Column('any-column1'),
             new Column('any-column2'),
-            new Column('any-column3'),
+            'any-column3',
+            'any-column4',
+            'any-column5',
         ]);
 
         return [
-            [3, $columns->count()],
-            ['`any-column1`, `any-column2`, `any-column3`', $columns],
-            [['`any-column1`', '`any-column2`', '`any-column3`'], $columns->all()],
+            [5, $columns->count()],
+            ['`any-column1`, `any-column2`, `any-column3`, `any-column4`, `any-column5`', $columns],
+            [['`any-column1`', '`any-column2`', '`any-column3`', '`any-column4`', '`any-column5`'], $columns->all()],
         ];
     }
 
@@ -47,7 +49,7 @@ class ColumnsTest extends TestCase
     {
         return [
             [[123]],            // Int
-            [['any-string']],   // String
+            [['']],             // Empty String
             [[12.5]],           // Float
             [[new \StdClass]],  // Object
             [[null]],           // Null
@@ -60,15 +62,15 @@ class ColumnsTest extends TestCase
     public function testShouldNotContainRepeatedColumns()
     {
         $columns = new Columns([
-            new Column('any-column1'),
-            new Column('any-column1'),
-            new Column('any-column1'),
-            new Column('any-column2'),
-            new Column('any-column2'),
-            new Column('any-column2'),
-            new Column('any-column3'),
-            new Column('any-column3'),
-            new Column('any-column3'),
+            'any-column1',
+            'any-column1',
+            'any-column1',
+            'any-column2',
+            'any-column2',
+            'any-column2',
+            'any-column3',
+            'any-column3',
+            'any-column3',
         ]);
 
         $this->assertEquals(3, $columns->count());

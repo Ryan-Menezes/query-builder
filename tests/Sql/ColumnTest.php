@@ -5,6 +5,7 @@ namespace Tests\Sql;
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Column;
+use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 
 class ColumnTest extends TestCase
 {
@@ -26,5 +27,12 @@ class ColumnTest extends TestCase
             [new Column('any-column`')],
             [new Column('```any-column```')],
         ];
+    }
+
+    public function shouldReturnAnErrorIfAnEmptyColumnNameIsPassed()
+    {
+        $this->expectException(InvalidArgumentColumnException::class);
+
+        new Column('');
     }
 }
