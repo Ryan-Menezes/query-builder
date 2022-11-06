@@ -7,7 +7,6 @@ namespace QueryBuilder\Sql;
 use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 use QueryBuilder\Utils\SimpleIterator;
-use Stringable;
 
 class Columns extends SimpleIterator implements SqlInterface
 {
@@ -25,40 +24,25 @@ class Columns extends SimpleIterator implements SqlInterface
                 throw new InvalidArgumentColumnException($key);
             }
 
-            $this->addColumnToItemsArrayAndParse($item);
+            $this->addColumnToItemsArray($item);
         }
     }
 
     private function isNotValidColumn(mixed $item): bool
     {
-        return !is_string($item) || empty($item);
+        return !($item instanceof Column);
     }
 
-    private function addColumnToItemsArrayAndParse(string|Stringable $item): self
+    private function addColumnToItemsArray(Column $item): self
     {
-        $itemWithBacktick = $this->addBacktickToItem($item);
-
-        if ($this->hasNotColumn($itemWithBacktick)) {
-            $this->items[] = $itemWithBacktick;
+        if ($this->hasNotColumn($item)) {
+            $this->items[] = $item;
         }
 
         return $this;
     }
 
-    private function addBacktickToItem(string|Stringable $item): string
-    {
-        if(!str_starts_with($item, '`')) {
-            $item = "`${item}";
-        }
-
-        if(!str_ends_with($item, '`')) {
-            $item = "${item}`";
-        }
-
-        return $item;
-    }
-
-    private function hasNotColumn(string|Stringable $item): bool
+    private function hasNotColumn(Column $item): bool
     {
         return !in_array($item, $this->all());
     }

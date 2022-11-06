@@ -20,6 +20,11 @@ class BooleanValue implements SqlInterface, ValueInterface
 
     public function __toString(): string
     {
-        return $this->value ? '1' : '0';
+        return $this->getValue() ? '1' : '0';
+    }
+
+    public function getValue(): bool
+    {
+        return $this->value;
     }
 }

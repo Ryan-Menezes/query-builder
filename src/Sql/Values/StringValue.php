@@ -21,6 +21,11 @@ class StringValue implements SqlInterface, ValueInterface
 
     public function __toString(): string
     {
-        return "'{$this->value}'";
+        return "'{$this->getValue()}'";
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
     }
 }
