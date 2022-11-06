@@ -20,6 +20,11 @@ class NumberValue implements SqlInterface, ValueInterface
 
     public function __toString(): string
     {
-        return (string)$this->value;
+        return (string)$this->getValue();
+    }
+
+    public function getValue(): int|float
+    {
+        return $this->value;
     }
 }

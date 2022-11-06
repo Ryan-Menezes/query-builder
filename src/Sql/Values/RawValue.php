@@ -21,6 +21,11 @@ class RawValue implements SqlInterface, ValueInterface
 
     public function __toString(): string
     {
+        return $this->getValue();
+    }
+
+    public function getValue(): string
+    {
         return $this->value;
     }
 }

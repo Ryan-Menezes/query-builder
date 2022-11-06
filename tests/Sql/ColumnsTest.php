@@ -4,6 +4,7 @@ namespace Tests\Sql;
 
 use PHPUnit\Framework\TestCase;
 
+use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Columns;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 
@@ -20,9 +21,9 @@ class ColumnsTest extends TestCase
     public function shouldFormatTheColumnsWithQuotesAtTheBeginningAndAtTheEndProvider()
     {
         $columns = new Columns([
-            'any-column1',
-            'any-column2',
-            'any-column3',
+            new Column('any-column1'),
+            new Column('any-column2'),
+            new Column('any-column3'),
         ]);
 
         return [
@@ -46,7 +47,7 @@ class ColumnsTest extends TestCase
     {
         return [
             [[123]],            // Int
-            [['']],             // Empty String
+            [['any-string']],   // String
             [[12.5]],           // Float
             [[new \StdClass]],  // Object
             [[null]],           // Null
@@ -59,13 +60,15 @@ class ColumnsTest extends TestCase
     public function testShouldNotContainRepeatedColumns()
     {
         $columns = new Columns([
-            'any-column1',
-            'any-column1',
-            'any-column2',
-            'any-column2',
-            'any-column2',
-            'any-column3',
-            'any-column3',
+            new Column('any-column1'),
+            new Column('any-column1'),
+            new Column('any-column1'),
+            new Column('any-column2'),
+            new Column('any-column2'),
+            new Column('any-column2'),
+            new Column('any-column3'),
+            new Column('any-column3'),
+            new Column('any-column3'),
         ]);
 
         $this->assertEquals(3, $columns->count());
