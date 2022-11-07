@@ -5,6 +5,9 @@ namespace Tests\Sql\Values;
 use PHPUnit\Framework\TestCase;
 use QueryBuilder\Sql\Values\StringValue;
 
+/**
+ * @requires PHP 8.1
+ */
 class StringValueTest extends TestCase
 {
     public function testShouldReturnAFormattedStringForASqlStatement()

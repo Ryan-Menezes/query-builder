@@ -14,6 +14,9 @@ use QueryBuilder\Sql\Values\{
     RawValue,
 };
 
+/**
+ * @requires PHP 8.1
+ */
 class ValueFactoryTest extends TestCase
 {
     /**
@@ -53,7 +56,8 @@ class ValueFactoryTest extends TestCase
             [new \StdClass],  // Object
             [null],           // Null
             [[]],             // Array
-            [function(){}],   // Callable
+            [function () {
+            }],   // Callable
         ];
     }
 }

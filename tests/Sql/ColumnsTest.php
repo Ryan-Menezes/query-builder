@@ -8,6 +8,9 @@ use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Columns;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 
+/**
+ * @requires PHP 8.1
+ */
 class ColumnsTest extends TestCase
 {
     /**
@@ -55,7 +58,8 @@ class ColumnsTest extends TestCase
             [[null]],           // Null
             [[[]]],             // Array
             [[true]],           // Boolean
-            [[function(){}]],   // Callable
+            [[function () {
+            }]],   // Callable
         ];
     }
 

@@ -5,6 +5,9 @@ namespace Tests\Sql\Values;
 use PHPUnit\Framework\TestCase;
 use QueryBuilder\Sql\Values\NumberValue;
 
+/**
+ * @requires PHP 8.1
+ */
 class NumberValueTest extends TestCase
 {
     public function testShouldReturnAFormattedIntegerForASqlStatement()

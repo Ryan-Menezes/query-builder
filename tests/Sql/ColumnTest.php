@@ -7,6 +7,9 @@ use PHPUnit\Framework\TestCase;
 use QueryBuilder\Sql\Column;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 
+/**
+ * @requires PHP 8.1
+ */
 class ColumnTest extends TestCase
 {
     /**

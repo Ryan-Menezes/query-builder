@@ -16,6 +16,9 @@ use QueryBuilder\Sql\Values\{
     RawValue,
 };
 
+/**
+ * @requires PHP 8.1
+ */
 class FieldTest extends TestCase
 {
     /**

@@ -7,6 +7,9 @@ use PHPUnit\Framework\TestCase;
 use QueryBuilder\Utils\SimpleIterator;
 use StdClass;
 
+/**
+ * @requires PHP 8.1
+ */
 class SimpleIteratorTest extends TestCase
 {
     private array $items;
@@ -23,7 +26,7 @@ class SimpleIteratorTest extends TestCase
 
     public function testShouldIterateWithAForeachLoop()
     {
-        foreach($this->simpleIterator as $key => $value) {
+        foreach ($this->simpleIterator as $key => $value) {
             $this->assertEquals($key, $this->simpleIterator->key());
             $this->assertEquals($value, $this->simpleIterator->current());
         }

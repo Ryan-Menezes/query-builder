@@ -11,6 +11,9 @@ use QueryBuilder\Sql\Values\{
     BooleanValue,
 };
 
+/**
+ * @requires PHP 8.1
+ */
 class InsertTest extends TestCase
 {
     public function testShouldCreateASqlInsertCommandCorrectly()
