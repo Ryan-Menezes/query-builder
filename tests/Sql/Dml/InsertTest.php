@@ -26,9 +26,49 @@ class InsertTest extends TestCase
         ]);
 
         $this->assertEquals('INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`) VALUES (?, ?, ?, ?)', $insert);
+        $this->assertEquals([
+            new StringValue('John'),
+            new NumberValue(18),
+            new BooleanValue(true),
+            new NumberValue(1.80),
+        ], $insert->getValues());
     }
 
-    public function testShouldAssociateEachValuePassedToItsGivenClass()
+    public function testShouldAcceptAMultiValuedListAndGenerateACorrectInsertQuery()
+    {
+        $insert = new Insert('any-table', [
+            [
+                'name' => 'John',
+                'age' => 18,
+                'isStudent' => true,
+                'height' => 1.80,
+            ],
+            [
+                'name' => 'Ana',
+                'age' => 22,
+                'isStudent' => false,
+                'height' => 1.60,
+            ],
+        ]);
+
+        $this->assertEquals('INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`) VALUES (?, ?, ?, ?), (?, ?, ?, ?)', $insert);
+        $this->assertEquals([
+            [
+                new StringValue('John'),
+                new NumberValue(18),
+                new BooleanValue(true),
+                new NumberValue(1.80),
+            ],
+            [
+                new StringValue('Ana'),
+                new NumberValue(22),
+                new BooleanValue(false),
+                new NumberValue(1.60),
+            ],
+        ], $insert->getValues());
+    }
+
+    public function testMustAcceptInsertsWithTheIgnoreStatement()
     {
         $insert = new Insert('any-table', [
             'name' => 'John',
@@ -37,11 +77,6 @@ class InsertTest extends TestCase
             'height' => 1.80,
         ]);
 
-        $this->assertEquals([
-            new StringValue('John'),
-            new NumberValue(18),
-            new BooleanValue(true),
-            new NumberValue(1.80),
-        ], $insert->getValues());
+        $this->assertEquals('INSERT IGNORE INTO `any-table` (`name`, `age`, `isStudent`, `height`) VALUES (?, ?, ?, ?)', $insert->ignore());
     }
 }
