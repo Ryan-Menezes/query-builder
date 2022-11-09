@@ -63,23 +63,27 @@ class ColumnsTest extends TestCase
         ];
     }
 
-    public function testShouldNotContainRepeatedColumns()
+    public function testShouldSupportRepeatedColumns()
     {
         $columns = new Columns([
             'any-column1',
             'any-column1',
-            'any-column1',
             'any-column2',
             'any-column2',
-            'any-column2',
-            'any-column3',
             'any-column3',
             'any-column3',
         ]);
 
-        $this->assertEquals(3, $columns->count());
-        $this->assertEquals('`any-column1`, `any-column2`, `any-column3`', $columns);
-        $this->assertEquals(['`any-column1`', '`any-column2`', '`any-column3`'], $columns->all());
+        $this->assertEquals(6, $columns->count());
+        $this->assertEquals('`any-column1`, `any-column1`, `any-column2`, `any-column2`, `any-column3`, `any-column3`', $columns);
+        $this->assertEquals([
+            '`any-column1`',
+            '`any-column1`',
+            '`any-column2`',
+            '`any-column2`',
+            '`any-column3`',
+            '`any-column3`'
+        ], $columns->all());
     }
 
     public function testShouldSupportRawColumns()

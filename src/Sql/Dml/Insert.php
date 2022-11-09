@@ -82,6 +82,7 @@ class Insert implements SqlInterface
 
     private function setColumns(array $columns): void
     {
+        $columns = array_unique($columns);
         $this->columns = new Columns($columns);
     }
 

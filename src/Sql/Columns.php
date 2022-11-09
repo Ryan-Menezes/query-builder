@@ -47,16 +47,8 @@ class Columns extends SimpleIterator implements SqlInterface
 
     private function addColumnToItemsArray(Column|RawValue $column): self
     {
-        if ($this->hasNotColumn($column)) {
-            $this->items[] = $column;
-        }
-
+        $this->items[] = $column;
         return $this;
-    }
-
-    private function hasNotColumn(Column|RawValue $column): bool
-    {
-        return !in_array($column, $this->all());
     }
 
     public function __toString(): string
