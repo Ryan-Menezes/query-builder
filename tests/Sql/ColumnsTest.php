@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Columns;
+use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 
 /**
@@ -58,8 +59,7 @@ class ColumnsTest extends TestCase
             [[null]],           // Null
             [[[]]],             // Array
             [[true]],           // Boolean
-            [[function () {
-            }]],   // Callable
+            [[function () {}]], // Callable
         ];
     }
 
@@ -80,5 +80,22 @@ class ColumnsTest extends TestCase
         $this->assertEquals(3, $columns->count());
         $this->assertEquals('`any-column1`, `any-column2`, `any-column3`', $columns);
         $this->assertEquals(['`any-column1`', '`any-column2`', '`any-column3`'], $columns->all());
+    }
+
+    public function testShouldSupportRawColumns()
+    {
+        $columns = new Columns([
+            new RawValue('COUNT(*) AS `count`'),
+            new RawValue('AVG(salary) AS `avg`'),
+            new RawValue('SUM(salary) AS sum'),
+        ]);
+
+        $this->assertEquals(3, $columns->count());
+        $this->assertEquals('COUNT(*) AS `count`, AVG(salary) AS `avg`, SUM(salary) AS sum', $columns);
+        $this->assertEquals([
+            new RawValue('COUNT(*) AS `count`'),
+            new RawValue('AVG(salary) AS `avg`'),
+            new RawValue('SUM(salary) AS sum'),
+        ], $columns->all());
     }
 }

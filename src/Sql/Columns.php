@@ -7,48 +7,56 @@ namespace QueryBuilder\Sql;
 use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 use QueryBuilder\Utils\SimpleIterator;
+use QueryBuilder\Sql\Values\RawValue;
 
 class Columns extends SimpleIterator implements SqlInterface
 {
-    public function __construct(array $items = [])
+    public function __construct(array $columns = [])
     {
         parent::__construct([]);
 
-        $this->validateColumnsAndAdd($items);
+        $this->validateColumnsAndAdd($columns);
     }
 
-    private function validateColumnsAndAdd(array $items): void
+    private function validateColumnsAndAdd(array $columns): void
     {
-        foreach($items as $key => $item) {
-            if($this->isNotValidColumn($item)) {
+        foreach($columns as $key => $column) {
+            if($this->isNotValidColumn($column)) {
                 throw new InvalidArgumentColumnException("The column \"${key}\" of the array passed is not a valid column, a valid column must be of type Column or string");
             }
 
-            if(is_string($item)) {
-                $item = new Column($item);
-            }
+            $column = $this->formatColumnIfNecessary($column);
 
-            $this->addColumnToItemsArray($item);
+            $this->addColumnToItemsArray($column);
         }
     }
 
-    private function isNotValidColumn(mixed $item): bool
+    private function isNotValidColumn(mixed $column): bool
     {
-        return !($item instanceof Column) && !is_string($item);
+        return !($column instanceof Column) && !($column instanceof RawValue) && !is_string($column);
     }
 
-    private function addColumnToItemsArray(Column $item): self
+    private function formatColumnIfNecessary(mixed $column): Column|RawValue
     {
-        if ($this->hasNotColumn($item)) {
-            $this->items[] = $item;
+        if(is_string($column)) {
+            $column = new Column($column);
+        }
+
+        return $column;
+    }
+
+    private function addColumnToItemsArray(Column|RawValue $column): self
+    {
+        if ($this->hasNotColumn($column)) {
+            $this->items[] = $column;
         }
 
         return $this;
     }
 
-    private function hasNotColumn(Column $item): bool
+    private function hasNotColumn(Column|RawValue $column): bool
     {
-        return !in_array($item, $this->all());
+        return !in_array($column, $this->all());
     }
 
     public function __toString(): string
