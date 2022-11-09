@@ -60,8 +60,8 @@ class FieldTest extends TestCase
     public function shouldShouldDisregardColumnRenamingProvider()
     {
         return [
-            [new Column('`any-column` AS `any-nickname`')],
-            [new Column('any-column AS any-nickname')],
+            [new Column('`any-column` AS `any-aliases`')],
+            [new Column('any-column AS any-aliases')],
         ];
     }
 }

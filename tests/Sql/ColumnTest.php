@@ -38,23 +38,23 @@ class ColumnTest extends TestCase
     public function testShouldSupportRenamedColumns(Column $column)
     {
         $this->assertEquals('any-column', $column->getName());
-        $this->assertEquals('any-nickname', $column->getNickname());
-        $this->assertEquals($column, '`any-column` AS `any-nickname`');
+        $this->assertEquals('any-aliases', $column->getAliases());
+        $this->assertEquals($column, '`any-column` AS `any-aliases`');
     }
 
     public function shouldSupportRenamedColumnsProvider()
     {
         return [
-            [new Column('any-column as any-nickname')],
-            [new Column('any-column AS any-nickname')],
-            [new Column('any-column As any-nickname')],
-            [new Column('any-column aS any-nickname')],
-            [new Column('`any-column` AS `any-nickname`')],
-            [new Column('`any-column AS `any-nickname`')],
-            [new Column('any-column` AS `any-nickname`')],
-            [new Column('`any-column` AS any-nickname`')],
-            [new Column('`any-column` AS `any-nickname')],
-            [new Column('```any-column``` AS ```any-nickname```')],
+            [new Column('any-column as any-aliases')],
+            [new Column('any-column AS any-aliases')],
+            [new Column('any-column As any-aliases')],
+            [new Column('any-column aS any-aliases')],
+            [new Column('`any-column` AS `any-aliases`')],
+            [new Column('`any-column AS `any-aliases`')],
+            [new Column('any-column` AS `any-aliases`')],
+            [new Column('`any-column` AS any-aliases`')],
+            [new Column('`any-column` AS `any-aliases')],
+            [new Column('```any-column``` AS ```any-aliases```')],
         ];
     }
 

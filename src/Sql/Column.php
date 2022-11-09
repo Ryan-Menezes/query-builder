@@ -11,20 +11,20 @@ use Stringable;
 class Column implements SqlInterface
 {
     private string $name;
-    private string $nickname = '';
-    private const SQL_AS_STATEMENT = ' AS ';
+    private string $aliases = '';
+    private const SQL_ALIASES_STATEMENT = ' AS ';
 
     public function __construct(string|Stringable $columnName)
     {
-        $this->formatNameAndNickname($columnName);
+        $this->formatNameAndAliases($columnName);
     }
 
-    private function formatNameAndNickname(string|Stringable $columnName): void
+    private function formatNameAndAliases(string|Stringable $columnName): void
     {
         $columnName = $this->removeBacktickFromBeginningAndEndOfString($columnName);
 
         $this->name = $this->extractName($columnName);
-        $this->nickname = $this->extractNickname($columnName);
+        $this->aliases = $this->extractAliases($columnName);
 
         if (empty($this->name)) {
             throw new InvalidArgumentColumnException('Past column name cannot be empty');
@@ -38,64 +38,64 @@ class Column implements SqlInterface
 
     private function extractName(string $columnName): string
     {
-        $name = $this->getStringBeforeSqlAsStatement($columnName);
+        $name = $this->getStringBeforeSqlAliasesStatement($columnName);
         $name = empty($name) ? $columnName : $name;
 
         return $this->removeBacktickFromBeginningAndEndOfString($name, '`');
     }
 
-    private function getStringBeforeSqlAsStatement(string $columnName): string
+    private function getStringBeforeSqlAliasesStatement(string $columnName): string
     {
-        $positionSqlAsStatement = $this->getPositionSqlAsStatement($columnName);
-        if($positionSqlAsStatement === false) {
+        $positionSqlAliasesStatement = $this->getPositionSqlAliasesStatement($columnName);
+        if($positionSqlAliasesStatement === false) {
             return '';
         }
 
-        $stringBeforeSqlAsStatement = mb_substr($columnName, 0, $positionSqlAsStatement);
-        $stringBeforeSqlAsStatement = str_ireplace(self::SQL_AS_STATEMENT, '', $stringBeforeSqlAsStatement);
+        $stringBeforeSqlAliasesStatement = mb_substr($columnName, 0, $positionSqlAliasesStatement);
+        $stringBeforeSqlAliasesStatement = str_ireplace(self::SQL_ALIASES_STATEMENT, '', $stringBeforeSqlAliasesStatement);
 
-        return $stringBeforeSqlAsStatement;
+        return $stringBeforeSqlAliasesStatement;
     }
 
-    private function getPositionSqlAsStatement(string $columnName): int|bool
+    private function getPositionSqlAliasesStatement(string $columnName): int|bool
     {
-        $positionSqlAsStatement = mb_stripos($columnName, self::SQL_AS_STATEMENT);
+        $positionSqlAliasesStatement = mb_stripos($columnName, self::SQL_ALIASES_STATEMENT);
 
-        return $positionSqlAsStatement;
+        return $positionSqlAliasesStatement;
     }
 
-    private function extractNickname(string $columnName): string
+    private function extractAliases(string $columnName): string
     {
-        $nickname = $this->getStringAfterSqlAsStatement($columnName);
+        $aliases = $this->getStringAfterSqlAliasesStatement($columnName);
 
-        return $this->removeBacktickFromBeginningAndEndOfString($nickname, '`');
+        return $this->removeBacktickFromBeginningAndEndOfString($aliases, '`');
     }
 
-    private function getStringAfterSqlAsStatement(string $columnName): string
+    private function getStringAfterSqlAliasesStatement(string $columnName): string
     {
-        $positionSqlAsStatement = $this->getPositionSqlAsStatement($columnName);
-        if($positionSqlAsStatement === false) {
+        $positionSqlAliasesStatement = $this->getPositionSqlAliasesStatement($columnName);
+        if($positionSqlAliasesStatement === false) {
             return '';
         }
 
-        $stringAfterSqlAsStatement = mb_substr($columnName, $positionSqlAsStatement);
-        $stringAfterSqlAsStatement = str_ireplace(self::SQL_AS_STATEMENT, '', $stringAfterSqlAsStatement);
+        $stringAfterSqlAliasesStatement = mb_substr($columnName, $positionSqlAliasesStatement);
+        $stringAfterSqlAliasesStatement = str_ireplace(self::SQL_ALIASES_STATEMENT, '', $stringAfterSqlAliasesStatement);
 
-        return $stringAfterSqlAsStatement;
+        return $stringAfterSqlAliasesStatement;
     }
 
     public function __toString(): string
     {
-        if($this->hasNickname()) {
-            return "`{$this->getName()}` AS `{$this->getNickname()}`";
+        if($this->hasAliases()) {
+            return "`{$this->getName()}` AS `{$this->getAliases()}`";
         }
 
         return "`{$this->getName()}`";
     }
 
-    private function hasNickname(): bool
+    private function hasAliases(): bool
     {
-        return !empty($this->getNickname());
+        return !empty($this->getAliases());
     }
 
     public function getName(): string
@@ -103,8 +103,8 @@ class Column implements SqlInterface
         return $this->name;
     }
 
-    public function getNickname(): string
+    public function getAliases(): string
     {
-        return $this->nickname;
+        return $this->aliases;
     }
 }
