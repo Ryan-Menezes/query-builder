@@ -24,7 +24,7 @@ class FieldTest extends TestCase
     /**
      * @dataProvider shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider
      */
-    public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(ValueInterface $value)
+    public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(mixed $value)
     {
         $column = new Column('any-column');
         $field = new Field($column, '=', $value);
@@ -49,10 +49,9 @@ class FieldTest extends TestCase
     /**
      * @dataProvider shouldShouldDisregardColumnRenamingProvider
      */
-    public function testShouldDisregardColumnRenaming(Column $column)
+    public function testShouldDisregardColumnRenaming(string|Column $column)
     {
-        $value = new StringValue('any-value');
-        $field = new Field($column, '=', $value);
+        $field = new Field($column, '=', 'any-value');
 
         $this->assertEquals('`any-column` = ?', $field);
     }
@@ -60,8 +59,8 @@ class FieldTest extends TestCase
     public function shouldShouldDisregardColumnRenamingProvider()
     {
         return [
-            [new Column('`any-column` AS `any-aliases`')],
-            [new Column('any-column AS any-aliases')],
+            ['`any-column` AS `any-aliases`'],
+            ['any-column AS any-aliases'],
         ];
     }
 }
