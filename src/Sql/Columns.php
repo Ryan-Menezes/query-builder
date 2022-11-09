@@ -22,7 +22,9 @@ class Columns extends SimpleIterator implements SqlInterface
     {
         foreach($columns as $key => $column) {
             if($this->isNotValidColumn($column)) {
-                throw new InvalidArgumentColumnException("The column \"${key}\" of the array passed is not a valid column, a valid column must be of type Column or string");
+                throw new InvalidArgumentColumnException(
+                    "The column \"${key}\" of the array passed is not a valid column, a valid column must be of type Column or string"
+                );
             }
 
             $column = $this->formatColumnIfNecessary($column);
@@ -33,7 +35,9 @@ class Columns extends SimpleIterator implements SqlInterface
 
     private function isNotValidColumn(mixed $column): bool
     {
-        return !($column instanceof Column) && !($column instanceof RawValue) && !is_string($column);
+        return  !($column instanceof Column) &&
+                !($column instanceof RawValue) &&
+                !is_string($column);
     }
 
     private function formatColumnIfNecessary(mixed $column): Column|RawValue
