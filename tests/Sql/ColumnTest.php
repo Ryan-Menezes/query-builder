@@ -17,7 +17,7 @@ class ColumnTest extends TestCase
      */
     public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(Column $column)
     {
-        $this->assertEquals('any-column', $column->getColumnName());
+        $this->assertEquals('any-column', $column->getName());
         $this->assertEquals($column, '`any-column`');
     }
 
@@ -29,6 +29,32 @@ class ColumnTest extends TestCase
             [new Column('`any-column')],
             [new Column('any-column`')],
             [new Column('```any-column```')],
+        ];
+    }
+
+    /**
+     * @dataProvider shouldSupportRenamedColumnsProvider
+     */
+    public function testShouldSupportRenamedColumns(Column $column)
+    {
+        $this->assertEquals('any-column', $column->getName());
+        $this->assertEquals('any-nickname', $column->getNickname());
+        $this->assertEquals($column, '`any-column` AS `any-nickname`');
+    }
+
+    public function shouldSupportRenamedColumnsProvider()
+    {
+        return [
+            [new Column('any-column as any-nickname')],
+            [new Column('any-column AS any-nickname')],
+            [new Column('any-column As any-nickname')],
+            [new Column('any-column aS any-nickname')],
+            [new Column('`any-column` AS `any-nickname`')],
+            [new Column('`any-column AS `any-nickname`')],
+            [new Column('any-column` AS `any-nickname`')],
+            [new Column('`any-column` AS any-nickname`')],
+            [new Column('`any-column` AS `any-nickname')],
+            [new Column('```any-column``` AS ```any-nickname```')],
         ];
     }
 

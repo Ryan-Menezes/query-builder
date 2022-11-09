@@ -30,7 +30,7 @@ class FieldTest extends TestCase
         $field = new Field($column, '=', $value);
 
         $this->assertEquals($value->getValue(), $field->getValue());
-        $this->assertEquals($column->getColumnName(), $field->getColumnName());
+        $this->assertEquals($column->getName(), $field->getColumnName());
         $this->assertEquals('=', $field->getOperator());
         $this->assertEquals('`any-column` = ?', $field);
     }

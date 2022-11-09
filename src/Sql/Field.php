@@ -25,7 +25,7 @@ class Field implements SqlInterface
 
     public function getColumnName(): string
     {
-        return $this->column->getColumnName();
+        return $this->column->getName();
     }
 
     public function getOperator(): string
