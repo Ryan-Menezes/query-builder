@@ -45,4 +45,23 @@ class FieldTest extends TestCase
             [new RawValue('COUNT(*)')],
         ];
     }
+
+    /**
+     * @dataProvider shouldShouldDisregardColumnRenamingProvider
+     */
+    public function testShouldDisregardColumnRenaming(Column $column)
+    {
+        $value = new StringValue('any-value');
+        $field = new Field($column, '=', $value);
+
+        $this->assertEquals('`any-column` = ?', $field);
+    }
+
+    public function shouldShouldDisregardColumnRenamingProvider()
+    {
+        return [
+            [new Column('`any-column` AS `any-nickname`')],
+            [new Column('any-column AS any-nickname')],
+        ];
+    }
 }

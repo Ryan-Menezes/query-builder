@@ -20,7 +20,7 @@ class Field implements SqlInterface
 
     public function __toString(): string
     {
-        return "{$this->column} {$this->operator} ?";
+        return "`{$this->getColumnName()}` {$this->getOperator()} ?";
     }
 
     public function getColumnName(): string
