@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Sql;
+namespace Tests\Sql\Commands\Dql;
 
 use PHPUnit\Framework\TestCase;
 
