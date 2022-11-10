@@ -13,6 +13,7 @@ use QueryBuilder\Sql\Values\{
     StringValue,
     NumberValue,
     BooleanValue,
+    NullValue,
     RawValue,
 };
 
@@ -42,8 +43,20 @@ class FieldTest extends TestCase
             [new NumberValue(5)],
             [new NumberValue(12.5)],
             [new BooleanValue(true)],
-            [new RawValue('COUNT(*)')],
+            [new NullValue()],
         ];
+    }
+
+    public function testShouldAcceptARawValue()
+    {
+        $column = new Column('any-column');
+        $value = new RawValue('COUNT(*)');
+        $field = new Field($column, '=', $value);
+
+        $this->assertEquals($value->getValue(), $field->getValue());
+        $this->assertEquals($column->getName(), $field->getColumnName());
+        $this->assertEquals('=', $field->getOperator());
+        $this->assertEquals('`any-column` = COUNT(*)', $field);
     }
 
     /**

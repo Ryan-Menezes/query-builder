@@ -5,12 +5,13 @@ namespace Tests\Sql;
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Exceptions\InvalidArgumentValueException;
-use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\ValueInterface;
+use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Values\{
     StringValue,
     NumberValue,
     BooleanValue,
+    NullValue,
     RawValue,
 };
 
@@ -22,7 +23,7 @@ class ValueFactoryTest extends TestCase
     /**
      * @dataProvider shouldReturnTheClassCorrespondingToThatTypeProvider
      */
-    public function testShouldReturnTheClassCorrespondingToThatType($value, $expected)
+    public function testShouldReturnTheClassCorrespondingToThatType(mixed $value, ValueInterface $expected)
     {
         $actual = ValueFactory::createValue($value);
 
@@ -36,6 +37,7 @@ class ValueFactoryTest extends TestCase
             [5, new NumberValue(5)],
             [5.5, new NumberValue(5.5)],
             [true, new BooleanValue(true)],
+            [null, new NullValue()],
             [new RawValue('any-raw'), new RawValue('any-raw')],
         ];
     }
@@ -54,7 +56,6 @@ class ValueFactoryTest extends TestCase
     {
         return [
             [new \StdClass],  // Object
-            [null],           // Null
             [[]],             // Array
             [function () {}], // Callable
         ];

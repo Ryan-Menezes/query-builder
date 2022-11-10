@@ -9,6 +9,7 @@ use QueryBuilder\Interfaces\{
     SqlInterface,
     ValueInterface,
 };
+use QueryBuilder\Sql\Values\RawValue;
 
 class Field implements SqlInterface
 {
@@ -34,6 +35,10 @@ class Field implements SqlInterface
 
     public function __toString(): string
     {
+        if($this->value instanceof RawValue) {
+            return "`{$this->getColumnName()}` {$this->getOperator()} {$this->getValue()}";
+        }
+
         return "`{$this->getColumnName()}` {$this->getOperator()} ?";
     }
 

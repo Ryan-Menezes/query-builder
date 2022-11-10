@@ -10,6 +10,7 @@ use QueryBuilder\Sql\Values\{
     StringValue,
     NumberValue,
     BooleanValue,
+    NullValue,
     RawValue,
 };
 
@@ -31,6 +32,10 @@ abstract class ValueFactory
 
         if(is_bool($item)) {
             return new BooleanValue($item);
+        }
+
+        if(is_null($item)) {
+            return new NullValue();
         }
 
         throw new InvalidArgumentValueException(

@@ -6,7 +6,9 @@ namespace QueryBuilder\Sql\Dml;
 
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\SqlInterface;
+use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Sql\Columns;
+use QueryBuilder\Sql\Values\RawValue;
 
 class Insert implements SqlInterface
 {
@@ -66,10 +68,10 @@ class Insert implements SqlInterface
     private function getFieldsValue(array $fields): array
     {
         $fieldsValue = array_values($fields);
-        return $this->getValueFormat($fieldsValue);
+        return $this->getValueFormatted($fieldsValue);
     }
 
-    private function getValueFormat(array $value): array
+    private function getValueFormatted(array $value): array
     {
         $valueFormatted = [];
 
@@ -95,10 +97,10 @@ class Insert implements SqlInterface
     public function __toString(): string
     {
         if($this->isIgnoreStatement) {
-            return "INSERT IGNORE INTO {$this->getTableName()} ({$this->getColumns()}) VALUES {$this->getValuesParseToSql()}";
+            return "INSERT IGNORE INTO {$this->getTableName()} ({$this->getColumns()}) VALUES {$this->getValuesToStringSql()}";
         }
 
-        return "INSERT INTO {$this->getTableName()} ({$this->getColumns()}) VALUES {$this->getValuesParseToSql()}";
+        return "INSERT INTO {$this->getTableName()} ({$this->getColumns()}) VALUES {$this->getValuesToStringSql()}";
     }
 
     public function getTableName(): string
@@ -111,29 +113,54 @@ class Insert implements SqlInterface
         return $this->columns;
     }
 
-    private function getValuesParseToSql(): string
+    private function getValuesToStringSql(): string
     {
-        $valueSql = $this->getValueFormatSql();
+        $valuesInline = $this->getValuesInline();
 
-        $valuesParseToSql = array_map(fn () => $valueSql, $this->values);
-
-        return implode(', ', $valuesParseToSql);
+        return implode(', ', $valuesInline);
     }
 
-    private function getValueFormatSql(): string
+    private function getValuesInline(): array
     {
-        $interrogationValues = array_fill(0, $this->columns->count(), '?');
-        $interrogationValues = implode(', ', $interrogationValues);
+        $values = $this->getValues();
+        $valuesInline = [];
 
-        return "(${interrogationValues})";
+        foreach($values as $value) {
+            $valuesInline[] = $this->getValueInline($value);
+        }
+
+        return $valuesInline;
+    }
+
+    private function getValueInline(array $value): string
+    {
+        $newValue = [];
+
+        foreach($value as $k => $v) {
+            $newValue[$k] = $this->getDefaultValue($v);
+        }
+
+        $valueToString = implode(', ', $newValue);
+
+        return "(${valueToString})";
+    }
+
+    private function getDefaultValue(ValueInterface $value): string|ValueInterface
+    {
+        if($this->isRawValue($value)) {
+            return $value;
+        }
+
+        return '?';
+    }
+
+    private function isRawValue(ValueInterface $value): bool
+    {
+        return $value instanceof RawValue;
     }
 
     public function getValues(): array
     {
-        if(count($this->values) === 1) {
-            return $this->values[0];
-        }
-
         return $this->values;
     }
 
