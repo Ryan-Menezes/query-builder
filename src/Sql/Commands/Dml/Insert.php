@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace QueryBuilder\Sql\Dml;
+namespace QueryBuilder\Sql\Commands\Dml;
 
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\SqlInterface;
-use QueryBuilder\Interfaces\ValueInterface;
+use QueryBuilder\Interfaces\{
+    SqlInterface,
+    ValueInterface,
+};
 use QueryBuilder\Sql\Columns;
 use QueryBuilder\Sql\Values\RawValue;
 

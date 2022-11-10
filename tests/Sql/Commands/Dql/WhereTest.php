@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Sql;
+namespace Tests\Sql\Commands\Dql;
 
 use PHPUnit\Framework\TestCase;
 
-use QueryBuilder\Sql\Dql\Where;
+use QueryBuilder\Sql\Commands\Dql\Where;
 use QueryBuilder\Sql\Field;
 use QueryBuilder\Sql\Values\RawValue;
 

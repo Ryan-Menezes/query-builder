@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Sql;
+namespace Tests\Sql\Commands\Dml;
 
 use PHPUnit\Framework\TestCase;
 
-use QueryBuilder\Sql\Dml\Insert;
+use QueryBuilder\Sql\Commands\Dml\Insert;
 use QueryBuilder\Sql\Values\{
     StringValue,
     NumberValue,
