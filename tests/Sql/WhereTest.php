@@ -4,9 +4,11 @@ namespace Tests\Sql;
 
 use PHPUnit\Framework\TestCase;
 
-use QueryBuilder\Sql\Dql\Where;
-use QueryBuilder\Sql\Field;
 use QueryBuilder\Sql\Values\RawValue;
+use QueryBuilder\Sql\{
+    Where,
+    Field,
+};
 
 /**
  * @requires PHP 8.1

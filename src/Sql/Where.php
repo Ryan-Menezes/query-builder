@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace QueryBuilder\Sql\Dql;
+namespace QueryBuilder\Sql;
 
 use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Sql\{
