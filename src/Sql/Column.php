@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql;
 
+use QueryBuilder\Utils\Str;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 use QueryBuilder\Interfaces\SqlInterface;
 use Stringable;
 
 class Column implements SqlInterface
 {
-    private string $name;
-    private string $aliases = '';
+    private string|Stringable $tableName = '';
+    private string|Stringable $name;
+    private string|Stringable $aliases = '';
     private const SQL_ALIASES_STATEMENT = ' AS ';
+    private const SQL_DOT = '.';
 
     public function __construct(string|Stringable $columnName)
     {
@@ -22,7 +25,9 @@ class Column implements SqlInterface
     private function formatNameAndAliases(string|Stringable $columnName): void
     {
         $columnName = $this->removeBacktickFromBeginningAndEndOfString($columnName);
+        $columnName = new Str($columnName);
 
+        $this->tableName = $this->extractTableName($columnName);
         $this->name = $this->extractName($columnName);
         $this->aliases = $this->extractAliases($columnName);
 
@@ -36,66 +41,64 @@ class Column implements SqlInterface
         return trim($value, '`');
     }
 
-    private function extractName(string $columnName): string
+    private function extractTableName(Str $columnName): string
     {
-        $name = $this->getStringBeforeSqlAliasesStatement($columnName);
-        $name = empty($name) ? $columnName : $name;
+        $tableName = $columnName->before(self::SQL_DOT);
+
+        return $this->removeBacktickFromBeginningAndEndOfString($tableName, '`');
+    }
+
+    private function extractName(Str $columnName): string
+    {
+        $name = $columnName->after(self::SQL_DOT);
+
+        if(empty($name)) {
+            $name = $columnName->before(self::SQL_ALIASES_STATEMENT);
+        } else {
+            $columnName = new Str($name);
+            $name = $columnName->before(self::SQL_ALIASES_STATEMENT);
+        }
+
+        $name = empty($name) ? $columnName->getValue() : $name;
 
         return $this->removeBacktickFromBeginningAndEndOfString($name, '`');
     }
 
-    private function getStringBeforeSqlAliasesStatement(string $columnName): string
+    private function extractAliases(Str $columnName): string
     {
-        $positionSqlAliasesStatement = $this->getPositionSqlAliasesStatement($columnName);
-        if($positionSqlAliasesStatement === false) {
-            return '';
-        }
-
-        $stringBeforeSqlAliasesStatement = mb_substr($columnName, 0, $positionSqlAliasesStatement);
-        $stringBeforeSqlAliasesStatement = str_ireplace(self::SQL_ALIASES_STATEMENT, '', $stringBeforeSqlAliasesStatement);
-
-        return $stringBeforeSqlAliasesStatement;
-    }
-
-    private function getPositionSqlAliasesStatement(string $columnName): int|bool
-    {
-        $positionSqlAliasesStatement = mb_stripos($columnName, self::SQL_ALIASES_STATEMENT);
-
-        return $positionSqlAliasesStatement;
-    }
-
-    private function extractAliases(string $columnName): string
-    {
-        $aliases = $this->getStringAfterSqlAliasesStatement($columnName);
+        $aliases = $columnName->after(self::SQL_ALIASES_STATEMENT);
 
         return $this->removeBacktickFromBeginningAndEndOfString($aliases, '`');
     }
 
-    private function getStringAfterSqlAliasesStatement(string $columnName): string
-    {
-        $positionSqlAliasesStatement = $this->getPositionSqlAliasesStatement($columnName);
-        if($positionSqlAliasesStatement === false) {
-            return '';
-        }
-
-        $stringAfterSqlAliasesStatement = mb_substr($columnName, $positionSqlAliasesStatement);
-        $stringAfterSqlAliasesStatement = str_ireplace(self::SQL_ALIASES_STATEMENT, '', $stringAfterSqlAliasesStatement);
-
-        return $stringAfterSqlAliasesStatement;
-    }
-
     public function __toString(): string
     {
-        if($this->hasAliases()) {
-            return "`{$this->getName()}` AS `{$this->getAliases()}`";
+        $fieldToString = "`{$this->getName()}`";
+
+        if($this->hasTableName()) {
+            $fieldToString = "`{$this->getTableName()}`.${fieldToString}";
         }
 
-        return "`{$this->getName()}`";
+        if($this->hasAliases()) {
+            $fieldToString = "${fieldToString} AS `{$this->getAliases()}`";
+        }
+
+        return $fieldToString;
+    }
+
+    private function hasTableName(): bool
+    {
+        return !empty($this->getTableName());
     }
 
     private function hasAliases(): bool
     {
         return !empty($this->getAliases());
+    }
+
+    public function getTableName(): string
+    {
+        return $this->tableName;
     }
 
     public function getName(): string

@@ -17,8 +17,7 @@ class ColumnTest extends TestCase
      */
     public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(Column $column)
     {
-        $this->assertEquals('any-column', $column->getName());
-        $this->assertEquals($column, '`any-column`');
+        $this->assertEquals('`any-column`', $column);
     }
 
     public function shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider()
@@ -37,9 +36,7 @@ class ColumnTest extends TestCase
      */
     public function testShouldSupportRenamedColumns(Column $column)
     {
-        $this->assertEquals('any-column', $column->getName());
-        $this->assertEquals('any-aliases', $column->getAliases());
-        $this->assertEquals($column, '`any-column` AS `any-aliases`');
+        $this->assertEquals('`any-column` AS `any-aliases`', $column);
     }
 
     public function shouldSupportRenamedColumnsProvider()
@@ -63,5 +60,22 @@ class ColumnTest extends TestCase
         $this->expectException(InvalidArgumentColumnException::class);
 
         new Column('');
+    }
+
+    /**
+     * @dataProvider shouldAcceptColumnsWithTableNameSpecificationProvider
+     */
+    public function testShouldAcceptColumnsWithTableNameSpecification(Column $column, $expected)
+    {
+        $this->assertEquals($expected, $column);
+    }
+
+    public function shouldAcceptColumnsWithTableNameSpecificationProvider() {
+        return [
+            [new Column('any-table.any-column'), '`any-table`.`any-column`'],
+            [new Column('`any-table`.`any-column`'), '`any-table`.`any-column`'],
+            [new Column('any-table.any-column AS any-aliases'), '`any-table`.`any-column` AS `any-aliases`'],
+            [new Column('`any-table`.`any-column` AS `any-aliases`'), '`any-table`.`any-column` AS `any-aliases`'],
+        ];
     }
 }

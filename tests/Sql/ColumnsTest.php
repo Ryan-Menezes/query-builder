@@ -26,16 +26,15 @@ class ColumnsTest extends TestCase
     {
         $columns = new Columns([
             new Column('any-column1'),
-            new Column('any-column2'),
-            'any-column3',
-            'any-column4',
-            'any-column5',
+            'any-column2',
+            'any-column AS any-aliases',
+            'any-table.any-column AS any-aliases',
         ]);
 
         return [
-            [5, $columns->count()],
-            ['`any-column1`, `any-column2`, `any-column3`, `any-column4`, `any-column5`', $columns],
-            [['`any-column1`', '`any-column2`', '`any-column3`', '`any-column4`', '`any-column5`'], $columns->all()],
+            [4, $columns->count()],
+            ['`any-column1`, `any-column2`, `any-column` AS `any-aliases`, `any-table`.`any-column` AS `any-aliases`', $columns],
+            [['`any-column1`', '`any-column2`', '`any-column` AS `any-aliases`', '`any-table`.`any-column` AS `any-aliases`'], $columns->all()],
         ];
     }
 
