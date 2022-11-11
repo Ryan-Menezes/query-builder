@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Sql;
+namespace Tests\Factories;
 
 use PHPUnit\Framework\TestCase;
 
@@ -57,7 +57,8 @@ class ValueFactoryTest extends TestCase
         return [
             [new \StdClass],  // Object
             [[]],             // Array
-            [function () {}], // Callable
+            [function () {
+            }], // Callable
         ];
     }
 }
