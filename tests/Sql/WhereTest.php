@@ -8,6 +8,7 @@ use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Sql\Field;
 use QueryBuilder\Sql\Where\Where;
+use InvalidArgumentException;
 
 /**
  * @requires PHP 8.1
@@ -123,6 +124,82 @@ class WhereTest extends TestCase
             [[new Column('a'), new Column('b')], 'WHERE `any-column` NOT BETWEEN `a` AND `b`'],
             [[5, new Column('b')], 'WHERE `any-column` NOT BETWEEN 5 AND `b`'],
             [[new Column('a'), 5], 'WHERE `any-column` NOT BETWEEN `a` AND 5'],
+        ];
+    }
+
+    /**
+     * @dataProvider shouldReturnAnErrorIfTheSecondParameterIsInvalidForABetweenStatementProvider
+     */
+    public function shouldReturnAnErrorIfTheSecondParameterIsInvalidForABetweenStatement(array $values)
+    {
+        $where = new Where();
+        $where->between('any-column', $values);
+
+        $this->expectException(InvalidArgumentException::class);
+    }
+
+    public function shouldReturnAnErrorIfTheSecondParameterIsInvalidForABetweenStatementProvider()
+    {
+        return [
+            [[]],
+            [[5]],
+        ];
+    }
+
+    /**
+     * @dataProvider shouldReturnAnErrorIfTheSecondParameterIsInvalidForANotBetweenStatementProvider
+     */
+    public function shouldReturnAnErrorIfTheSecondParameterIsInvalidForANotBetweenStatement(array $values)
+    {
+        $where = new Where();
+        $where->notBetween('any-column', $values);
+
+        $this->expectException(InvalidArgumentException::class);
+    }
+
+    public function shouldReturnAnErrorIfTheSecondParameterIsInvalidForANotBetweenStatementProvider()
+    {
+        return [
+            [[]],
+            [[5]],
+        ];
+    }
+
+    /**
+     * @dataProvider shouldReturnAnErrorIfTheSecondParameterIsInvalidForAOrBetweenStatementProvider
+     */
+    public function shouldReturnAnErrorIfTheSecondParameterIsInvalidForAOrBetweenStatement(array $values)
+    {
+        $where = new Where();
+        $where->orBetween('any-column', $values);
+
+        $this->expectException(InvalidArgumentException::class);
+    }
+
+    public function shouldReturnAnErrorIfTheSecondParameterIsInvalidForAOrBetweenStatementProvider()
+    {
+        return [
+            [[]],
+            [[5]],
+        ];
+    }
+
+    /**
+     * @dataProvider shouldReturnAnErrorIfTheSecondParameterIsInvalidForAOrNotBetweenStatementProvider
+     */
+    public function shouldReturnAnErrorIfTheSecondParameterIsInvalidForAOrNotBetweenStatement(array $values)
+    {
+        $where = new Where();
+        $where->orNotBetween('any-column', $values);
+
+        $this->expectException(InvalidArgumentException::class);
+    }
+
+    public function shouldReturnAnErrorIfTheSecondParameterIsInvalidForAOrNotBetweenStatementProvider()
+    {
+        return [
+            [[]],
+            [[5]],
         ];
     }
 }
