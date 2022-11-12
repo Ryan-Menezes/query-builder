@@ -11,11 +11,12 @@ use Stringable;
 
 class Column implements SqlInterface
 {
+    private const SQL_ALIASES_STATEMENT = ' AS ';
+    private const SQL_DOT = '.';
+
     private string|Stringable $tableName = '';
     private string|Stringable $name;
     private string|Stringable $aliases = '';
-    private const SQL_ALIASES_STATEMENT = ' AS ';
-    private const SQL_DOT = '.';
 
     public function __construct(string|Stringable $columnName)
     {

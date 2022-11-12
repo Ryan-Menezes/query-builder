@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql;
 
 use QueryBuilder\Interfaces\SqlInterface;
-use QueryBuilder\Sql\Field;
 
 class Where implements SqlInterface
 {
@@ -48,5 +47,37 @@ class Where implements SqlInterface
     public function getLogicalInstructions(): array
     {
         return $this->logicalInstructions;
+    }
+
+    public function between(string|Column $column, array $values): self
+    {
+        $between = new Between($this, $column, $values);
+        $between->and();
+
+        return $this;
+    }
+
+    public function notBetween(string|Column $column, array $values): self
+    {
+        $between = new Between($this, $column, $values);
+        $between->andNot();
+
+        return $this;
+    }
+
+    public function orBetween(string|Column $column, array $values): self
+    {
+        $between = new Between($this, $column, $values);
+        $between->or();
+
+        return $this;
+    }
+
+    public function orNotBetween(string|Column $column, array $values): self
+    {
+        $between = new Between($this, $column, $values);
+        $between->orNot();
+
+        return $this;
     }
 }
