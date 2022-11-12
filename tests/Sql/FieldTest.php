@@ -4,7 +4,6 @@ namespace Tests\Sql;
 
 use PHPUnit\Framework\TestCase;
 
-use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Sql\{
     Field,
     Column,
@@ -60,20 +59,45 @@ class FieldTest extends TestCase
     }
 
     /**
-     * @dataProvider shouldShouldDisregardColumnRenamingProvider
+     * @dataProvider shouldShouldDisregardColumnRenamingAndTableNameProvider
      */
-    public function testShouldDisregardColumnRenaming(string|Column $column)
+    public function testShouldDisregardColumnRenamingAndTableName(string|Column $column)
     {
         $field = new Field($column, '=', 'any-value');
 
         $this->assertEquals('`any-column` = ?', $field);
     }
 
-    public function shouldShouldDisregardColumnRenamingProvider()
+    public function shouldShouldDisregardColumnRenamingAndTableNameProvider()
     {
         return [
             ['`any-column` AS `any-aliases`'],
             ['any-column AS any-aliases'],
+            ['`any-table`.`any-column` AS `any-aliases`'],
+            ['any-table.any-column AS any-aliases'],
+        ];
+    }
+
+    /**
+     * @dataProvider shouldAcceptAColumnInPlaceOfAValueAndDisregardColumnRenamingAndTableNameProvider
+     */
+    public function testShouldAcceptAColumnInPlaceOfAValueAndDisregardColumnRenamingAndTableName(Column $column)
+    {
+        $field = new Field('any-column', '=', $column);
+
+        $this->assertEquals($column->getName(), $field->getValue());
+        $this->assertEquals('`any-column` = `other-column`', $field);
+    }
+
+    public function shouldAcceptAColumnInPlaceOfAValueAndDisregardColumnRenamingAndTableNameProvider()
+    {
+        return [
+            [new Column('other-column')],
+            [new Column('`other-column`')],
+            [new Column('`other-column` AS `any-aliases`')],
+            [new Column('other-column AS any-aliases')],
+            [new Column('`any-table`.`other-column` AS `any-aliases`')],
+            [new Column('any-table.other-column AS any-aliases')],
         ];
     }
 }

@@ -9,19 +9,20 @@ use QueryBuilder\Interfaces\{
     SqlInterface,
     ValueInterface,
 };
+use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Values\RawValue;
 
 class Field implements SqlInterface
 {
     private Column $column;
     private string $operator;
-    private ValueInterface $value;
+    private ValueInterface|Column $value;
 
     public function __construct(string|Column $column, string $operator, mixed $value)
     {
         $this->column = $this->formatColumn($column);
         $this->operator = $operator;
-        $this->value = ValueFactory::createValue($value);
+        $this->value = $this->formatValue($value);
     }
 
     private function formatColumn(string|Column $column): Column
@@ -33,13 +34,37 @@ class Field implements SqlInterface
         return $column;
     }
 
-    public function __toString(): string
+    private function formatValue(mixed $value): ValueInterface|Column
     {
-        if($this->value instanceof RawValue) {
-            return "`{$this->getColumnName()}` {$this->getOperator()} {$this->getValue()}";
+        if($this->isColumn($value)) {
+            return $this->formatColumn($value);
         }
 
-        return "`{$this->getColumnName()}` {$this->getOperator()} ?";
+        return ValueFactory::createValue($value);
+    }
+
+    private function isColumn(mixed $value): bool
+    {
+        return $value instanceof Column;
+    }
+
+    public function __toString(): string
+    {
+        $value = '?';
+
+        if($this->isRawValue($this->value)) {
+            $value = $this->value;
+        }
+
+        if($this->isColumn($this->value)) {
+            $value = "`{$this->value->getName()}`";
+        }
+
+        return "`{$this->getColumnName()}` {$this->getOperator()} ${value}";
+    }
+
+    private function isRawValue(mixed $value): bool {
+        return $value instanceof RawValue;
     }
 
     public function getColumnName(): string
@@ -54,6 +79,10 @@ class Field implements SqlInterface
 
     public function getValue(): mixed
     {
+        if($this->isColumn($this->value)) {
+            return $this->value->getName();
+        }
+
         return $this->value->getValue();
     }
 }
