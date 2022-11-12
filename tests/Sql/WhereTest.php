@@ -1,15 +1,13 @@
 <?php
 
-namespace Tests\Sql;
+namespace Tests\Sql\Where;
 
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Values\RawValue;
-use QueryBuilder\Sql\{
-    Where,
-    Field,
-};
+use QueryBuilder\Sql\Field;
+use QueryBuilder\Sql\Where\Where;
 
 /**
  * @requires PHP 8.1

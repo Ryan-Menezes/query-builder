@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
-namespace QueryBuilder\Sql;
+namespace QueryBuilder\Sql\Where;
 
 use QueryBuilder\Interfaces\SqlInterface;
+use QueryBuilder\Sql\{
+    Column,
+    Field,
+};
 
 class Where implements SqlInterface
 {

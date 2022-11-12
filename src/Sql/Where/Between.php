@@ -2,11 +2,15 @@
 
 declare(strict_types=1);
 
-namespace QueryBuilder\Sql;
+namespace QueryBuilder\Sql\Where;
 
 use InvalidArgumentException;
 use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Factories\ValueFactory;
+use QueryBuilder\Sql\{
+    Column,
+    Field,
+};
 
 class Between
 {
