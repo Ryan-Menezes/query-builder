@@ -5,30 +5,21 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql;
 
 use QueryBuilder\Interfaces\SqlInterface;
-use QueryBuilder\Sql\{
-    Column,
-    Field,
-};
+use QueryBuilder\Sql\Field;
 
 class Where implements SqlInterface
 {
     private array $logicalInstructions = [];
 
-    public function and(string|Column $column, string $operator, mixed $value): self
+    public function and(Field $field): self
     {
-        $field = new Field($column, $operator, $value);
-
         $this->addLogicalInstruction('AND', $field);
-
         return $this;
     }
 
-    public function or(string|Column $column, string $operator, mixed $value): self
+    public function or(Field $field): self
     {
-        $field = new Field($column, $operator, $value);
-
         $this->addLogicalInstruction('OR', $field);
-
         return $this;
     }
 

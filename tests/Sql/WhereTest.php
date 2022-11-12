@@ -19,11 +19,11 @@ class WhereTest extends TestCase
     {
         $where = new Where();
         $where
-            ->and('name', 'LIKE', '%any-name%')
-            ->or('salary', '>', 800)
-            ->and('isTeacher', '=', true)
-            ->or('age', 'BETWEEN', new RawValue('20 AND 30'))
-            ->or('created_at', '=', null);
+            ->and(new Field('name', 'LIKE', '%any-name%'))
+            ->or(new Field('salary', '>', 800))
+            ->and(new Field('isTeacher', '=', true))
+            ->or(new Field('age', 'BETWEEN', new RawValue('20 AND 30')))
+            ->or(new Field('created_at', '=', null));
 
         $this->assertEquals('WHERE `name` LIKE ? OR `salary` > ? AND `isTeacher` = ? OR `age` BETWEEN 20 AND 30 OR `created_at` = ?', $where);
         $this->assertEquals([
