@@ -57,8 +57,7 @@ class ValueFactoryTest extends TestCase
         return [
             [new \StdClass],  // Object
             [[]],             // Array
-            [function () {
-            }], // Callable
+            [function () {}], // Callable
         ];
     }
 }

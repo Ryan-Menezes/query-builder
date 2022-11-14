@@ -50,17 +50,20 @@ class Field implements SqlInterface
 
     public function __toString(): string
     {
-        $value = '?';
+        return "`{$this->getColumnName()}` {$this->getOperator()} {$this->getFormattedValue()}";
+    }
 
+    private function getFormattedValue(): string|ValueInterface
+    {
         if($this->isRawValue($this->value)) {
-            $value = $this->value;
+            return $this->value;
         }
 
         if($this->isColumn($this->value)) {
-            $value = "`{$this->value->getName()}`";
+            return "`{$this->value->getName()}`";
         }
 
-        return "`{$this->getColumnName()}` {$this->getOperator()} ${value}";
+        return '?';
     }
 
     private function isRawValue(mixed $value): bool {

@@ -21,11 +21,16 @@ class Insert implements SqlInterface
 
     public function __construct(string $tableName, array $data)
     {
-        $data = $this->formatData($data);
-
-        $this->setValuesAndColumns($data);
-
         $this->tableName = $this->formatTitle($tableName);
+
+        $data = $this->formatData($data);
+        $this->setValuesAndColumns($data);
+    }
+
+    private function formatTitle(string $tableName): string
+    {
+        $tableName = trim($tableName, '`');
+        return "`${tableName}`";
     }
 
     private function formatData(array $data): array
@@ -88,12 +93,6 @@ class Insert implements SqlInterface
     {
         $columns = array_unique($columns);
         $this->columns = new Columns($columns);
-    }
-
-    private function formatTitle(string $tableName): string
-    {
-        $tableName = trim($tableName, '`');
-        return "`${tableName}`";
     }
 
     public function __toString(): string
