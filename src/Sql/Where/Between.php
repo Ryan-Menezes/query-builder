@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql\Where;
 
 use InvalidArgumentException;
-use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\FieldGeneratorInterface;
+use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Sql\{
     Column,
     Field,
