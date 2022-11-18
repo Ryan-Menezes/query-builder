@@ -95,15 +95,15 @@ class Insert implements SqlInterface
     public function __toString(): string
     {
         if($this->isIgnoreStatement) {
-            return "INSERT IGNORE INTO {$this->getTableName()} ({$this->getColumns()}) VALUES {$this->getValuesToStringSql()}";
+            return "INSERT IGNORE INTO `{$this->getTableName()}` ({$this->getColumns()}) VALUES {$this->getValuesToStringSql()}";
         }
 
-        return "INSERT INTO {$this->getTableName()} ({$this->getColumns()}) VALUES {$this->getValuesToStringSql()}";
+        return "INSERT INTO `{$this->getTableName()}` ({$this->getColumns()}) VALUES {$this->getValuesToStringSql()}";
     }
 
-    public function getTableName(): TableName
+    public function getTableName(): string
     {
-        return $this->tableName;
+        return $this->tableName->getTableName();
     }
 
     public function getColumns(): Columns
