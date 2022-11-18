@@ -76,7 +76,7 @@ class Between implements FieldGeneratorInterface
     public function getField(): Field
     {
         $sqlStatement = $this->getSqlStatement();
-        $valuesToString = implode(" AND ", $this->values);
+        $valuesToString = implode(' AND ', $this->values);
 
         $field = new Field($this->column, $sqlStatement, new RawValue($valuesToString));
 
