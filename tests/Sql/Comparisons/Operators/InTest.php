@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Sql\Where\Operators;
+namespace Tests\Sql\Comparators\Operators;
 
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Values\RawValue;
-use QueryBuilder\Sql\Where\Operators\In;
+use QueryBuilder\Sql\Comparators\Operators\In;
 use InvalidArgumentException;
 
 /**
