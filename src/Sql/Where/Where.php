@@ -44,8 +44,17 @@ class Where implements SqlInterface
 
     public function __toString(): string
     {
+        if($this->isEmptyLogicalInstructions()) {
+            return '';
+        }
+
         $sqlFields = implode(' ', $this->getLogicalInstructions());
         return "WHERE {$sqlFields}";
+    }
+
+    private function isEmptyLogicalInstructions(): bool
+    {
+        return empty($this->getLogicalInstructions());
     }
 
     public function getLogicalInstructions(): array

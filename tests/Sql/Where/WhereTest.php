@@ -32,6 +32,13 @@ class WhereTest extends TestCase
         $this->assertEquals('WHERE `name` LIKE ? OR `salary` > ? AND `isTeacher` = ? OR `created_at` = ? OR `updated_at` <= NOW()', $where);
     }
 
+    public function testShouldReturnAnEmptyStringIfThereIsNoLogicalComparison()
+    {
+        $where = new Where();
+
+        $this->assertEquals('', $where);
+    }
+
     public function testShouldSupportBETWEENStatements()
     {
         $where = new Where();
