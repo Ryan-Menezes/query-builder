@@ -2,21 +2,18 @@
 
 declare(strict_types=1);
 
-namespace QueryBuilder\Sql\Where\Operators;
+namespace QueryBuilder\Sql\Comparators\Operators;
 
 use InvalidArgumentException;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\FieldGeneratorInterface;
 use QueryBuilder\Sql\Values\RawValue;
-use QueryBuilder\Sql\{
-    Column,
-    Field,
-};
+use QueryBuilder\Sql\Field;
 
-class Between implements FieldGeneratorInterface
+class In implements FieldGeneratorInterface
 {
-    private const SQL_BETWEEN_OPERATOR = 'BETWEEN';
-    private const SQL_NOT_BETWEEN_OPERATOR = 'NOT BETWEEN';
+    private const SQL_IN_OPERATOR = 'IN';
+    private const SQL_NOT_IN_OPERATOR = 'NOT IN';
 
     private string $column;
     private array $values;
@@ -31,7 +28,7 @@ class Between implements FieldGeneratorInterface
     private function formatValues(array $values): array
     {
         if($this->isNotValidValues($values)) {
-            throw new InvalidArgumentException('The array of values ​​must contain only two values');
+            throw new InvalidArgumentException('The array of values ​​must not be empty');
         }
 
         foreach($values as $key => $value) {
@@ -43,21 +40,13 @@ class Between implements FieldGeneratorInterface
 
     private function isNotValidValues(array $values): bool
     {
-        return count($values) !== 2;
+        return empty($values);
     }
 
     private function formatValue(mixed $value): string
     {
-        if($this->isNotColumnValue($value)) {
-            $value = ValueFactory::createValue($value);
-        }
-
+        $value = ValueFactory::createValue($value);
         return (string) $value;
-    }
-
-    private function isNotColumnValue(mixed $value): bool
-    {
-        return !($value instanceof Column);
     }
 
     public function not(): self
@@ -68,7 +57,7 @@ class Between implements FieldGeneratorInterface
 
     public function __toString(): string
     {
-        $field = $this->getField(self::SQL_BETWEEN_OPERATOR);
+        $field = $this->getField(self::SQL_IN_OPERATOR);
 
         return "${field}";
     }
@@ -76,7 +65,8 @@ class Between implements FieldGeneratorInterface
     public function getField(): Field
     {
         $sqlOperator = $this->getSqlOperator();
-        $valuesToString = implode(' AND ', $this->values);
+        $valuesToString = implode(', ', $this->values);
+        $valuesToString = "(${valuesToString})";
 
         $field = new Field($this->column, $sqlOperator, new RawValue($valuesToString));
 
@@ -86,9 +76,9 @@ class Between implements FieldGeneratorInterface
     private function getSqlOperator(): string
     {
         if($this->isNotOperator) {
-            return self::SQL_NOT_BETWEEN_OPERATOR;
+            return self::SQL_NOT_IN_OPERATOR;
         }
 
-        return self::SQL_BETWEEN_OPERATOR;
+        return self::SQL_IN_OPERATOR;
     }
 }

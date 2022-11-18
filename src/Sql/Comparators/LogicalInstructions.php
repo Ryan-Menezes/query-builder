@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace QueryBuilder\Sql\Where;
+namespace QueryBuilder\Sql\Comparators;
 
 use QueryBuilder\Interfaces\{
     FieldGeneratorInterface,
@@ -10,9 +10,9 @@ use QueryBuilder\Interfaces\{
 };
 use QueryBuilder\Sql\Field;
 
-class Where implements SqlInterface
+abstract class LogicalInstructions implements SqlInterface
 {
-    private array $logicalInstructions = [];
+    protected array $logicalInstructions = [];
 
     public function and(FieldGeneratorInterface|Field $field): self
     {
@@ -26,9 +26,9 @@ class Where implements SqlInterface
         return $this;
     }
 
-    private function addLogicalInstruction(string $conditional, FieldGeneratorInterface|Field $field): void
+    protected function addLogicalInstruction(string $conditional, FieldGeneratorInterface|Field $field): void
     {
-        if($this->isEmptyLogicalInstructionsArray()) {
+        if($this->isEmptyLogicalInstructions()) {
             $this->logicalInstructions[] = $field;
             return;
         }
@@ -37,22 +37,16 @@ class Where implements SqlInterface
         $this->logicalInstructions[] = $field;
     }
 
-    private function isEmptyLogicalInstructionsArray(): bool
-    {
-        return empty($this->getLogicalInstructions());
-    }
-
     public function __toString(): string
     {
         if($this->isEmptyLogicalInstructions()) {
             return '';
         }
 
-        $sqlFields = implode(' ', $this->getLogicalInstructions());
-        return "WHERE {$sqlFields}";
+        return implode(' ', $this->getLogicalInstructions());
     }
 
-    private function isEmptyLogicalInstructions(): bool
+    protected function isEmptyLogicalInstructions(): bool
     {
         return empty($this->getLogicalInstructions());
     }
