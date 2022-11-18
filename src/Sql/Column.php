@@ -14,39 +14,52 @@ class Column implements SqlInterface
     private const SQL_ALIASES_STATEMENT = ' AS ';
     private const SQL_DOT = '.';
 
-    private string|Stringable $tableName = '';
-    private string|Stringable $name;
-    private string|Stringable $aliases = '';
+    private string $tableName = '';
+    private string $name;
+    private string $aliases = '';
 
-    public function __construct(string|Stringable $columnName)
+    public function __construct(string $columnName)
     {
         $this->formatNameAndAliases($columnName);
     }
 
     private function formatNameAndAliases(string|Stringable $columnName): void
     {
-        $columnName = $this->removeBacktickFromBeginningAndEndOfString($columnName);
-        $columnName = new Str($columnName);
+        $columnName = $this->formatColumnName($columnName);
 
         $this->tableName = $this->extractTableName($columnName);
         $this->name = $this->extractName($columnName);
         $this->aliases = $this->extractAliases($columnName);
-
-        if (empty($this->name)) {
-            throw new InvalidArgumentColumnException('Past column name cannot be empty');
-        }
     }
 
-    private function removeBacktickFromBeginningAndEndOfString(string $value): string
+    private function  formatColumnName(string|Stringable $columnName): Str
     {
-        return trim($value, '`');
+        $columnName = (string) $columnName;
+        $columnName = $this->removeBacktick($columnName);
+        $columnName = trim($columnName);
+
+        if ($this->isNotValidColumnName($columnName)) {
+            throw new InvalidArgumentColumnException('Column name is invalid');
+        }
+
+        return new Str($columnName);
+    }
+
+    private function removeBacktick(string $value): string
+    {
+        return str_ireplace('`', '', $value);
+    }
+
+    private function isNotValidColumnName(string $columnName): bool
+    {
+        return empty($columnName);
     }
 
     private function extractTableName(Str $columnName): string
     {
         $tableName = $columnName->before(self::SQL_DOT);
 
-        return $this->removeBacktickFromBeginningAndEndOfString($tableName, '`');
+        return $tableName;
     }
 
     private function extractName(Str $columnName): string
@@ -62,14 +75,14 @@ class Column implements SqlInterface
 
         $name = empty($name) ? $columnName->getValue() : $name;
 
-        return $this->removeBacktickFromBeginningAndEndOfString($name, '`');
+        return $name;
     }
 
     private function extractAliases(Str $columnName): string
     {
         $aliases = $columnName->after(self::SQL_ALIASES_STATEMENT);
 
-        return $this->removeBacktickFromBeginningAndEndOfString($aliases, '`');
+        return $aliases;
     }
 
     public function __toString(): string

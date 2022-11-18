@@ -52,10 +52,13 @@ class ColumnTest extends TestCase
             [new Column('`any-column` AS any-aliases`')],
             [new Column('`any-column` AS `any-aliases')],
             [new Column('```any-column``` AS ```any-aliases```')],
+            [new Column('.`any-column` AS `any-aliases`')],
+            [new Column('.any-column` AS any-aliases')],
+            [new Column('`.any-column` AS any-aliases')],
         ];
     }
 
-    public function shouldReturnAnErrorIfAnEmptyColumnNameIsPassed()
+    public function testShouldReturnAnErrorIfAnEmptyColumnNameIsPassed()
     {
         $this->expectException(InvalidArgumentColumnException::class);
 

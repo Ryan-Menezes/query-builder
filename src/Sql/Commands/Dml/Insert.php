@@ -9,28 +9,25 @@ use QueryBuilder\Interfaces\{
     SqlInterface,
     ValueInterface,
 };
-use QueryBuilder\Sql\Columns;
+use QueryBuilder\Sql\{
+    Columns,
+    TableName,
+};
 use QueryBuilder\Sql\Values\RawValue;
 
 class Insert implements SqlInterface
 {
-    private string $tableName;
+    private TableName $tableName;
     private Columns $columns;
     private array $values;
     private $isIgnoreStatement = false;
 
     public function __construct(string $tableName, array $data)
     {
-        $this->tableName = $this->formatTitle($tableName);
+        $this->tableName = new TableName($tableName);
 
         $data = $this->formatData($data);
         $this->setValuesAndColumns($data);
-    }
-
-    private function formatTitle(string $tableName): string
-    {
-        $tableName = trim($tableName, '`');
-        return "`${tableName}`";
     }
 
     private function formatData(array $data): array
@@ -104,7 +101,7 @@ class Insert implements SqlInterface
         return "INSERT INTO {$this->getTableName()} ({$this->getColumns()}) VALUES {$this->getValuesToStringSql()}";
     }
 
-    public function getTableName(): string
+    public function getTableName(): TableName
     {
         return $this->tableName;
     }
