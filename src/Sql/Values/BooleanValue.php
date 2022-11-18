@@ -8,7 +8,7 @@ use QueryBuilder\Interfaces\ValueInterface;
 
 class BooleanValue implements ValueInterface
 {
-    private $value;
+    private bool $value;
 
     public function __construct(bool $value)
     {

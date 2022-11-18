@@ -8,7 +8,7 @@ use QueryBuilder\Interfaces\ValueInterface;
 
 class NumberValue implements ValueInterface
 {
-    private $value;
+    private int|float $value;
 
     public function __construct(int|float $value)
     {

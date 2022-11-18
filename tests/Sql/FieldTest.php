@@ -26,12 +26,9 @@ class FieldTest extends TestCase
      */
     public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(mixed $value)
     {
-        $column = new Column('any-column');
-        $field = new Field($column, '=', $value);
+        $field = new Field('any-column', '=', $value);
 
         $this->assertEquals($value->getValue(), $field->getValue());
-        $this->assertEquals($column->getName(), $field->getColumnName());
-        $this->assertEquals('=', $field->getOperator());
         $this->assertEquals('`any-column` = ?', $field);
     }
 
@@ -48,56 +45,51 @@ class FieldTest extends TestCase
 
     public function testShouldAcceptARawValue()
     {
-        $column = new Column('any-column');
         $value = new RawValue('COUNT(*)');
-        $field = new Field($column, '=', $value);
+        $field = new Field('any-column', '=', $value);
 
         $this->assertEquals($value->getValue(), $field->getValue());
-        $this->assertEquals($column->getName(), $field->getColumnName());
-        $this->assertEquals('=', $field->getOperator());
         $this->assertEquals('`any-column` = COUNT(*)', $field);
     }
 
     /**
-     * @dataProvider shouldShouldDisregardColumnRenamingAndTableNameProvider
+     * @dataProvider shouldCorrectlyAcceptAndFormatTheColumnPassedInTheFirstParameterProvider
      */
-    public function testShouldDisregardColumnRenamingAndTableName(string|Column $column)
+    public function testShouldCorrectlyAcceptAndFormatTheColumnPassedInTheFirstParameter(string $column, string $expected)
     {
         $field = new Field($column, '=', 'any-value');
 
-        $this->assertEquals('`any-column` = ?', $field);
+        $this->assertEquals($expected, $field);
     }
 
-    public function shouldShouldDisregardColumnRenamingAndTableNameProvider()
+    public function shouldCorrectlyAcceptAndFormatTheColumnPassedInTheFirstParameterProvider()
     {
         return [
-            ['`any-column` AS `any-aliases`'],
-            ['any-column AS any-aliases'],
-            ['`any-table`.`any-column` AS `any-aliases`'],
-            ['any-table.any-column AS any-aliases'],
+            ['`any-column`', '`any-column` = ?'],
+            ['any-column', '`any-column` = ?'],
+            ['`any-table`.`any-column`', '`any-table`.`any-column` = ?'],
+            ['any-table.any-column', '`any-table`.`any-column` = ?'],
         ];
     }
 
     /**
-     * @dataProvider shouldAcceptAColumnInPlaceOfAValueAndDisregardColumnRenamingAndTableNameProvider
+     * @dataProvider shouldAcceptAColumnAsSecondParameterProvider
      */
-    public function testShouldAcceptAColumnInPlaceOfAValueAndDisregardColumnRenamingAndTableName(Column $column)
+    public function testShouldAcceptAColumnAsSecondParameter(Column $column, string $expected)
     {
         $field = new Field('any-column', '=', $column);
 
         $this->assertEquals($column->getName(), $field->getValue());
-        $this->assertEquals('`any-column` = `other-column`', $field);
+        $this->assertEquals($expected, $field);
     }
 
-    public function shouldAcceptAColumnInPlaceOfAValueAndDisregardColumnRenamingAndTableNameProvider()
+    public function shouldAcceptAColumnAsSecondParameterProvider()
     {
         return [
-            [new Column('other-column')],
-            [new Column('`other-column`')],
-            [new Column('`other-column` AS `any-aliases`')],
-            [new Column('other-column AS any-aliases')],
-            [new Column('`any-table`.`other-column` AS `any-aliases`')],
-            [new Column('any-table.other-column AS any-aliases')],
+            [new Column('other-column'), '`any-column` = `other-column`'],
+            [new Column('`other-column`'), '`any-column` = `other-column`'],
+            [new Column('`any-table`.`other-column`'), '`any-column` = `any-table`.`other-column`'],
+            [new Column('any-table.other-column'), '`any-column` = `any-table`.`other-column`'],
         ];
     }
 }

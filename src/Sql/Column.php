@@ -7,7 +7,6 @@ namespace QueryBuilder\Sql;
 use QueryBuilder\Utils\Str;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 use QueryBuilder\Interfaces\SqlInterface;
-use Stringable;
 
 class Column implements SqlInterface
 {
@@ -23,7 +22,7 @@ class Column implements SqlInterface
         $this->formatNameAndAliases($columnName);
     }
 
-    private function formatNameAndAliases(string|Stringable $columnName): void
+    private function formatNameAndAliases(string $columnName): void
     {
         $columnName = $this->formatColumnName($columnName);
 
@@ -32,9 +31,8 @@ class Column implements SqlInterface
         $this->aliases = $this->extractAliases($columnName);
     }
 
-    private function  formatColumnName(string|Stringable $columnName): Str
+    private function  formatColumnName(string $columnName): Str
     {
-        $columnName = (string) $columnName;
         $columnName = $this->removeBacktick($columnName);
         $columnName = trim($columnName);
 

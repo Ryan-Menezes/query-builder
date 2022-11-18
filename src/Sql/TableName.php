@@ -7,7 +7,6 @@ namespace QueryBuilder\Sql;
 use QueryBuilder\Exceptions\InvalidArgumentTableNameException;
 use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Utils\Str;
-use Stringable;
 
 class TableName implements SqlInterface
 {
@@ -16,7 +15,7 @@ class TableName implements SqlInterface
     private string $tableName;
     private string $aliases = '';
 
-    public function __construct(string|Stringable $tableName)
+    public function __construct(string $tableName)
     {
         $tableName = $this->formatTableName($tableName);
 
@@ -24,9 +23,8 @@ class TableName implements SqlInterface
         $this->aliases = $this->extractAliases($tableName);
     }
 
-    private function formatTableName(string|Stringable $tableName): Str
+    private function formatTableName(string $tableName): Str
     {
-        $tableName = (string) $tableName;
         $tableName = $this->removeBacktick($tableName);
         $tableName = trim($tableName);
 

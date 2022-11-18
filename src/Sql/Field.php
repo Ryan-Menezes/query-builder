@@ -18,20 +18,11 @@ class Field implements SqlInterface
     private string $operator;
     private ValueInterface|Column $value;
 
-    public function __construct(string|Column $column, string $operator, mixed $value)
+    public function __construct(string $column, string $operator, mixed $value)
     {
         $this->column = $this->formatColumn($column);
         $this->operator = $operator;
         $this->value = $this->formatValue($value);
-    }
-
-    private function formatColumn(string|Column $column): Column
-    {
-        if(is_string($column)) {
-            return new Column($column);
-        }
-
-        return $column;
     }
 
     private function formatValue(mixed $value): ValueInterface|Column
@@ -43,6 +34,15 @@ class Field implements SqlInterface
         return ValueFactory::createValue($value);
     }
 
+    private function formatColumn(string|Column $column): Column
+    {
+        if(is_string($column)) {
+            return new Column($column);
+        }
+
+        return $column;
+    }
+
     private function isColumn(mixed $value): bool
     {
         return $value instanceof Column;
@@ -50,17 +50,17 @@ class Field implements SqlInterface
 
     public function __toString(): string
     {
-        return "`{$this->getColumnName()}` {$this->getOperator()} {$this->getFormattedValue()}";
+        return "{$this->getColumn()} {$this->getOperator()} {$this->getFormattedValue()}";
     }
 
-    private function getFormattedValue(): string|ValueInterface
+    private function getFormattedValue(): string|ValueInterface|Column
     {
         if($this->isRawValue($this->value)) {
             return $this->value;
         }
 
         if($this->isColumn($this->value)) {
-            return "`{$this->value->getName()}`";
+            return $this->value;
         }
 
         return '?';
@@ -70,9 +70,9 @@ class Field implements SqlInterface
         return $value instanceof RawValue;
     }
 
-    public function getColumnName(): string
+    public function getColumn(): Column
     {
-        return $this->column->getName();
+        return $this->column;
     }
 
     public function getOperator(): string

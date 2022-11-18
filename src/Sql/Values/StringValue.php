@@ -9,11 +9,11 @@ use Stringable;
 
 class StringValue implements ValueInterface
 {
-    private $value;
+    private string $value;
 
     public function __construct(string|Stringable $value)
     {
-        $this->value = $value;
+        $this->value = (string)$value;
     }
 
     public function __toString(): string

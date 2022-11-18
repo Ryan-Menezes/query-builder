@@ -18,11 +18,11 @@ class Between implements FieldGeneratorInterface
     private const SQL_BETWEEN_STATEMENT = 'BETWEEN';
     private const SQL_NOT_BETWEEN_STATEMENT = 'NOT BETWEEN';
 
-    private string|Column $column;
+    private string $column;
     private array $values;
     private bool $isNotStatement = false;
 
-    public function __construct(string|Column $column, array $values)
+    public function __construct(string $column, array $values)
     {
         $this->column = $column;
         $this->values = $this->formatValues($values);
