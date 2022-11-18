@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Sql\Where;
+namespace Tests\Sql\Where\Operators;
 
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Column;
-use QueryBuilder\Sql\Where\Between;
 use QueryBuilder\Sql\Values\RawValue;
+use QueryBuilder\Sql\Where\Operators\Between;
 use InvalidArgumentException;
 
 /**

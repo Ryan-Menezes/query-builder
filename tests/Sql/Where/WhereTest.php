@@ -9,10 +9,8 @@ use QueryBuilder\Sql\{
     Field,
     Column,
 };
-use QueryBuilder\Sql\Where\{
-    Where,
-    Between,
-};
+use QueryBuilder\Sql\Where\Where;
+use QueryBuilder\Sql\Where\Operators\Between;
 
 /**
  * @requires PHP 8.1
