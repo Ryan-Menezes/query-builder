@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Where\Between;
+use QueryBuilder\Sql\Values\RawValue;
 use InvalidArgumentException;
 
 /**
@@ -14,9 +15,9 @@ use InvalidArgumentException;
 class BetweenTest extends TestCase
 {
     /**
-     * @dataProvider shouldCreateABetweenStatementCorrectlyProvider
+     * @dataProvider shouldCreateABetweenOperatorCorrectlyProvider
      */
-    public function testShouldCreateABetweenStatementCorrectly(string|Column $column, array $values, string $expected)
+    public function testShouldCreateABetweenOperatorCorrectly(string $column, array $values, string $expected)
     {
         $between = new Between($column, $values);
 
@@ -25,7 +26,7 @@ class BetweenTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function shouldCreateABetweenStatementCorrectlyProvider()
+    public function shouldCreateABetweenOperatorCorrectlyProvider()
     {
         return [
             ['any-column', [5, 10], '`any-column` BETWEEN 5 AND 10'],
@@ -33,13 +34,14 @@ class BetweenTest extends TestCase
             ['any-column', [new Column('a'), new Column('b')], '`any-column` BETWEEN `a` AND `b`'],
             ['any-column', [5, new Column('b')], '`any-column` BETWEEN 5 AND `b`'],
             ['any-column', [new Column('a'), 5], '`any-column` BETWEEN `a` AND 5'],
+            ['any-column', ['2000-01-01', new RawValue('NOW()')], '`any-column` BETWEEN \'2000-01-01\' AND NOW()'],
         ];
     }
 
     /**
-     * @dataProvider shouldCreateANotBetweenStatementCorrectlyProvider
+     * @dataProvider shouldCreateANotBetweenOperatorCorrectlyProvider
      */
-    public function testShouldCreateANotBetweenStatementCorrectly(string|Column $column, array $values, string $expected)
+    public function testShouldCreateANotBetweenOperatorCorrectly(string $column, array $values, string $expected)
     {
         $between = new Between($column, $values);
 
@@ -48,7 +50,7 @@ class BetweenTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function shouldCreateANotBetweenStatementCorrectlyProvider()
+    public function shouldCreateANotBetweenOperatorCorrectlyProvider()
     {
         return [
             ['any-column', [5, 10], '`any-column` NOT BETWEEN 5 AND 10'],
@@ -56,6 +58,7 @@ class BetweenTest extends TestCase
             ['any-column', [new Column('a'), new Column('b')], '`any-column` NOT BETWEEN `a` AND `b`'],
             ['any-column', [5, new Column('b')], '`any-column` NOT BETWEEN 5 AND `b`'],
             ['any-column', [new Column('a'), 5], '`any-column` NOT BETWEEN `a` AND 5'],
+            ['any-column', ['2000-01-01', new RawValue('NOW()')], '`any-column` NOT BETWEEN \'2000-01-01\' AND NOW()'],
         ];
     }
 
