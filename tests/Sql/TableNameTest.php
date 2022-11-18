@@ -39,6 +39,14 @@ class TableNameTest extends TestCase
             [' AS `any-aliases`', '`AS any-aliases`'],
             [' as any-aliases', '`as any-aliases`'],
             [' as `any-aliases`', '`as any-aliases`'],
+            ['`any-table` AS', '`any-table AS`'],
+            ['`any-table` as', '`any-table as`'],
+            ['any-table AS', '`any-table AS`'],
+            ['any-table as', '`any-table as`'],
+            ['any-table AS ', '`any-table AS`'],
+            ['any-table as ', '`any-table as`'],
+            ['`any-table AS`', '`any-table AS`'],
+            ['`any-table as`', '`any-table as`'],
         ];
     }
 
