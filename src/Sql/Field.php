@@ -28,7 +28,7 @@ class Field implements FieldInterface
     private function formatValue(mixed $value): ValueInterface|Column
     {
         if($this->isColumn($value)) {
-            return $this->formatColumn($value);
+            return $value;
         }
 
         return ValueFactory::createValue($value);
@@ -80,12 +80,8 @@ class Field implements FieldInterface
         return $this->operator;
     }
 
-    public function getValue(): mixed
+    public function getValue(): ValueInterface|Column
     {
-        if($this->isColumn($this->value)) {
-            return $this->value->getName();
-        }
-
-        return $this->value->getValue();
+        return $this->value;
     }
 }

@@ -28,7 +28,7 @@ class FieldTest extends TestCase
     {
         $field = new Field('any-column', '=', $value);
 
-        $this->assertEquals($value->getValue(), $field->getValue());
+        $this->assertEquals($value, $field->getValue());
         $this->assertEquals('`any-column` = ?', $field);
     }
 
@@ -48,7 +48,7 @@ class FieldTest extends TestCase
         $value = new RawValue('COUNT(*)');
         $field = new Field('any-column', '=', $value);
 
-        $this->assertEquals($value->getValue(), $field->getValue());
+        $this->assertEquals($value, $field->getValue());
         $this->assertEquals('`any-column` = COUNT(*)', $field);
     }
 
@@ -79,7 +79,7 @@ class FieldTest extends TestCase
     {
         $field = new Field('any-column', '=', $column);
 
-        $this->assertEquals($column->getName(), $field->getValue());
+        $this->assertEquals($column, $field->getValue());
         $this->assertEquals($expected, $field);
     }
 
