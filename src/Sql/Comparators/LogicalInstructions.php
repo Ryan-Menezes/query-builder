@@ -12,7 +12,7 @@ use QueryBuilder\Sql\Field;
 
 abstract class LogicalInstructions implements SqlInterface
 {
-    protected array $logicalInstructions = [];
+    private array $logicalInstructions = [];
 
     public function and(FieldGeneratorInterface|Field $field): self
     {
@@ -26,7 +26,7 @@ abstract class LogicalInstructions implements SqlInterface
         return $this;
     }
 
-    protected function addLogicalInstruction(string $conditional, FieldGeneratorInterface|Field $field): void
+    private function addLogicalInstruction(string $conditional, FieldGeneratorInterface|Field $field): void
     {
         if($this->isEmptyLogicalInstructions()) {
             $this->logicalInstructions[] = $field;
