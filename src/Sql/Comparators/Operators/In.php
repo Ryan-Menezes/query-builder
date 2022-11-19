@@ -6,11 +6,14 @@ namespace QueryBuilder\Sql\Comparators\Operators;
 
 use InvalidArgumentException;
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\FieldGeneratorInterface;
+use QueryBuilder\Interfaces\FieldInterface;
 use QueryBuilder\Sql\Values\RawValue;
-use QueryBuilder\Sql\Field;
+use QueryBuilder\Sql\{
+    Field,
+    Column,
+};
 
-class In implements FieldGeneratorInterface
+class In implements FieldInterface
 {
     private const SQL_IN_OPERATOR = 'IN';
     private const SQL_NOT_IN_OPERATOR = 'NOT IN';
@@ -62,23 +65,34 @@ class In implements FieldGeneratorInterface
         return "${field}";
     }
 
-    public function getField(): Field
+    private function getField(): Field
     {
-        $sqlOperator = $this->getSqlOperator();
+        $operator = $this->getOperator();
         $valuesToString = implode(', ', $this->values);
         $valuesToString = "(${valuesToString})";
 
-        $field = new Field($this->column, $sqlOperator, new RawValue($valuesToString));
-
+        $field = new Field($this->column, $operator, new RawValue($valuesToString));
         return $field;
     }
 
-    private function getSqlOperator(): string
+    public function getOperator(): string
     {
         if($this->isNotOperator) {
             return self::SQL_NOT_IN_OPERATOR;
         }
 
         return self::SQL_IN_OPERATOR;
+    }
+
+    public function getColumn(): Column
+    {
+        $field = $this->getField();
+        return $field->getColumn();
+    }
+
+    public function getValue(): mixed
+    {
+        $field = $this->getField();
+        return $field->getValue();
     }
 }

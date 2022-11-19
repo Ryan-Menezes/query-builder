@@ -6,13 +6,13 @@ namespace QueryBuilder\Sql;
 
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\{
-    SqlInterface,
+    FieldInterface,
     ValueInterface,
 };
 use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Values\RawValue;
 
-class Field implements SqlInterface
+class Field implements FieldInterface
 {
     private Column $column;
     private string $operator;

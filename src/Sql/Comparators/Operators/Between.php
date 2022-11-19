@@ -6,14 +6,14 @@ namespace QueryBuilder\Sql\Comparators\Operators;
 
 use InvalidArgumentException;
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\FieldGeneratorInterface;
+use QueryBuilder\Interfaces\FieldInterface;
 use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Sql\{
     Column,
     Field,
 };
 
-class Between implements FieldGeneratorInterface
+class Between implements FieldInterface
 {
     private const SQL_BETWEEN_OPERATOR = 'BETWEEN';
     private const SQL_NOT_BETWEEN_OPERATOR = 'NOT BETWEEN';
@@ -73,22 +73,34 @@ class Between implements FieldGeneratorInterface
         return "${field}";
     }
 
-    public function getField(): Field
+    private function getField(): Field
     {
-        $sqlOperator = $this->getSqlOperator();
+        $operator = $this->getOperator();
         $valuesToString = implode(' AND ', $this->values);
 
-        $field = new Field($this->column, $sqlOperator, new RawValue($valuesToString));
+        $field = new Field($this->column, $operator, new RawValue($valuesToString));
 
         return $field;
     }
 
-    private function getSqlOperator(): string
+    public function getOperator(): string
     {
         if($this->isNotOperator) {
             return self::SQL_NOT_BETWEEN_OPERATOR;
         }
 
         return self::SQL_BETWEEN_OPERATOR;
+    }
+
+    public function getColumn(): Column
+    {
+        $field = $this->getField();
+        return $field->getColumn();
+    }
+
+    public function getValue(): mixed
+    {
+        $field = $this->getField();
+        return $field->getValue();
     }
 }

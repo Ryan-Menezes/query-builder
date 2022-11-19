@@ -5,28 +5,27 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql\Comparators;
 
 use QueryBuilder\Interfaces\{
-    FieldGeneratorInterface,
+    FieldInterface,
     SqlInterface,
 };
-use QueryBuilder\Sql\Field;
 
 abstract class LogicalInstructions implements SqlInterface
 {
     private array $logicalInstructions = [];
 
-    public function and(FieldGeneratorInterface|Field $field): self
+    public function and(FieldInterface $field): self
     {
         $this->addLogicalInstruction('AND', $field);
         return $this;
     }
 
-    public function or(FieldGeneratorInterface|Field $field): self
+    public function or(FieldInterface $field): self
     {
         $this->addLogicalInstruction('OR', $field);
         return $this;
     }
 
-    private function addLogicalInstruction(string $conditional, FieldGeneratorInterface|Field $field): void
+    private function addLogicalInstruction(string $conditional, FieldInterface $field): void
     {
         if($this->isEmptyLogicalInstructions()) {
             $this->logicalInstructions[] = $field;
