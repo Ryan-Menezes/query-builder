@@ -10,5 +10,5 @@ interface FieldInterface extends SqlInterface
 {
     public function getColumn(): Column;
     public function getOperator(): string;
-    public function getValue(): mixed;
+    public function getValue(): ValueInterface|Column;
 }

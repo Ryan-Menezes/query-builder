@@ -4,6 +4,7 @@ namespace Tests\Sql\Comparators\Operators;
 
 use PHPUnit\Framework\TestCase;
 
+use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Sql\Comparators\Operators\In;
 use InvalidArgumentException;
@@ -18,11 +19,10 @@ class InTest extends TestCase
      */
     public function testShouldCreateAInOperatorCorrectly(string $column, array $values, string $expected)
     {
+        $column = new Column($column);
         $in = new In($column, $values);
 
-        $actual = $in;
-
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $in);
     }
 
     public function shouldCreateAInOperatorCorrectlyProvider()
@@ -40,11 +40,10 @@ class InTest extends TestCase
      */
     public function testShouldCreateANotInOperatorCorrectly(string $column, array $values, string $expected)
     {
+        $column = new Column($column);
         $in = new In($column, $values);
 
-        $actual = $in->not();
-
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $in->not());
     }
 
     public function shouldCreateANotInOperatorCorrectlyProvider()
@@ -60,6 +59,7 @@ class InTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new In('any-column', []);
+        $column = new Column('any-column');
+        new In($column, []);
     }
 }

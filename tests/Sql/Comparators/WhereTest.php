@@ -4,13 +4,8 @@ namespace Tests\Sql\Comparators;
 
 use PHPUnit\Framework\TestCase;
 
-use QueryBuilder\Sql\Values\RawValue;
-use QueryBuilder\Sql\{
-    Field,
-    Column,
-};
+use QueryBuilder\Factories\FieldFactory;
 use QueryBuilder\Sql\Comparators\Where;
-use QueryBuilder\Sql\Comparators\Operators\Between;
 
 /**
  * @requires PHP 8.1
@@ -21,8 +16,8 @@ class WhereTest extends TestCase
     {
         $where = new Where();
         $where
-            ->and(new Field('name', 'LIKE', '%any-name%'))
-            ->or(new Field('salary', '>', 800));
+            ->and(FieldFactory::createField('name', 'LIKE', '%any-name%'))
+            ->or(FieldFactory::createField('salary', '>', 800));
 
         $this->assertEquals('WHERE `name` LIKE ? OR `salary` > ?', $where);
     }

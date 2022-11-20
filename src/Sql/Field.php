@@ -18,34 +18,11 @@ class Field implements FieldInterface
     private string $operator;
     private ValueInterface|Column $value;
 
-    public function __construct(string $column, string $operator, mixed $value)
+    public function __construct(Column $column, string $operator, ValueInterface|Column $value)
     {
-        $this->column = $this->formatColumn($column);
+        $this->column =$column;
         $this->operator = $operator;
-        $this->value = $this->formatValue($value);
-    }
-
-    private function formatValue(mixed $value): ValueInterface|Column
-    {
-        if($this->isColumn($value)) {
-            return $value;
-        }
-
-        return ValueFactory::createValue($value);
-    }
-
-    private function formatColumn(string|Column $column): Column
-    {
-        if(is_string($column)) {
-            return new Column($column);
-        }
-
-        return $column;
-    }
-
-    private function isColumn(mixed $value): bool
-    {
-        return $value instanceof Column;
+        $this->value = $value;
     }
 
     public function __toString(): string
@@ -68,6 +45,11 @@ class Field implements FieldInterface
 
     private function isRawValue(mixed $value): bool {
         return $value instanceof RawValue;
+    }
+
+    private function isColumn(mixed $value): bool
+    {
+        return $value instanceof Column;
     }
 
     public function getColumn(): Column

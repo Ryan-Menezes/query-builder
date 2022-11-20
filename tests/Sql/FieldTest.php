@@ -4,16 +4,11 @@ namespace Tests\Sql;
 
 use PHPUnit\Framework\TestCase;
 
+use QueryBuilder\Factories\ValueFactory;
+use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Sql\{
     Field,
     Column,
-};
-use QueryBuilder\Sql\Values\{
-    StringValue,
-    NumberValue,
-    BooleanValue,
-    NullValue,
-    RawValue,
 };
 
 /**
@@ -26,8 +21,12 @@ class FieldTest extends TestCase
      */
     public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(mixed $value)
     {
-        $field = new Field('any-column', '=', $value);
+        $column = new Column('any-column');
+        $value = ValueFactory::createValue($value);
+        $field = new Field($column, '=', $value);
 
+        $this->assertEquals($column, $field->getColumn());
+        $this->assertEquals('=', $field->getOperator());
         $this->assertEquals($value, $field->getValue());
         $this->assertEquals('`any-column` = ?', $field);
     }
@@ -35,19 +34,22 @@ class FieldTest extends TestCase
     public function shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider()
     {
         return [
-            [new StringValue('any-string')],
-            [new NumberValue(5)],
-            [new NumberValue(12.5)],
-            [new BooleanValue(true)],
-            [new NullValue()],
+            ['any-string'],
+            [5],
+            [12.5],
+            [true],
+            [null],
         ];
     }
 
     public function testShouldAcceptARawValue()
     {
+        $column = new Column('any-column');
         $value = new RawValue('COUNT(*)');
-        $field = new Field('any-column', '=', $value);
+        $field = new Field($column, '=', $value);
 
+        $this->assertEquals($column, $field->getColumn());
+        $this->assertEquals('=', $field->getOperator());
         $this->assertEquals($value, $field->getValue());
         $this->assertEquals('`any-column` = COUNT(*)', $field);
     }
@@ -57,7 +59,9 @@ class FieldTest extends TestCase
      */
     public function testShouldCorrectlyAcceptAndFormatTheColumnPassedInTheFirstParameter(string $column, string $expected)
     {
-        $field = new Field($column, '=', 'any-value');
+        $column = new Column($column);
+        $value = ValueFactory::createValue('any-value');
+        $field = new Field($column, '=', $value);
 
         $this->assertEquals($expected, $field);
     }
@@ -75,21 +79,25 @@ class FieldTest extends TestCase
     /**
      * @dataProvider shouldAcceptAColumnAsSecondParameterProvider
      */
-    public function testShouldAcceptAColumnAsSecondParameter(Column $column, string $expected)
+    public function testShouldAcceptAColumnAsSecondParameter(string $value, string $expected)
     {
-        $field = new Field('any-column', '=', $column);
+        $column = new Column('any-column');
+        $value = new Column($value);
+        $field = new Field($column, '=', $value);
 
-        $this->assertEquals($column, $field->getValue());
+        $this->assertEquals($column, $field->getColumn());
+        $this->assertEquals('=', $field->getOperator());
+        $this->assertEquals($value, $field->getValue());
         $this->assertEquals($expected, $field);
     }
 
     public function shouldAcceptAColumnAsSecondParameterProvider()
     {
         return [
-            [new Column('other-column'), '`any-column` = `other-column`'],
-            [new Column('`other-column`'), '`any-column` = `other-column`'],
-            [new Column('`any-table`.`other-column`'), '`any-column` = `any-table`.`other-column`'],
-            [new Column('any-table.other-column'), '`any-column` = `any-table`.`other-column`'],
+            ['other-column', '`any-column` = `other-column`'],
+            ['`other-column`', '`any-column` = `other-column`'],
+            ['`any-table`.`other-column`', '`any-column` = `any-table`.`other-column`'],
+            ['any-table.other-column', '`any-column` = `any-table`.`other-column`'],
         ];
     }
 }

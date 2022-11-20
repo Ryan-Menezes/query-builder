@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql\Comparators\Operators;
 
 use InvalidArgumentException;
-use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\FieldInterface;
-use QueryBuilder\Sql\Values\RawValue;
+use QueryBuilder\Factories\{
+    FieldFactory,
+    ValueFactory,
+};
+use QueryBuilder\Interfaces\{
+    FieldInterface,
+    ValueInterface,
+};
 use QueryBuilder\Sql\{
     Column,
     Field,
@@ -18,11 +23,11 @@ class Between implements FieldInterface
     private const SQL_BETWEEN_OPERATOR = 'BETWEEN';
     private const SQL_NOT_BETWEEN_OPERATOR = 'NOT BETWEEN';
 
-    private string $column;
+    private Column $column;
     private array $values;
     private bool $isNotOperator = false;
 
-    public function __construct(string $column, array $values)
+    public function __construct(Column $column, array $values)
     {
         $this->column = $column;
         $this->values = $this->formatValues($values);
@@ -75,10 +80,11 @@ class Between implements FieldInterface
 
     private function getField(): Field
     {
+        $column = (string) $this->column;
         $operator = $this->getOperator();
         $valuesToString = implode(' AND ', $this->values);
 
-        $field = new Field($this->column, $operator, new RawValue($valuesToString));
+        $field = FieldFactory::createFieldWithRawValue($column, $operator, $valuesToString);
 
         return $field;
     }
@@ -98,7 +104,7 @@ class Between implements FieldInterface
         return $field->getColumn();
     }
 
-    public function getValue(): mixed
+    public function getValue(): ValueInterface|Column
     {
         $field = $this->getField();
         return $field->getValue();

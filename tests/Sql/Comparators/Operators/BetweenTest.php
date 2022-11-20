@@ -19,11 +19,10 @@ class BetweenTest extends TestCase
      */
     public function testShouldCreateABetweenOperatorCorrectly(string $column, array $values, string $expected)
     {
+        $column = new Column($column);
         $between = new Between($column, $values);
 
-        $actual = $between;
-
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $between);
     }
 
     public function shouldCreateABetweenOperatorCorrectlyProvider()
@@ -43,11 +42,10 @@ class BetweenTest extends TestCase
      */
     public function testShouldCreateANotBetweenOperatorCorrectly(string $column, array $values, string $expected)
     {
+        $column = new Column($column);
         $between = new Between($column, $values);
 
-        $actual = $between->not();
-
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $between->not());
     }
 
     public function shouldCreateANotBetweenOperatorCorrectlyProvider()
@@ -69,7 +67,8 @@ class BetweenTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new Between('any-column', $values);
+        $column = new Column('any-column');
+        new Between($column, $values);
     }
 
     public function shouldReturnAnErrorIfWrongParametersArePassedToTheConstructorProvider()

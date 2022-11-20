@@ -15,46 +15,50 @@ class ColumnTest extends TestCase
     /**
      * @dataProvider shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider
      */
-    public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(Column $column)
+    public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(string $column)
     {
+        $column = new Column($column);
+
         $this->assertEquals('`any-column`', $column);
     }
 
     public function shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider()
     {
         return [
-            [new Column('any-column')],
-            [new Column('`any-column`')],
-            [new Column('`any-column')],
-            [new Column('any-column`')],
-            [new Column('```any-column```')],
+            ['any-column'],
+            ['`any-column`'],
+            ['`any-column'],
+            ['any-column`'],
+            ['```any-column```'],
         ];
     }
 
     /**
      * @dataProvider shouldSupportRenamedColumnsProvider
      */
-    public function testShouldSupportRenamedColumns(Column $column)
+    public function testShouldSupportRenamedColumns(string $column)
     {
+        $column = new Column($column);
+
         $this->assertEquals('`any-column` AS `any-aliases`', $column);
     }
 
     public function shouldSupportRenamedColumnsProvider()
     {
         return [
-            [new Column('any-column as any-aliases')],
-            [new Column('any-column AS any-aliases')],
-            [new Column('any-column As any-aliases')],
-            [new Column('any-column aS any-aliases')],
-            [new Column('`any-column` AS `any-aliases`')],
-            [new Column('`any-column AS `any-aliases`')],
-            [new Column('any-column` AS `any-aliases`')],
-            [new Column('`any-column` AS any-aliases`')],
-            [new Column('`any-column` AS `any-aliases')],
-            [new Column('```any-column``` AS ```any-aliases```')],
-            [new Column('.`any-column` AS `any-aliases`')],
-            [new Column('.any-column` AS any-aliases')],
-            [new Column('`.any-column` AS any-aliases')],
+            ['any-column as any-aliases'],
+            ['any-column AS any-aliases'],
+            ['any-column As any-aliases'],
+            ['any-column aS any-aliases'],
+            ['`any-column` AS `any-aliases`'],
+            ['`any-column AS `any-aliases`'],
+            ['any-column` AS `any-aliases`'],
+            ['`any-column` AS any-aliases`'],
+            ['`any-column` AS `any-aliases'],
+            ['```any-column``` AS ```any-aliases```'],
+            ['.`any-column` AS `any-aliases`'],
+            ['.any-column` AS any-aliases'],
+            ['`.any-column` AS any-aliases'],
         ];
     }
 
@@ -68,17 +72,19 @@ class ColumnTest extends TestCase
     /**
      * @dataProvider shouldAcceptColumnsWithTableNameSpecificationProvider
      */
-    public function testShouldAcceptColumnsWithTableNameSpecification(Column $column, $expected)
+    public function testShouldAcceptColumnsWithTableNameSpecification(string $column, $expected)
     {
+        $column = new Column($column);
+
         $this->assertEquals($expected, $column);
     }
 
     public function shouldAcceptColumnsWithTableNameSpecificationProvider() {
         return [
-            [new Column('any-table.any-column'), '`any-table`.`any-column`'],
-            [new Column('`any-table`.`any-column`'), '`any-table`.`any-column`'],
-            [new Column('any-table.any-column AS any-aliases'), '`any-table`.`any-column` AS `any-aliases`'],
-            [new Column('`any-table`.`any-column` AS `any-aliases`'), '`any-table`.`any-column` AS `any-aliases`'],
+            ['any-table.any-column', '`any-table`.`any-column`'],
+            ['`any-table`.`any-column`', '`any-table`.`any-column`'],
+            ['any-table.any-column AS any-aliases', '`any-table`.`any-column` AS `any-aliases`'],
+            ['`any-table`.`any-column` AS `any-aliases`', '`any-table`.`any-column` AS `any-aliases`'],
         ];
     }
 }
