@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql;
 
-use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\{
     FieldInterface,
     ValueInterface,
