@@ -43,8 +43,9 @@ abstract class ValueFactory
             return new CollectionValue($value);
         }
 
+
         throw new InvalidArgumentValueException(
-            'The value must be of type string, number or boolean, if you want to pass a value if formatting uses the ' . RawValue::class . ' class'
+            'The value must be of type string, number, boolean or array, if you want to pass a value if formatting uses the ' . RawValue::class . ' class'
         );
     }
 }
