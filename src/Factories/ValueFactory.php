@@ -12,30 +12,35 @@ use QueryBuilder\Sql\Values\{
     BooleanValue,
     NullValue,
     RawValue,
+    CollectionValue,
 };
 
 abstract class ValueFactory
 {
-    public static function createValue(mixed $item): ValueInterface
+    public static function createValue(mixed $value): ValueInterface
     {
-        if($item instanceof ValueInterface) {
-            return $item;
+        if($value instanceof ValueInterface) {
+            return $value;
         }
 
-        if(is_string($item)) {
-            return new StringValue($item);
+        if(is_string($value)) {
+            return new StringValue($value);
         }
 
-        if(is_numeric($item)) {
-            return new NumberValue($item);
+        if(is_numeric($value)) {
+            return new NumberValue($value);
         }
 
-        if(is_bool($item)) {
-            return new BooleanValue($item);
+        if(is_bool($value)) {
+            return new BooleanValue($value);
         }
 
-        if(is_null($item)) {
+        if(is_null($value)) {
             return new NullValue();
+        }
+
+        if(is_array($value)) {
+            return new CollectionValue($value);
         }
 
         throw new InvalidArgumentValueException(

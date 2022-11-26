@@ -11,6 +11,7 @@ use QueryBuilder\Sql\Values\{
     StringValue,
     NumberValue,
     BooleanValue,
+    CollectionValue,
     NullValue,
     RawValue,
 };
@@ -39,6 +40,7 @@ class ValueFactoryTest extends TestCase
             [true, new BooleanValue(true)],
             [null, new NullValue()],
             [new RawValue('any-raw'), new RawValue('any-raw')],
+            [[1, 2, 3], new CollectionValue([1, 2, 3])],
         ];
     }
 
@@ -56,7 +58,6 @@ class ValueFactoryTest extends TestCase
     {
         return [
             [new \StdClass],  // Object
-            [[]],             // Array
             [function () {}], // Callable
         ];
     }
