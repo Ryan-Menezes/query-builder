@@ -9,7 +9,10 @@ use QueryBuilder\Interfaces\{
     ValueInterface,
 };
 use QueryBuilder\Sql\Column;
-use QueryBuilder\Sql\Values\RawValue;
+use QueryBuilder\Sql\Values\{
+    CollectionValue,
+    RawValue,
+};
 
 class Field implements FieldInterface
 {
@@ -35,6 +38,10 @@ class Field implements FieldInterface
             return $this->value;
         }
 
+        if($this->isCollectionValue($this->value)) {
+            return $this->value;
+        }
+
         if($this->isColumn($this->value)) {
             return $this->value;
         }
@@ -42,8 +49,14 @@ class Field implements FieldInterface
         return '?';
     }
 
-    private function isRawValue(mixed $value): bool {
+    private function isRawValue(mixed $value): bool
+    {
         return $value instanceof RawValue;
+    }
+
+    private function isCollectionValue(mixed $value): bool
+    {
+        return $value instanceof CollectionValue;
     }
 
     private function isColumn(mixed $value): bool

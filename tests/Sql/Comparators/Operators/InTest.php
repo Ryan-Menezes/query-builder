@@ -5,7 +5,10 @@ namespace Tests\Sql\Comparators\Operators;
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Column;
-use QueryBuilder\Sql\Values\RawValue;
+use QueryBuilder\Sql\Values\{
+    CollectionValue,
+    RawValue,
+};
 use QueryBuilder\Sql\Comparators\Operators\In;
 use InvalidArgumentException;
 
@@ -22,15 +25,17 @@ class InTest extends TestCase
         $column = new Column($column);
         $in = new In($column, $values);
 
+        $this->assertEquals($column, $in->getColumn());
+        $this->assertEquals(new CollectionValue($values), $in->getValue());
         $this->assertEquals($expected, $in);
     }
 
     public function shouldCreateAInOperatorCorrectlyProvider()
     {
         return [
-            ['any-column', [5, 10, 20.5], '`any-column` IN (5, 10, 20.5)'],
-            ['any-column', ['2000-01-01', '2001-01-01'], '`any-column` IN (\'2000-01-01\', \'2001-01-01\')'],
-            ['any-column', [true], '`any-column` IN (1)'],
+            ['any-column', [5, 10, 20.5], '`any-column` IN (?, ?, ?)'],
+            ['any-column', ['2000-01-01', '2001-01-01'], '`any-column` IN (?, ?)'],
+            ['any-column', [true], '`any-column` IN (?)'],
             ['any-column', [new RawValue('NOW()')], '`any-column` IN (NOW())'],
         ];
     }
@@ -49,9 +54,9 @@ class InTest extends TestCase
     public function shouldCreateANotInOperatorCorrectlyProvider()
     {
         return [
-            ['any-column', [5, 10, 20.5], '`any-column` NOT IN (5, 10, 20.5)'],
-            ['any-column', ['2000-01-01', '2001-01-01'], '`any-column` NOT IN (\'2000-01-01\', \'2001-01-01\')'],
-            ['any-column', [true], '`any-column` NOT IN (1)'],
+            ['any-column', [5, 10, 20.5], '`any-column` NOT IN (?, ?, ?)'],
+            ['any-column', ['2000-01-01', '2001-01-01'], '`any-column` NOT IN (?, ?)'],
+            ['any-column', [true], '`any-column` NOT IN (?)'],
             ['any-column', [new RawValue('NOW()')], '`any-column` NOT IN (NOW())'],
         ];
     }

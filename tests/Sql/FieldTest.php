@@ -19,7 +19,7 @@ class FieldTest extends TestCase
     /**
      * @dataProvider shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider
      */
-    public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(mixed $value)
+    public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(mixed $value, string $expected)
     {
         $column = new Column('any-column');
         $value = ValueFactory::createValue($value);
@@ -28,18 +28,18 @@ class FieldTest extends TestCase
         $this->assertEquals($column, $field->getColumn());
         $this->assertEquals('=', $field->getOperator());
         $this->assertEquals($value, $field->getValue());
-        $this->assertEquals('`any-column` = ?', $field);
+        $this->assertEquals($expected, $field);
     }
 
     public function shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider()
     {
         return [
-            ['any-string'],
-            [5],
-            [12.5],
-            [true],
-            [null],
-            [[1, 2, 3]],
+            ['any-string', '`any-column` = ?'],
+            [5, '`any-column` = ?'],
+            [12.5, '`any-column` = ?'],
+            [true, '`any-column` = ?'],
+            [null, '`any-column` = ?'],
+            [[1, 2, 3], '`any-column` = (?, ?, ?)'],
         ];
     }
 
