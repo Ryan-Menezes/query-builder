@@ -14,6 +14,7 @@ use QueryBuilder\Sql\{
     Column,
     Field,
 };
+use QueryBuilder\Sql\Values\CollectionValue;
 
 class In implements FieldInterface
 {
