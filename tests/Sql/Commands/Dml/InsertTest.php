@@ -6,10 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Commands\Dml\Insert;
 use QueryBuilder\Sql\Values\{
-    StringValue,
-    NumberValue,
-    BooleanValue,
-    NullValue,
+    CollectionValue,
     RawValue,
 };
 
@@ -31,14 +28,14 @@ class InsertTest extends TestCase
 
         $this->assertEquals('INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW())', $insert);
         $this->assertEquals([
-            [
-                new StringValue('John'),
-                new NumberValue(18),
-                new BooleanValue(true),
-                new NumberValue(1.80),
-                new NullValue(),
+            new CollectionValue([
+                'John',
+                18,
+                true,
+                1.80,
+                null,
                 new RawValue('NOW()'),
-            ],
+            ]),
         ], $insert->getValues());
     }
 
@@ -65,22 +62,22 @@ class InsertTest extends TestCase
 
         $this->assertEquals('INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW()), (?, ?, ?, ?, ?, NOW())', $insert);
         $this->assertEquals([
-            [
-                new StringValue('John'),
-                new NumberValue(18),
-                new BooleanValue(true),
-                new NumberValue(1.80),
-                new NullValue(),
+            new CollectionValue([
+                'John',
+                18,
+                true,
+                1.80,
+                null,
                 new RawValue('NOW()'),
-            ],
-            [
-                new StringValue('Ana'),
-                new NumberValue(22),
-                new BooleanValue(false),
-                new NumberValue(1.60),
-                new NullValue(),
+            ]),
+            new CollectionValue([
+                'Ana',
+                22,
+                false,
+                1.60,
+                null,
                 new RawValue('NOW()'),
-            ],
+            ]),
         ], $insert->getValues());
     }
 

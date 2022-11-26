@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql\Commands\Dml;
 
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\{
-    SqlInterface,
-    ValueInterface,
-};
+use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Sql\{
     Columns,
     TableName,
 };
-use QueryBuilder\Sql\Values\RawValue;
+use QueryBuilder\Sql\Values\CollectionValue;
 
 class Insert implements SqlInterface
 {
@@ -24,10 +21,22 @@ class Insert implements SqlInterface
 
     public function __construct(string $tableName, array $data)
     {
-        $this->tableName = new TableName($tableName);
-
         $data = $this->formatData($data);
-        $this->setValuesAndColumns($data);
+
+        $this->tableName = new TableName($tableName);
+        $this->values = $this->formatValuesFromData($data);
+        $this->columns = $this->formatColumnsFromData($data);
+    }
+
+    private function formatValuesFromData(array $data): array
+    {
+        $values = [];
+
+        foreach($data as $value) {
+            $values[] = new CollectionValue($value);
+        }
+
+        return $values;
     }
 
     private function formatData(array $data): array
@@ -50,18 +59,16 @@ class Insert implements SqlInterface
         return false;
     }
 
-    private function setValuesAndColumns(array $data): void
+    private function formatColumnsFromData(array $data): Columns
     {
         $columns = [];
 
         foreach($data as $fields) {
             $fieldsColumns = $this->getFieldsColumns($fields);
             $columns = [...$columns, ...$fieldsColumns];
-
-            $this->values[] = $this->getFieldsValue($fields);
         }
 
-        $this->setColumns($columns);
+        return $this->getUniqueColumns($columns);
     }
 
     private function getFieldsColumns(array $fields): array
@@ -69,36 +76,20 @@ class Insert implements SqlInterface
         return array_keys($fields);
     }
 
-    private function getFieldsValue(array $fields): array
+    private function getUniqueColumns(array $columns): Columns
     {
-        $fieldsValue = array_values($fields);
-        return $this->getValueFormatted($fieldsValue);
-    }
+        $uniqueColumns = array_unique($columns);
 
-    private function getValueFormatted(array $value): array
-    {
-        $valueFormatted = [];
-
-        foreach($value as $k => $v) {
-            $valueFormatted[$k] = ValueFactory::createValue($v);
-        }
-
-        return $valueFormatted;
-    }
-
-    private function setColumns(array $columns): void
-    {
-        $columns = array_unique($columns);
-        $this->columns = new Columns($columns);
+        return new Columns($uniqueColumns);
     }
 
     public function __toString(): string
     {
         if($this->isIgnoreStatement) {
-            return "INSERT IGNORE INTO `{$this->getTableName()}` ({$this->getColumns()}) VALUES {$this->getValuesToStringSql()}";
+            return "INSERT IGNORE INTO `{$this->getTableName()}` ({$this->getColumns()}) VALUES {$this->getValuesToSql()}";
         }
 
-        return "INSERT INTO `{$this->getTableName()}` ({$this->getColumns()}) VALUES {$this->getValuesToStringSql()}";
+        return "INSERT INTO `{$this->getTableName()}` ({$this->getColumns()}) VALUES {$this->getValuesToSql()}";
     }
 
     public function getTableName(): string
@@ -111,50 +102,9 @@ class Insert implements SqlInterface
         return $this->columns;
     }
 
-    private function getValuesToStringSql(): string
+    private function getValuesToSql(): string
     {
-        $valuesInline = $this->getValuesInline();
-
-        return implode(', ', $valuesInline);
-    }
-
-    private function getValuesInline(): array
-    {
-        $values = $this->getValues();
-        $valuesInline = [];
-
-        foreach($values as $value) {
-            $valuesInline[] = $this->getValueInline($value);
-        }
-
-        return $valuesInline;
-    }
-
-    private function getValueInline(array $value): string
-    {
-        $newValue = [];
-
-        foreach($value as $k => $v) {
-            $newValue[$k] = $this->getDefaultValue($v);
-        }
-
-        $valueToString = implode(', ', $newValue);
-
-        return "(${valueToString})";
-    }
-
-    private function getDefaultValue(ValueInterface $value): string|ValueInterface
-    {
-        if($this->isRawValue($value)) {
-            return $value;
-        }
-
-        return '?';
-    }
-
-    private function isRawValue(ValueInterface $value): bool
-    {
-        return $value instanceof RawValue;
+        return implode(', ', $this->getValues());
     }
 
     public function getValues(): array
