@@ -62,6 +62,6 @@ class LogicalInstructionsTest extends TestCase
                 (new In(new Column('age'), [10, 20]))->not()
             );
 
-        $this->assertEquals('`age` IN (5, 10, 20.5) OR `birthday` IN (\'2000-01-01\', NOW()) AND `age` NOT IN (10, 20)', $logicalInstructions);
+        $this->assertEquals('`age` IN (?, ?, ?) OR `birthday` IN (?, NOW()) AND `age` NOT IN (?, ?)', $logicalInstructions);
     }
 }

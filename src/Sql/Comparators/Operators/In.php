@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql\Comparators\Operators;
 
 use InvalidArgumentException;
-use QueryBuilder\Factories\{
-    FieldFactory,
-    ValueFactory,
-};
+use QueryBuilder\Factories\FieldFactory;
 use QueryBuilder\Interfaces\{
     FieldInterface,
     ValueInterface,
@@ -29,32 +26,17 @@ class In implements FieldInterface
 
     public function __construct(Column $column, array $values)
     {
-        $this->column = $column;
-        $this->values = $this->formatValues($values);
-    }
-
-    private function formatValues(array $values): array
-    {
         if($this->isNotValidValues($values)) {
             throw new InvalidArgumentException('The array of values ​​must not be empty');
         }
 
-        foreach($values as $key => $value) {
-            $values[$key]= $this->formatValue($value);
-        }
-
-        return $values;
+        $this->column = $column;
+        $this->values = $values;
     }
 
     private function isNotValidValues(array $values): bool
     {
         return empty($values);
-    }
-
-    private function formatValue(mixed $value): string
-    {
-        $value = ValueFactory::createValue($value);
-        return (string) $value;
     }
 
     public function not(): self
@@ -65,7 +47,7 @@ class In implements FieldInterface
 
     public function __toString(): string
     {
-        $field = $this->getField(self::SQL_IN_OPERATOR);
+        $field = $this->getField();
 
         return "${field}";
     }
@@ -74,10 +56,8 @@ class In implements FieldInterface
     {
         $column = (string) $this->column;
         $operator = $this->getOperator();
-        $valuesToString = implode(', ', $this->values);
-        $valuesToString = "(${valuesToString})";
 
-        $field = FieldFactory::createFieldWithRawValue($column, $operator, $valuesToString);
+        $field = FieldFactory::createField($column, $operator, $this->values);
 
         return $field;
     }
