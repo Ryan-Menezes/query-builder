@@ -39,6 +39,7 @@ class FieldTest extends TestCase
             [12.5],
             [true],
             [null],
+            [[1, 2, 3]],
         ];
     }
 
