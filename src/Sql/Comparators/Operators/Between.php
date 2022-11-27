@@ -13,10 +13,7 @@ use QueryBuilder\Interfaces\{
     FieldInterface,
     ValueInterface,
 };
-use QueryBuilder\Sql\{
-    Column,
-    Field,
-};
+use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Values\{
     CollectionValue,
     RawValue,
@@ -82,7 +79,7 @@ class Between implements FieldInterface
         return "${field}";
     }
 
-    private function getField(): Field
+    private function getField(): FieldInterface
     {
         $column = (string) $this->column;
         $operator = $this->getOperator();
@@ -133,7 +130,7 @@ class Between implements FieldInterface
         return $field->getColumn();
     }
 
-    public function getValue(): ValueInterface|Column
+    public function getValue(): ValueInterface
     {
         return $this->values;
     }

@@ -10,10 +10,7 @@ use QueryBuilder\Interfaces\{
     FieldInterface,
     ValueInterface,
 };
-use QueryBuilder\Sql\{
-    Column,
-    Field,
-};
+use QueryBuilder\Sql\Column;
 
 class In implements FieldInterface
 {
@@ -52,7 +49,7 @@ class In implements FieldInterface
         return "${field}";
     }
 
-    private function getField(): Field
+    private function getField(): FieldInterface
     {
         $column = (string) $this->column;
         $operator = $this->getOperator();
@@ -77,7 +74,7 @@ class In implements FieldInterface
         return $field->getColumn();
     }
 
-    public function getValue(): ValueInterface|Column
+    public function getValue(): ValueInterface
     {
         $field = $this->getField();
         return $field->getValue();
