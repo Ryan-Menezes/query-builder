@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Commands\Dml;
 
-use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Sql\{
     Columns,

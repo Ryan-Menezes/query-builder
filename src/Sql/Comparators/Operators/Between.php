@@ -133,7 +133,7 @@ class Between implements FieldInterface
         return $field->getColumn();
     }
 
-    public function getValue(): ValueInterface|Column
+    public function getValue(): ValueInterface
     {
         return $this->values;
     }

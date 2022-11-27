@@ -77,7 +77,7 @@ class In implements FieldInterface
         return $field->getColumn();
     }
 
-    public function getValue(): ValueInterface|Column
+    public function getValue(): ValueInterface
     {
         $field = $this->getField();
         return $field->getValue();

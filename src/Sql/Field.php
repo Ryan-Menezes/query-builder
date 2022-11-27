@@ -65,7 +65,7 @@ class Field implements FieldInterface
         return $this->operator;
     }
 
-    public function getValue(): ValueInterface|Column
+    public function getValue(): ValueInterface
     {
         return $this->value;
     }
