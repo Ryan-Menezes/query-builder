@@ -32,7 +32,7 @@ abstract class FieldFactory
     public static function createFieldOnlyWithColumns(string $column, string $operator, string $value): FieldInterface
     {
         $column = new Column($column);
-        $value = new Column($value);
+        $value = ValueFactory::createRawValue(new Column($value));
 
         return new Field($column, $operator, $value);
     }

@@ -18,9 +18,9 @@ class Field implements FieldInterface
 {
     private Column $column;
     private string $operator;
-    private ValueInterface|Column $value;
+    private ValueInterface $value;
 
-    public function __construct(Column $column, string $operator, ValueInterface|Column $value)
+    public function __construct(Column $column, string $operator, ValueInterface $value)
     {
         $this->column =$column;
         $this->operator = $operator;
@@ -32,17 +32,13 @@ class Field implements FieldInterface
         return "{$this->getColumn()} {$this->getOperator()} {$this->getFormattedValue()}";
     }
 
-    private function getFormattedValue(): string|ValueInterface|Column
+    private function getFormattedValue(): string|ValueInterface
     {
         if($this->isRawValue($this->value)) {
             return $this->value;
         }
 
         if($this->isCollectionValue($this->value)) {
-            return $this->value;
-        }
-
-        if($this->isColumn($this->value)) {
             return $this->value;
         }
 
@@ -57,11 +53,6 @@ class Field implements FieldInterface
     private function isCollectionValue(mixed $value): bool
     {
         return $value instanceof CollectionValue;
-    }
-
-    private function isColumn(mixed $value): bool
-    {
-        return $value instanceof Column;
     }
 
     public function getColumn(): Column

@@ -12,7 +12,6 @@ use QueryBuilder\Sql\{
     Field,
     Column,
 };
-use QueryBuilder\Sql\Values\RawValue;
 
 /**
  * @requires PHP 8.1
@@ -35,7 +34,7 @@ class FieldFactoryTest extends TestCase
         $field = FieldFactory::createFieldWithRawValue('any-column', '=', 'COUNT(*)');
 
         $column = new Column('any-column');
-        $value = new RawValue('COUNT(*)');
+        $value = ValueFactory::createRawValue('COUNT(*)');
         $expect = new Field($column, '=', $value);
 
         $this->assertEquals($expect, $field);
@@ -46,7 +45,7 @@ class FieldFactoryTest extends TestCase
         $field = FieldFactory::createFieldOnlyWithColumns('any-column', '=', 'other-column');
 
         $column = new Column('any-column');
-        $value = new Column('other-column');
+        $value = ValueFactory::createRawValue(new Column('other-column'));
         $expect = new Field($column, '=', $value);
 
         $this->assertEquals($expect, $field);

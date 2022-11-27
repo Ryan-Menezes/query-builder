@@ -82,7 +82,7 @@ class FieldTest extends TestCase
     public function testShouldAcceptAColumnAsSecondParameter(string $value, string $expected)
     {
         $column = new Column('any-column');
-        $value = new Column($value);
+        $value = ValueFactory::createRawValue(new Column($value));
         $field = new Field($column, '=', $value);
 
         $this->assertEquals($column, $field->getColumn());
