@@ -17,6 +17,10 @@ use QueryBuilder\Sql\{
     Column,
     Field,
 };
+use QueryBuilder\Sql\Values\{
+    CollectionValue,
+    RawValue,
+};
 
 class Between implements FieldInterface
 {
@@ -24,7 +28,7 @@ class Between implements FieldInterface
     private const SQL_NOT_BETWEEN_OPERATOR = 'NOT BETWEEN';
 
     private Column $column;
-    private array $values;
+    private CollectionValue $values;
     private bool $isNotOperator = false;
 
     public function __construct(Column $column, array $values)
@@ -33,7 +37,7 @@ class Between implements FieldInterface
         $this->values = $this->formatValues($values);
     }
 
-    private function formatValues(array $values): array
+    private function formatValues(array $values): CollectionValue
     {
         if($this->isNotValidValues($values)) {
             throw new InvalidArgumentException('The array of values ​​must contain only two values');
@@ -43,7 +47,7 @@ class Between implements FieldInterface
             $values[$key]= $this->formatValue($value);
         }
 
-        return $values;
+        return new CollectionValue($values);
     }
 
     private function isNotValidValues(array $values): bool
@@ -51,13 +55,13 @@ class Between implements FieldInterface
         return count($values) !== 2;
     }
 
-    private function formatValue(mixed $value): string
+    private function formatValue(mixed $value): ValueInterface
     {
         if($this->isNotColumnValue($value)) {
-            $value = ValueFactory::createValue($value);
+            return ValueFactory::createValue($value);
         }
 
-        return (string) $value;
+        return new RawValue($value);
     }
 
     private function isNotColumnValue(mixed $value): bool
@@ -82,11 +86,36 @@ class Between implements FieldInterface
     {
         $column = (string) $this->column;
         $operator = $this->getOperator();
-        $valuesToString = implode(' AND ', $this->values);
+        $valuesToString = $this->getValuesToString();
 
         $field = FieldFactory::createFieldWithRawValue($column, $operator, $valuesToString);
 
         return $field;
+    }
+
+    private function getValuesToString(): string
+    {
+        $values = [];
+
+        foreach($this->values->getValue() as $v) {
+            $values[] = $this->formatValueToString($v);
+        }
+
+        return implode(' AND ', $values);
+    }
+
+    private function formatValueToString(ValueInterface $value): string
+    {
+        if($this->isRawValue($value)) {
+            return (string) $value;
+        }
+
+        return '?';
+    }
+
+    private function isRawValue(mixed $value): bool
+    {
+        return $value instanceof RawValue;
     }
 
     public function getOperator(): string
@@ -106,7 +135,6 @@ class Between implements FieldInterface
 
     public function getValue(): ValueInterface|Column
     {
-        $field = $this->getField();
-        return $field->getValue();
+        return $this->values;
     }
 }

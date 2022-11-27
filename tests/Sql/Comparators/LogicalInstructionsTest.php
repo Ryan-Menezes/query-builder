@@ -49,7 +49,7 @@ class LogicalInstructionsTest extends TestCase
                 (new Between(new Column('age'), [10, 20]))->not()
             );
 
-        $this->assertEquals('`age` BETWEEN 10 AND 20 OR `age` BETWEEN 10 AND `any-column` AND `age` NOT BETWEEN 10 AND 20', $logicalInstructions);
+        $this->assertEquals('`age` BETWEEN ? AND ? OR `age` BETWEEN ? AND `any-column` AND `age` NOT BETWEEN ? AND ?', $logicalInstructions);
     }
 
     public function testShouldSupportInOperator()
