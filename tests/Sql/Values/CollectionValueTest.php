@@ -4,6 +4,7 @@ namespace Tests\Sql\Values;
 
 use PHPUnit\Framework\TestCase;
 
+use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Values\{
     BooleanValue,
     CollectionValue,
@@ -27,15 +28,17 @@ class CollectionValueTest extends TestCase
             5,
             new RawValue('NOW()'),
             'any-string',
+            new Column('any-column'),
         ]);
 
-        $this->assertEquals('(?, ?, ?, NOW(), ?)', $collectionValue);
+        $this->assertEquals('(?, ?, ?, NOW(), ?, `any-column`)', $collectionValue);
         $this->assertEquals([
             new BooleanValue(true),
             new NullValue(),
             new NumberValue(5),
             new RawValue('NOW()'),
             new StringValue('any-string'),
+            new RawValue('`any-column`'),
         ], $collectionValue->getValue());
     }
 

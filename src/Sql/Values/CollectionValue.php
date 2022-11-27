@@ -6,6 +6,7 @@ namespace QueryBuilder\Sql\Values;
 
 use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Factories\ValueFactory;
+use QueryBuilder\Sql\Column;
 use InvalidArgumentException;
 
 class CollectionValue implements ValueInterface
@@ -22,14 +23,28 @@ class CollectionValue implements ValueInterface
         $newValue = [];
 
         foreach($value as $v) {
-            if(is_array($v)) {
-                throw new InvalidArgumentException('Arrays are not accepted in the value collection');
-            }
-
-            $newValue[] = ValueFactory::createValue($v);
+            $newValue[] = $this->getFormattedValue($v);
         }
 
         return $newValue;
+    }
+
+    private function getFormattedValue(mixed $value): ValueInterface
+    {
+        if(is_array($value)) {
+            throw new InvalidArgumentException('Arrays are not accepted in the value collection');
+        }
+
+        if($this->isColumn($value)) {
+            return ValueFactory::createRawValue($value);
+        }
+
+        return ValueFactory::createValue($value);
+    }
+
+    private function isColumn(mixed $value): bool
+    {
+        return $value instanceof Column;
     }
 
     public function __toString(): string

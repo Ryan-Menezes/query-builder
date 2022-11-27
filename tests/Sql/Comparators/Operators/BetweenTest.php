@@ -4,8 +4,8 @@ namespace Tests\Sql\Comparators\Operators;
 
 use PHPUnit\Framework\TestCase;
 
+use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Column;
-use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Sql\Comparators\Operators\Between;
 use InvalidArgumentException;
 
@@ -35,7 +35,7 @@ class BetweenTest extends TestCase
             ['any-column', [new Column('a'), new Column('b')], '`any-column` BETWEEN `a` AND `b`'],
             ['any-column', [5, new Column('b')], '`any-column` BETWEEN ? AND `b`'],
             ['any-column', [new Column('a'), 5], '`any-column` BETWEEN `a` AND ?'],
-            ['any-column', ['2000-01-01', new RawValue('NOW()')], '`any-column` BETWEEN ? AND NOW()'],
+            ['any-column', ['2000-01-01', ValueFactory::createRawValue('NOW()')], '`any-column` BETWEEN ? AND NOW()'],
         ];
     }
 
@@ -58,7 +58,7 @@ class BetweenTest extends TestCase
             ['any-column', [new Column('a'), new Column('b')], '`any-column` NOT BETWEEN `a` AND `b`'],
             ['any-column', [5, new Column('b')], '`any-column` NOT BETWEEN ? AND `b`'],
             ['any-column', [new Column('a'), 5], '`any-column` NOT BETWEEN `a` AND ?'],
-            ['any-column', ['2000-01-01', new RawValue('NOW()')], '`any-column` NOT BETWEEN ? AND NOW()'],
+            ['any-column', ['2000-01-01', ValueFactory::createRawValue('NOW()')], '`any-column` NOT BETWEEN ? AND NOW()'],
         ];
     }
 

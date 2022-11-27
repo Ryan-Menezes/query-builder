@@ -61,7 +61,7 @@ class Between implements FieldInterface
             return ValueFactory::createValue($value);
         }
 
-        return new RawValue($value);
+        return ValueFactory::createRawValue($value);
     }
 
     private function isNotColumnValue(mixed $value): bool

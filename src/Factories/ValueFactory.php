@@ -14,6 +14,7 @@ use QueryBuilder\Sql\Values\{
     RawValue,
     CollectionValue,
 };
+use Stringable;
 
 abstract class ValueFactory
 {
@@ -47,5 +48,10 @@ abstract class ValueFactory
         throw new InvalidArgumentValueException(
             'The value must be of type string, number, boolean or array, if you want to pass a value if formatting uses the ' . RawValue::class . ' class'
         );
+    }
+
+    public static function createRawValue(string|Stringable $value): ValueInterface
+    {
+        return new RawValue($value);
     }
 }

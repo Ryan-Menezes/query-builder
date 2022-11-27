@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Columns;
-use QueryBuilder\Sql\Values\RawValue;
+use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Exceptions\InvalidArgumentColumnException;
 
 /**
@@ -88,17 +88,17 @@ class ColumnsTest extends TestCase
     public function testShouldSupportRawColumns()
     {
         $columns = new Columns([
-            new RawValue('COUNT(*) AS `count`'),
-            new RawValue('AVG(salary) AS `avg`'),
-            new RawValue('SUM(salary) AS sum'),
+            ValueFactory::createRawValue('COUNT(*) AS `count`'),
+            ValueFactory::createRawValue('AVG(salary) AS `avg`'),
+            ValueFactory::createRawValue('SUM(salary) AS sum'),
         ]);
 
         $this->assertEquals(3, $columns->count());
         $this->assertEquals('COUNT(*) AS `count`, AVG(salary) AS `avg`, SUM(salary) AS sum', $columns);
         $this->assertEquals([
-            new RawValue('COUNT(*) AS `count`'),
-            new RawValue('AVG(salary) AS `avg`'),
-            new RawValue('SUM(salary) AS sum'),
+            ValueFactory::createRawValue('COUNT(*) AS `count`'),
+            ValueFactory::createRawValue('AVG(salary) AS `avg`'),
+            ValueFactory::createRawValue('SUM(salary) AS sum'),
         ], $columns->all());
     }
 }

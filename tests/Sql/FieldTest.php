@@ -5,7 +5,6 @@ namespace Tests\Sql;
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Sql\Values\RawValue;
 use QueryBuilder\Sql\{
     Field,
     Column,
@@ -46,7 +45,7 @@ class FieldTest extends TestCase
     public function testShouldAcceptARawValue()
     {
         $column = new Column('any-column');
-        $value = new RawValue('COUNT(*)');
+        $value = ValueFactory::createRawValue('COUNT(*)');
         $field = new Field($column, '=', $value);
 
         $this->assertEquals($column, $field->getColumn());

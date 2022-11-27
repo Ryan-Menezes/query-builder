@@ -44,6 +44,14 @@ class ValueFactoryTest extends TestCase
         ];
     }
 
+    public function testShouldCreateARawValueClass()
+    {
+        $actual = ValueFactory::createRawValue('NOW()');
+        $expected = new RawValue('NOW()');
+
+        $this->assertEquals($expected, $actual);
+    }
+
     /**
      * @dataProvider shouldThrowAnExceptionIfValueIsInvalidProvider
      */
