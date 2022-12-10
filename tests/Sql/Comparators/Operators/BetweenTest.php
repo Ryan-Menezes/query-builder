@@ -5,8 +5,8 @@ namespace Tests\Sql\Comparators\Operators;
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Comparators\Operators\Between;
+use QueryBuilder\Sql\Values\CollectionValue;
 use InvalidArgumentException;
 
 /**
@@ -19,23 +19,26 @@ class BetweenTest extends TestCase
      */
     public function testShouldCreateABetweenOperatorCorrectly(string $column, array $values, string $expected)
     {
-        $column = new Column($column);
         $between = new Between($column, $values);
 
         $this->assertEquals($column, $between->getColumn());
-        // $this->assertEquals($values, $between->getValue());
+        $this->assertEquals(new CollectionValue($values), $between->getValue());
         $this->assertEquals($expected, $between);
     }
 
     public function shouldCreateABetweenOperatorCorrectlyProvider()
     {
+        $columnA = ValueFactory::createRawValue('a');
+        $columnB = ValueFactory::createRawValue('b');
+        $now = ValueFactory::createRawValue('NOW()');
+
         return [
-            ['any-column', [5, 10], '`any-column` BETWEEN ? AND ?'],
-            ['any-column', ['2000-01-01', '2001-01-01'], '`any-column` BETWEEN ? AND ?'],
-            ['any-column', [new Column('a'), new Column('b')], '`any-column` BETWEEN `a` AND `b`'],
-            ['any-column', [5, new Column('b')], '`any-column` BETWEEN ? AND `b`'],
-            ['any-column', [new Column('a'), 5], '`any-column` BETWEEN `a` AND ?'],
-            ['any-column', ['2000-01-01', ValueFactory::createRawValue('NOW()')], '`any-column` BETWEEN ? AND NOW()'],
+            ['any-column', [5, 10], 'any-column BETWEEN ? AND ?'],
+            ['any-column', ['2000-01-01', '2001-01-01'], 'any-column BETWEEN ? AND ?'],
+            ['any-column', [$columnA, $columnB], 'any-column BETWEEN a AND b'],
+            ['any-column', [5, $columnB], 'any-column BETWEEN ? AND b'],
+            ['any-column', [$columnA, 5], 'any-column BETWEEN a AND ?'],
+            ['any-column', ['2000-01-01', $now], 'any-column BETWEEN ? AND NOW()'],
         ];
     }
 
@@ -44,7 +47,6 @@ class BetweenTest extends TestCase
      */
     public function testShouldCreateANotBetweenOperatorCorrectly(string $column, array $values, string $expected)
     {
-        $column = new Column($column);
         $between = new Between($column, $values);
 
         $this->assertEquals($expected, $between->not());
@@ -52,13 +54,17 @@ class BetweenTest extends TestCase
 
     public function shouldCreateANotBetweenOperatorCorrectlyProvider()
     {
+        $columnA = ValueFactory::createRawValue('a');
+        $columnB = ValueFactory::createRawValue('b');
+        $now = ValueFactory::createRawValue('NOW()');
+
         return [
-            ['any-column', [5, 10], '`any-column` NOT BETWEEN ? AND ?'],
-            ['any-column', ['2000-01-01', '2001-01-01'], '`any-column` NOT BETWEEN ? AND ?'],
-            ['any-column', [new Column('a'), new Column('b')], '`any-column` NOT BETWEEN `a` AND `b`'],
-            ['any-column', [5, new Column('b')], '`any-column` NOT BETWEEN ? AND `b`'],
-            ['any-column', [new Column('a'), 5], '`any-column` NOT BETWEEN `a` AND ?'],
-            ['any-column', ['2000-01-01', ValueFactory::createRawValue('NOW()')], '`any-column` NOT BETWEEN ? AND NOW()'],
+            ['any-column', [5, 10], 'any-column NOT BETWEEN ? AND ?'],
+            ['any-column', ['2000-01-01', '2001-01-01'], 'any-column NOT BETWEEN ? AND ?'],
+            ['any-column', [$columnA, $columnB], 'any-column NOT BETWEEN a AND b'],
+            ['any-column', [5, $columnB], 'any-column NOT BETWEEN ? AND b'],
+            ['any-column', [$columnA, 5], 'any-column NOT BETWEEN a AND ?'],
+            ['any-column', ['2000-01-01', $now], 'any-column NOT BETWEEN ? AND NOW()'],
         ];
     }
 
@@ -69,8 +75,7 @@ class BetweenTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $column = new Column('any-column');
-        new Between($column, $values);
+        new Between('any-column', $values);
     }
 
     public function shouldReturnAnErrorIfWrongParametersArePassedToTheConstructorProvider()

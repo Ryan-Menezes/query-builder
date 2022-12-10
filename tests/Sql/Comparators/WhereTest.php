@@ -19,7 +19,7 @@ class WhereTest extends TestCase
             ->and(FieldFactory::createField('name', 'LIKE', '%any-name%'))
             ->or(FieldFactory::createField('salary', '>', 800));
 
-        $this->assertEquals('WHERE `name` LIKE ? OR `salary` > ?', $where);
+        $this->assertEquals('WHERE name LIKE ? OR salary > ?', $where);
     }
 
     public function testShouldReturnAnEmptyStringIfThereIsNoLogicalComparison()
