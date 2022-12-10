@@ -8,10 +8,7 @@ use QueryBuilder\Factories\{
     FieldFactory,
     ValueFactory,
 };
-use QueryBuilder\Sql\{
-    Field,
-    Column,
-};
+use QueryBuilder\Sql\Field;
 
 /**
  * @requires PHP 8.1
@@ -22,7 +19,7 @@ class FieldFactoryTest extends TestCase
     {
         $field = FieldFactory::createField('any-column', '=', 'any-value');
 
-        $column = new Column('any-column');
+        $column = 'any-column';
         $value = ValueFactory::createValue('any-value');
         $expect = new Field($column, '=', $value);
 
@@ -33,7 +30,7 @@ class FieldFactoryTest extends TestCase
     {
         $field = FieldFactory::createFieldWithRawValue('any-column', '=', 'COUNT(*)');
 
-        $column = new Column('any-column');
+        $column = 'any-column';
         $value = ValueFactory::createRawValue('COUNT(*)');
         $expect = new Field($column, '=', $value);
 
@@ -44,8 +41,8 @@ class FieldFactoryTest extends TestCase
     {
         $field = FieldFactory::createFieldOnlyWithColumns('any-column', '=', 'other-column');
 
-        $column = new Column('any-column');
-        $value = ValueFactory::createRawValue(new Column('other-column'));
+        $column = 'any-column';
+        $value = ValueFactory::createRawValue('other-column');
         $expect = new Field($column, '=', $value);
 
         $this->assertEquals($expect, $field);

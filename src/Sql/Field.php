@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql;
 
+use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\{
     FieldInterface,
     ValueInterface,
 };
-use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Values\{
     CollectionValue,
     RawValue,
@@ -16,13 +16,13 @@ use QueryBuilder\Sql\Values\{
 
 class Field implements FieldInterface
 {
-    private Column $column;
+    private ValueInterface $column;
     private string $operator;
     private ValueInterface $value;
 
-    public function __construct(Column $column, string $operator, ValueInterface $value)
+    public function __construct(string $column, string $operator, ValueInterface $value)
     {
-        $this->column =$column;
+        $this->column = ValueFactory::createRawValue($column);
         $this->operator = $operator;
         $this->value = $value;
     }
@@ -55,7 +55,7 @@ class Field implements FieldInterface
         return $value instanceof CollectionValue;
     }
 
-    public function getColumn(): Column
+    public function getColumn(): ValueInterface
     {
         return $this->column;
     }

@@ -13,7 +13,6 @@ use QueryBuilder\Interfaces\{
     FieldInterface,
     ValueInterface,
 };
-use QueryBuilder\Sql\Column;
 use QueryBuilder\Sql\Values\{
     CollectionValue,
     RawValue,
@@ -24,24 +23,24 @@ class Between implements FieldInterface
     private const SQL_BETWEEN_OPERATOR = 'BETWEEN';
     private const SQL_NOT_BETWEEN_OPERATOR = 'NOT BETWEEN';
 
-    private Column $column;
-    private CollectionValue $values;
+    private ValueInterface $column;
+    private ValueInterface $values;
     private bool $isNotOperator = false;
 
-    public function __construct(Column $column, array $values)
+    public function __construct(string $column, array $values)
     {
-        $this->column = $column;
+        $this->column = ValueFactory::createRawValue($column);
         $this->values = $this->formatValues($values);
     }
 
-    private function formatValues(array $values): CollectionValue
+    private function formatValues(array $values): ValueInterface
     {
         if($this->isNotValidValues($values)) {
             throw new InvalidArgumentException('The array of values ​​must contain only two values');
         }
 
         foreach($values as $key => $value) {
-            $values[$key]= $this->formatValue($value);
+            $values[$key] = ValueFactory::createValue($value);
         }
 
         return new CollectionValue($values);
@@ -50,20 +49,6 @@ class Between implements FieldInterface
     private function isNotValidValues(array $values): bool
     {
         return count($values) !== 2;
-    }
-
-    private function formatValue(mixed $value): ValueInterface
-    {
-        if($this->isNotColumnValue($value)) {
-            return ValueFactory::createValue($value);
-        }
-
-        return ValueFactory::createRawValue($value);
-    }
-
-    private function isNotColumnValue(mixed $value): bool
-    {
-        return !($value instanceof Column);
     }
 
     public function not(): self
@@ -124,7 +109,7 @@ class Between implements FieldInterface
         return self::SQL_BETWEEN_OPERATOR;
     }
 
-    public function getColumn(): Column
+    public function getColumn(): ValueInterface
     {
         $field = $this->getField();
         return $field->getColumn();
