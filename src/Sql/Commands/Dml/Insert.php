@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Commands\Dml;
 
-use QueryBuilder\Interfaces\SqlInterface;
-use QueryBuilder\Sql\{
-    Columns,
-    TableName,
+use QueryBuilder\Factories\ValueFactory;
+use QueryBuilder\Interfaces\{
+    SqlInterface,
+    ValueInterface,
 };
 use QueryBuilder\Sql\Values\CollectionValue;
 
 class Insert implements SqlInterface
 {
-    private TableName $tableName;
-    private Columns $columns;
+    private string $tableName;
+    private ValueInterface $columns;
     private array $values;
     private $isIgnoreStatement = false;
 
@@ -22,7 +22,7 @@ class Insert implements SqlInterface
     {
         $data = $this->formatData($data);
 
-        $this->tableName = new TableName($tableName);
+        $this->tableName = $tableName;
         $this->values = $this->formatValuesFromData($data);
         $this->columns = $this->formatColumnsFromData($data);
     }
@@ -58,7 +58,7 @@ class Insert implements SqlInterface
         return false;
     }
 
-    private function formatColumnsFromData(array $data): Columns
+    private function formatColumnsFromData(array $data): CollectionValue
     {
         $columns = [];
 
@@ -67,7 +67,7 @@ class Insert implements SqlInterface
             $columns = [...$columns, ...$fieldsColumns];
         }
 
-        return $this->getUniqueColumns($columns);
+        return $this->getFormattedColumns($columns);
     }
 
     private function getFieldsColumns(array $fields): array
@@ -75,28 +75,34 @@ class Insert implements SqlInterface
         return array_keys($fields);
     }
 
-    private function getUniqueColumns(array $columns): Columns
+    private function getFormattedColumns(array $columns): ValueInterface
     {
-        $uniqueColumns = array_unique($columns);
+        $columns = array_unique($columns);
+        $columns = array_map($this->getFormattedColumn(...), $columns);
 
-        return new Columns($uniqueColumns);
+        return new CollectionValue($columns);
+    }
+
+    private function getFormattedColumn(string $column): ValueInterface
+    {
+        return ValueFactory::createRawValue("`${column}`");
     }
 
     public function __toString(): string
     {
         if($this->isIgnoreStatement) {
-            return "INSERT IGNORE INTO `{$this->getTableName()}` ({$this->getColumns()}) VALUES {$this->getValuesToSql()}";
+            return "INSERT IGNORE INTO `{$this->getTableName()}` {$this->getColumns()} VALUES {$this->getValuesToSql()}";
         }
 
-        return "INSERT INTO `{$this->getTableName()}` ({$this->getColumns()}) VALUES {$this->getValuesToSql()}";
+        return "INSERT INTO `{$this->getTableName()}` {$this->getColumns()} VALUES {$this->getValuesToSql()}";
     }
 
     public function getTableName(): string
     {
-        return $this->tableName->getTableName();
+        return $this->tableName;
     }
 
-    public function getColumns(): Columns
+    public function getColumns(): ValueInterface
     {
         return $this->columns;
     }
