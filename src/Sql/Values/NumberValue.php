@@ -17,7 +17,7 @@ class NumberValue implements ValueInterface
 
     public function __toString(): string
     {
-        return (string)$this->getValue();
+        return (string) $this->getValue();
     }
 
     public function getValue(): int|float

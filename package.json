@@ -1,0 +1,30 @@
+{
+  "name": "query-builder",
+  "version": "1.0.0",
+  "description": "A simple query builder for sql queries",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "composer test",
+    "test:all": "composer test:all",
+    "style:check": "npx prettier src/**/*.php tests/**/*.php --check",
+    "style:fix": "npx prettier src/**/*.php tests/**/*.php --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ryan-Menezes/query-builder.git"
+  },
+  "keywords": [],
+  "author": "Ryan de Menezes Nobre Ciriaco",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ryan-Menezes/query-builder/issues"
+  },
+  "homepage": "https://github.com/Ryan-Menezes/query-builder#readme",
+  "devDependencies": {
+    "@prettier/plugin-php": "^0.19.2",
+    "prettier": "^2.8.1"
+  }
+}

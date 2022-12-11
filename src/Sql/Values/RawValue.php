@@ -13,7 +13,7 @@ class RawValue implements ValueInterface
 
     public function __construct(string|Stringable $value)
     {
-        $this->value = (string)$value;
+        $this->value = (string) $value;
     }
 
     public function __toString(): string

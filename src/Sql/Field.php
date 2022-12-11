@@ -5,14 +5,8 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql;
 
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\{
-    FieldInterface,
-    ValueInterface,
-};
-use QueryBuilder\Sql\Values\{
-    CollectionValue,
-    RawValue,
-};
+use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
+use QueryBuilder\Sql\Values\{CollectionValue, RawValue};
 
 class Field implements FieldInterface
 {
@@ -20,8 +14,11 @@ class Field implements FieldInterface
     private string $operator;
     private ValueInterface $value;
 
-    public function __construct(string $column, string $operator, ValueInterface $value)
-    {
+    public function __construct(
+        string $column,
+        string $operator,
+        ValueInterface $value,
+    ) {
         $this->column = ValueFactory::createRawValue($column);
         $this->operator = $operator;
         $this->value = $value;
@@ -34,11 +31,11 @@ class Field implements FieldInterface
 
     private function getFormattedValue(): string|ValueInterface
     {
-        if($this->isRawValue($this->value)) {
+        if ($this->isRawValue($this->value)) {
             return $this->value;
         }
 
-        if($this->isCollectionValue($this->value)) {
+        if ($this->isCollectionValue($this->value)) {
             return $this->value;
         }
 

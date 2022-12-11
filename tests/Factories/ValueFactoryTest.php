@@ -24,8 +24,10 @@ class ValueFactoryTest extends TestCase
     /**
      * @dataProvider shouldReturnTheClassCorrespondingToThatTypeProvider
      */
-    public function testShouldReturnTheClassCorrespondingToThatType(mixed $value, ValueInterface $expected)
-    {
+    public function testShouldReturnTheClassCorrespondingToThatType(
+        mixed $value,
+        ValueInterface $expected,
+    ) {
         $actual = ValueFactory::createValue($value);
 
         $this->assertEquals($expected, $actual);
@@ -65,7 +67,7 @@ class ValueFactoryTest extends TestCase
     public function shouldThrowAnExceptionIfValueIsInvalidProvider()
     {
         return [
-            [new \StdClass],  // Object
+            [new \StdClass()], // Object
             [function () {}], // Callable
         ];
     }

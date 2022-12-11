@@ -10,9 +10,9 @@ use Serializable;
 
 abstract class SimpleIterator implements Iterator, Countable, Serializable
 {
-    public function __construct(
-        protected array $items
-    ) {}
+    public function __construct(protected array $items)
+    {
+    }
 
     public function count(): int
     {

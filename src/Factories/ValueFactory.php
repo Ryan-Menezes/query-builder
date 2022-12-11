@@ -20,38 +20,40 @@ abstract class ValueFactory
 {
     public static function createValue(mixed $value): ValueInterface
     {
-        if($value instanceof ValueInterface) {
+        if ($value instanceof ValueInterface) {
             return $value;
         }
 
-        if(is_string($value)) {
+        if (is_string($value)) {
             return new StringValue($value);
         }
 
-        if(is_numeric($value)) {
+        if (is_numeric($value)) {
             return new NumberValue($value);
         }
 
-        if(is_bool($value)) {
+        if (is_bool($value)) {
             return new BooleanValue($value);
         }
 
-        if(is_null($value)) {
+        if (is_null($value)) {
             return new NullValue();
         }
 
-        if(is_array($value)) {
+        if (is_array($value)) {
             return new CollectionValue($value);
         }
 
-
         throw new InvalidArgumentValueException(
-            'The value must be of type string, number, boolean or array, if you want to pass a value if formatting uses the ' . RawValue::class . ' class'
+            'The value must be of type string, number, boolean or array, if you want to pass a value if formatting uses the ' .
+                RawValue::class .
+                ' class',
         );
     }
 
-    public static function createRawValue(string|Stringable $value): ValueInterface
-    {
+    public static function createRawValue(
+        string|Stringable $value,
+    ): ValueInterface {
         return new RawValue($value);
     }
 }

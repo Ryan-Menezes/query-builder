@@ -30,23 +30,27 @@ class CollectionValueTest extends TestCase
             new RawValue('any-column'),
         ]);
 
-        $this->assertEquals('(?, ?, ?, NOW(), ?, any-column)', $collectionValue);
-        $this->assertEquals([
-            new BooleanValue(true),
-            new NullValue(),
-            new NumberValue(5),
-            new RawValue('NOW()'),
-            new StringValue('any-string'),
-            new RawValue('any-column'),
-        ], $collectionValue->getValue());
+        $this->assertEquals(
+            '(?, ?, ?, NOW(), ?, any-column)',
+            $collectionValue,
+        );
+        $this->assertEquals(
+            [
+                new BooleanValue(true),
+                new NullValue(),
+                new NumberValue(5),
+                new RawValue('NOW()'),
+                new StringValue('any-string'),
+                new RawValue('any-column'),
+            ],
+            $collectionValue->getValue(),
+        );
     }
 
     public function shouldThrowAnErrorIfAnArrayIsPassedTheCollectionOfValues()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new CollectionValue([
-            [],
-        ]);
+        new CollectionValue([[]]);
     }
 }

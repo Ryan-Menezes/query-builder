@@ -10,7 +10,7 @@ class Where extends LogicalInstructions implements SqlInterface
 {
     public function __toString(): string
     {
-        if($this->isEmptyLogicalInstructions()) {
+        if ($this->isEmptyLogicalInstructions()) {
             return '';
         }
 

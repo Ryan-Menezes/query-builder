@@ -5,18 +5,9 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql\Comparators\Operators;
 
 use InvalidArgumentException;
-use QueryBuilder\Factories\{
-    FieldFactory,
-    ValueFactory,
-};
-use QueryBuilder\Interfaces\{
-    FieldInterface,
-    ValueInterface,
-};
-use QueryBuilder\Sql\Values\{
-    CollectionValue,
-    RawValue,
-};
+use QueryBuilder\Factories\{FieldFactory, ValueFactory};
+use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
+use QueryBuilder\Sql\Values\{CollectionValue, RawValue};
 
 class Between implements FieldInterface
 {
@@ -35,11 +26,13 @@ class Between implements FieldInterface
 
     private function formatValues(array $values): ValueInterface
     {
-        if($this->isNotValidValues($values)) {
-            throw new InvalidArgumentException('The array of values ​​must contain only two values');
+        if ($this->isNotValidValues($values)) {
+            throw new InvalidArgumentException(
+                'The array of values ​​must contain only two values',
+            );
         }
 
-        foreach($values as $key => $value) {
+        foreach ($values as $key => $value) {
             $values[$key] = ValueFactory::createValue($value);
         }
 
@@ -70,7 +63,11 @@ class Between implements FieldInterface
         $operator = $this->getOperator();
         $valuesToString = $this->getValuesToString();
 
-        $field = FieldFactory::createFieldWithRawValue($column, $operator, $valuesToString);
+        $field = FieldFactory::createFieldWithRawValue(
+            $column,
+            $operator,
+            $valuesToString,
+        );
 
         return $field;
     }
@@ -79,7 +76,7 @@ class Between implements FieldInterface
     {
         $values = [];
 
-        foreach($this->values->getValue() as $v) {
+        foreach ($this->values->getValue() as $v) {
             $values[] = $this->formatValueToString($v);
         }
 
@@ -88,7 +85,7 @@ class Between implements FieldInterface
 
     private function formatValueToString(ValueInterface $value): string
     {
-        if($this->isRawValue($value)) {
+        if ($this->isRawValue($value)) {
             return (string) $value;
         }
 
@@ -102,7 +99,7 @@ class Between implements FieldInterface
 
     public function getOperator(): string
     {
-        if($this->isNotOperator) {
+        if ($this->isNotOperator) {
             return self::SQL_NOT_BETWEEN_OPERATOR;
         }
 

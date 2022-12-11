@@ -6,7 +6,6 @@ namespace QueryBuilder\Sql\Values;
 
 use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Sql\Column;
 use InvalidArgumentException;
 
 class CollectionValue implements ValueInterface
@@ -22,7 +21,7 @@ class CollectionValue implements ValueInterface
     {
         $newValue = [];
 
-        foreach($value as $v) {
+        foreach ($value as $v) {
             $newValue[] = $this->getFormattedValue($v);
         }
 
@@ -31,20 +30,13 @@ class CollectionValue implements ValueInterface
 
     private function getFormattedValue(mixed $value): ValueInterface
     {
-        if(is_array($value)) {
-            throw new InvalidArgumentException('Arrays are not accepted in the value collection');
-        }
-
-        if($this->isColumn($value)) {
-            return ValueFactory::createRawValue($value);
+        if (is_array($value)) {
+            throw new InvalidArgumentException(
+                'Arrays are not accepted in the value collection',
+            );
         }
 
         return ValueFactory::createValue($value);
-    }
-
-    private function isColumn(mixed $value): bool
-    {
-        return $value instanceof Column;
     }
 
     public function __toString(): string
@@ -57,7 +49,7 @@ class CollectionValue implements ValueInterface
     {
         $value = [];
 
-        foreach($this->value as $v) {
+        foreach ($this->value as $v) {
             $value[] = $this->getValueCorrespondingToItsType($v);
         }
 
@@ -65,9 +57,10 @@ class CollectionValue implements ValueInterface
         return "(${valueToSql})";
     }
 
-    private function getValueCorrespondingToItsType(ValueInterface $value): string|ValueInterface
-    {
-        if($this->isRawValue($value)) {
+    private function getValueCorrespondingToItsType(
+        ValueInterface $value,
+    ): string|ValueInterface {
+        if ($this->isRawValue($value)) {
             return $value;
         }
 

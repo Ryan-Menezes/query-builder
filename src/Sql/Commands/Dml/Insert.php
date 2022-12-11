@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql\Commands\Dml;
 
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\{
-    SqlInterface,
-    ValueInterface,
-};
+use QueryBuilder\Interfaces\{SqlInterface, ValueInterface};
 use QueryBuilder\Sql\Values\CollectionValue;
 
 class Insert implements SqlInterface
@@ -31,7 +28,7 @@ class Insert implements SqlInterface
     {
         $values = [];
 
-        foreach($data as $value) {
+        foreach ($data as $value) {
             $values[] = new CollectionValue($value);
         }
 
@@ -40,7 +37,7 @@ class Insert implements SqlInterface
 
     private function formatData(array $data): array
     {
-        if($this->isNotDataAListOfArrays($data)) {
+        if ($this->isNotDataAListOfArrays($data)) {
             return [$data];
         }
 
@@ -49,8 +46,8 @@ class Insert implements SqlInterface
 
     private function isNotDataAListOfArrays(array $data): bool
     {
-        foreach($data as $fields) {
-            if(!is_array($fields)) {
+        foreach ($data as $fields) {
+            if (!is_array($fields)) {
                 return true;
             }
         }
@@ -58,11 +55,11 @@ class Insert implements SqlInterface
         return false;
     }
 
-    private function formatColumnsFromData(array $data): CollectionValue
+    private function formatColumnsFromData(array $data): ValueInterface
     {
         $columns = [];
 
-        foreach($data as $fields) {
+        foreach ($data as $fields) {
             $fieldsColumns = $this->getFieldsColumns($fields);
             $columns = [...$columns, ...$fieldsColumns];
         }
@@ -90,7 +87,7 @@ class Insert implements SqlInterface
 
     public function __toString(): string
     {
-        if($this->isIgnoreStatement) {
+        if ($this->isIgnoreStatement) {
             return "INSERT IGNORE INTO `{$this->getTableName()}` {$this->getColumns()} VALUES {$this->getValuesToSql()}";
         }
 

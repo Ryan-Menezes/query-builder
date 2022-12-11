@@ -4,10 +4,7 @@ namespace Tests\Factories;
 
 use PHPUnit\Framework\TestCase;
 
-use QueryBuilder\Factories\{
-    FieldFactory,
-    ValueFactory,
-};
+use QueryBuilder\Factories\{FieldFactory, ValueFactory};
 use QueryBuilder\Sql\Field;
 
 /**
@@ -28,7 +25,11 @@ class FieldFactoryTest extends TestCase
 
     public function testShouldCreateAnObjectOfTheFieldClassWithRawValue()
     {
-        $field = FieldFactory::createFieldWithRawValue('any-column', '=', 'COUNT(*)');
+        $field = FieldFactory::createFieldWithRawValue(
+            'any-column',
+            '=',
+            'COUNT(*)',
+        );
 
         $column = 'any-column';
         $value = ValueFactory::createRawValue('COUNT(*)');
@@ -39,7 +40,11 @@ class FieldFactoryTest extends TestCase
 
     public function testShouldCreateAnObjectOfTheFieldClassOnlyWithColumns()
     {
-        $field = FieldFactory::createFieldOnlyWithColumns('any-column', '=', 'other-column');
+        $field = FieldFactory::createFieldOnlyWithColumns(
+            'any-column',
+            '=',
+            'other-column',
+        );
 
         $column = 'any-column';
         $value = ValueFactory::createRawValue('other-column');

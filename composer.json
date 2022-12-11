@@ -24,6 +24,9 @@
         "phpunit/phpunit": "^9.5"
     },
     "scripts": {
-        "test": "vendor/bin/phpunit --colors tests"
+        "test": "vendor/bin/phpunit --colors tests",
+        "test:all": "composer style:check & composer test",
+        "style:check": "npm run style:check",
+        "style:fix": "npm run style:fix"
     }
 }

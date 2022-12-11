@@ -5,10 +5,7 @@ namespace Tests\Sql\Commands\Dml;
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Commands\Dml\Insert;
-use QueryBuilder\Sql\Values\{
-    CollectionValue,
-    RawValue,
-};
+use QueryBuilder\Sql\Values\{CollectionValue, RawValue};
 
 /**
  * @requires PHP 8.1
@@ -21,22 +18,28 @@ class InsertTest extends TestCase
             'name' => 'John',
             'age' => 18,
             'isStudent' => true,
-            'height' => 1.80,
+            'height' => 1.8,
             'token' => null,
             'created_at' => new RawValue('NOW()'),
         ]);
 
-        $this->assertEquals('INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW())', $insert);
-        $this->assertEquals([
-            new CollectionValue([
-                'John',
-                18,
-                true,
-                1.80,
-                null,
-                new RawValue('NOW()'),
-            ]),
-        ], $insert->getValues());
+        $this->assertEquals(
+            'INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW())',
+            $insert,
+        );
+        $this->assertEquals(
+            [
+                new CollectionValue([
+                    'John',
+                    18,
+                    true,
+                    1.8,
+                    null,
+                    new RawValue('NOW()'),
+                ]),
+            ],
+            $insert->getValues(),
+        );
     }
 
     public function testShouldAcceptAMultiValuedListAndGenerateACorrectInsertQuery()
@@ -46,7 +49,7 @@ class InsertTest extends TestCase
                 'name' => 'John',
                 'age' => 18,
                 'isStudent' => true,
-                'height' => 1.80,
+                'height' => 1.8,
                 'token' => null,
                 'created_at' => new RawValue('NOW()'),
             ],
@@ -54,31 +57,37 @@ class InsertTest extends TestCase
                 'name' => 'Ana',
                 'age' => 22,
                 'isStudent' => false,
-                'height' => 1.60,
+                'height' => 1.6,
                 'token' => null,
                 'created_at' => new RawValue('NOW()'),
             ],
         ]);
 
-        $this->assertEquals('INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW()), (?, ?, ?, ?, ?, NOW())', $insert);
-        $this->assertEquals([
-            new CollectionValue([
-                'John',
-                18,
-                true,
-                1.80,
-                null,
-                new RawValue('NOW()'),
-            ]),
-            new CollectionValue([
-                'Ana',
-                22,
-                false,
-                1.60,
-                null,
-                new RawValue('NOW()'),
-            ]),
-        ], $insert->getValues());
+        $this->assertEquals(
+            'INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW()), (?, ?, ?, ?, ?, NOW())',
+            $insert,
+        );
+        $this->assertEquals(
+            [
+                new CollectionValue([
+                    'John',
+                    18,
+                    true,
+                    1.8,
+                    null,
+                    new RawValue('NOW()'),
+                ]),
+                new CollectionValue([
+                    'Ana',
+                    22,
+                    false,
+                    1.6,
+                    null,
+                    new RawValue('NOW()'),
+                ]),
+            ],
+            $insert->getValues(),
+        );
     }
 
     public function testMustAcceptInsertsWithTheIgnoreStatement()
@@ -87,9 +96,12 @@ class InsertTest extends TestCase
             'name' => 'John',
             'age' => 18,
             'isStudent' => true,
-            'height' => 1.80,
+            'height' => 1.8,
         ]);
 
-        $this->assertEquals('INSERT IGNORE INTO `any-table` (`name`, `age`, `isStudent`, `height`) VALUES (?, ?, ?, ?)', $insert->ignore());
+        $this->assertEquals(
+            'INSERT IGNORE INTO `any-table` (`name`, `age`, `isStudent`, `height`) VALUES (?, ?, ?, ?)',
+            $insert->ignore(),
+        );
     }
 }

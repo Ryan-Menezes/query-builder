@@ -15,8 +15,10 @@ class FieldTest extends TestCase
     /**
      * @dataProvider shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider
      */
-    public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(mixed $value, string $expected)
-    {
+    public function testShouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValue(
+        mixed $value,
+        string $expected,
+    ) {
         $column = 'any-column';
         $value = ValueFactory::createValue($value);
         $field = new Field($column, '=', $value);

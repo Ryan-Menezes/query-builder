@@ -17,11 +17,12 @@ class SimpleIteratorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->items = [1, 'any-value', [], 12.5, new StdClass];
+        $this->items = [1, 'any-value', [], 12.5, new StdClass()];
 
-        $this->simpleIterator = $this->getMockForAbstractClass(SimpleIterator::class, [
-            $this->items
-        ]);
+        $this->simpleIterator = $this->getMockForAbstractClass(
+            SimpleIterator::class,
+            [$this->items],
+        );
     }
 
     public function testShouldIterateWithAForeachLoop()

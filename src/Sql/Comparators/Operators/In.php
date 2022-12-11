@@ -5,14 +5,8 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql\Comparators\Operators;
 
 use InvalidArgumentException;
-use QueryBuilder\Factories\{
-    FieldFactory,
-    ValueFactory,
-};
-use QueryBuilder\Interfaces\{
-    FieldInterface,
-    ValueInterface,
-};
+use QueryBuilder\Factories\{FieldFactory, ValueFactory};
+use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
 
 class In implements FieldInterface
 {
@@ -25,8 +19,10 @@ class In implements FieldInterface
 
     public function __construct(string $column, array $values)
     {
-        if($this->isNotValidValues($values)) {
-            throw new InvalidArgumentException('The array of values ​​must not be empty');
+        if ($this->isNotValidValues($values)) {
+            throw new InvalidArgumentException(
+                'The array of values ​​must not be empty',
+            );
         }
 
         $this->column = ValueFactory::createRawValue($column);
@@ -63,7 +59,7 @@ class In implements FieldInterface
 
     public function getOperator(): string
     {
-        if($this->isNotOperator) {
+        if ($this->isNotOperator) {
             return self::SQL_NOT_IN_OPERATOR;
         }
 

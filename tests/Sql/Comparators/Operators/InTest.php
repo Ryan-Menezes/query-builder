@@ -17,8 +17,11 @@ class InTest extends TestCase
     /**
      * @dataProvider shouldCreateAInOperatorCorrectlyProvider
      */
-    public function testShouldCreateAInOperatorCorrectly(string $column, array $values, string $expected)
-    {
+    public function testShouldCreateAInOperatorCorrectly(
+        string $column,
+        array $values,
+        string $expected,
+    ) {
         $in = new In($column, $values);
 
         $this->assertEquals($column, $in->getColumn());
@@ -30,17 +33,28 @@ class InTest extends TestCase
     {
         return [
             ['any-column', [5, 10, 20.5], 'any-column IN (?, ?, ?)'],
-            ['any-column', ['2000-01-01', '2001-01-01'], 'any-column IN (?, ?)'],
+            [
+                'any-column',
+                ['2000-01-01', '2001-01-01'],
+                'any-column IN (?, ?)',
+            ],
             ['any-column', [true], 'any-column IN (?)'],
-            ['any-column', [ValueFactory::createRawValue('NOW()')], 'any-column IN (NOW())'],
+            [
+                'any-column',
+                [ValueFactory::createRawValue('NOW()')],
+                'any-column IN (NOW())',
+            ],
         ];
     }
 
     /**
      * @dataProvider shouldCreateANotInOperatorCorrectlyProvider
      */
-    public function testShouldCreateANotInOperatorCorrectly(string $column, array $values, string $expected)
-    {
+    public function testShouldCreateANotInOperatorCorrectly(
+        string $column,
+        array $values,
+        string $expected,
+    ) {
         $in = new In($column, $values);
 
         $this->assertEquals($expected, $in->not());
@@ -50,9 +64,17 @@ class InTest extends TestCase
     {
         return [
             ['any-column', [5, 10, 20.5], 'any-column NOT IN (?, ?, ?)'],
-            ['any-column', ['2000-01-01', '2001-01-01'], 'any-column NOT IN (?, ?)'],
+            [
+                'any-column',
+                ['2000-01-01', '2001-01-01'],
+                'any-column NOT IN (?, ?)',
+            ],
             ['any-column', [true], 'any-column NOT IN (?)'],
-            ['any-column', [ValueFactory::createRawValue('NOW()')], 'any-column NOT IN (NOW())'],
+            [
+                'any-column',
+                [ValueFactory::createRawValue('NOW()')],
+                'any-column NOT IN (NOW())',
+            ],
         ];
     }
     public function testShouldReturnAnErrorIfTheSecondParameterOfTheConstructorIsAnEmptyArray()

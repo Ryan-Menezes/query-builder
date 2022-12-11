@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Comparators;
 
-use QueryBuilder\Interfaces\{
-    FieldInterface,
-    SqlInterface,
-};
+use QueryBuilder\Interfaces\{FieldInterface, SqlInterface};
 
 abstract class LogicalInstructions implements SqlInterface
 {
@@ -25,9 +22,11 @@ abstract class LogicalInstructions implements SqlInterface
         return $this;
     }
 
-    private function addLogicalInstruction(string $conditional, FieldInterface $field): void
-    {
-        if($this->isEmptyLogicalInstructions()) {
+    private function addLogicalInstruction(
+        string $conditional,
+        FieldInterface $field,
+    ): void {
+        if ($this->isEmptyLogicalInstructions()) {
             $this->logicalInstructions[] = $field;
             return;
         }
@@ -38,7 +37,7 @@ abstract class LogicalInstructions implements SqlInterface
 
     public function __toString(): string
     {
-        if($this->isEmptyLogicalInstructions()) {
+        if ($this->isEmptyLogicalInstructions()) {
             return '';
         }
 
