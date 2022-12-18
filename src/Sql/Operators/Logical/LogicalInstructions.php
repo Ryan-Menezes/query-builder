@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace QueryBuilder\Sql\Comparators;
+namespace QueryBuilder\Sql\Operators\Logical;
 
 use QueryBuilder\Interfaces\{FieldInterface, SqlInterface};
 

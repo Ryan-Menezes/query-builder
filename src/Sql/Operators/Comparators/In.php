@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace QueryBuilder\Sql\Comparators\Operators;
+namespace QueryBuilder\Sql\Operators\Comparators;
 
 use InvalidArgumentException;
 use QueryBuilder\Factories\{FieldFactory, ValueFactory};

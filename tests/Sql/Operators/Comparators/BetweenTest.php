@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Sql\Comparators\Operators;
+namespace Tests\Sql\Operators\Comparators;
 
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Sql\Comparators\Operators\Between;
+use QueryBuilder\Sql\Operators\Comparators\Between;
 use QueryBuilder\Sql\Values\CollectionValue;
 use InvalidArgumentException;
 

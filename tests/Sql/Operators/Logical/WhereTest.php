@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Sql\Comparators;
+namespace Tests\Sql\Operators\Logical;
 
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Factories\FieldFactory;
-use QueryBuilder\Sql\Comparators\Where;
+use QueryBuilder\Sql\Operators\Logical\Where;
 
 /**
  * @requires PHP 8.1

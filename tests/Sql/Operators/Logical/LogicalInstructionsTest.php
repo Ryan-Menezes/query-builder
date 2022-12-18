@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Sql\Comparators;
+namespace Tests\Sql\Operators\Logical;
 
 use PHPUnit\Framework\TestCase;
 use QueryBuilder\Factories\FieldFactory;
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Sql\Comparators\LogicalInstructions;
-use QueryBuilder\Sql\Comparators\Operators\{Between, In};
+use QueryBuilder\Sql\Operators\Logical\LogicalInstructions;
+use QueryBuilder\Sql\Operators\Comparators\{Between, In};
 
 class LogicalInstructionsMock extends LogicalInstructions
 {

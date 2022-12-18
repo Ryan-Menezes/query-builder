@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Sql\Comparators\Operators;
+namespace Tests\Sql\Operators\Comparators;
 
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Values\CollectionValue;
-use QueryBuilder\Sql\Comparators\Operators\In;
+use QueryBuilder\Sql\Operators\Comparators\In;
 use InvalidArgumentException;
 
 /**
