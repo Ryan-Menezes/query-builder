@@ -8,10 +8,6 @@ use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Operators\Logical\LogicalInstructions;
 use QueryBuilder\Sql\Operators\Comparators\{Between, In};
 
-class LogicalInstructionsMock extends LogicalInstructions
-{
-}
-
 /**
  * @requires PHP 8.1
  */
@@ -19,7 +15,9 @@ class LogicalInstructionsTest extends TestCase
 {
     public function testShouldCreateLogicalAndComparisonOperators()
     {
-        $logicalInstructions = new LogicalInstructionsMock();
+        $logicalInstructions = $this->simpleIterator = $this->getMockForAbstractClass(
+            LogicalInstructions::class,
+        );
         $logicalInstructions
             ->and(FieldFactory::createField('name', 'LIKE', '%any-name%'))
             ->or(FieldFactory::createField('salary', '>', 800))
@@ -41,14 +39,18 @@ class LogicalInstructionsTest extends TestCase
 
     public function testShouldReturnAnEmptyStringIfThereIsNoLogicalComparison()
     {
-        $logicalInstructions = new LogicalInstructionsMock();
+        $logicalInstructions = $this->simpleIterator = $this->getMockForAbstractClass(
+            LogicalInstructions::class,
+        );
 
         $this->assertEquals('', $logicalInstructions);
     }
 
     public function testShouldSupportBetweenOperator()
     {
-        $logicalInstructions = new LogicalInstructionsMock();
+        $logicalInstructions = $this->simpleIterator = $this->getMockForAbstractClass(
+            LogicalInstructions::class,
+        );
         $logicalInstructions
             ->and(new Between('age', [10, 20]))
             ->or(
@@ -67,7 +69,9 @@ class LogicalInstructionsTest extends TestCase
 
     public function testShouldSupportInOperator()
     {
-        $logicalInstructions = new LogicalInstructionsMock();
+        $logicalInstructions = $this->simpleIterator = $this->getMockForAbstractClass(
+            LogicalInstructions::class,
+        );
         $logicalInstructions
             ->and(new In('age', [5, 10, 20.5]))
             ->or(
