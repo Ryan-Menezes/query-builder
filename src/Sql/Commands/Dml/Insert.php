@@ -22,7 +22,9 @@ class Insert implements SqlInterface
     public function __construct(string $tableName, array $data)
     {
         if (empty($tableName)) {
-            throw new InvalidArgumentTableNameException('The table name must be a string of length greater than zero.');
+            throw new InvalidArgumentTableNameException(
+                'The table name must be a string of length greater than zero.',
+            );
         }
 
         $data = $this->formatData($data);
@@ -35,7 +37,9 @@ class Insert implements SqlInterface
     private function formatValuesFromData(array $data): array
     {
         if (empty($data)) {
-            throw new InvalidArgumentDataException('The array of values ​​must contain at least one value to be inserted.');
+            throw new InvalidArgumentDataException(
+                'The array of values ​​must contain at least one value to be inserted.',
+            );
         }
 
         $values = [];

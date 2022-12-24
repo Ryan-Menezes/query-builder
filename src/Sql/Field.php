@@ -7,6 +7,10 @@ namespace QueryBuilder\Sql;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
 use QueryBuilder\Sql\Values\{CollectionValue, RawValue};
+use QueryBuilder\Exceptions\{
+    InvalidArgumentColumnNameException,
+    InvalidArgumentOperatorException,
+};
 
 class Field implements FieldInterface
 {
@@ -15,11 +19,23 @@ class Field implements FieldInterface
     private ValueInterface $value;
 
     public function __construct(
-        string $column,
+        string $columnName,
         string $operator,
         ValueInterface $value,
     ) {
-        $this->column = ValueFactory::createRawValue($column);
+        if (empty($columnName)) {
+            throw new InvalidArgumentColumnNameException(
+                'The column name must be a string of length greater than zero.',
+            );
+        }
+
+        if (empty($operator)) {
+            throw new InvalidArgumentOperatorException(
+                'The operator must be a string of length greater than zero.',
+            );
+        }
+
+        $this->column = ValueFactory::createRawValue($columnName);
         $this->operator = $operator;
         $this->value = $value;
     }

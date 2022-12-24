@@ -6,7 +6,7 @@ namespace QueryBuilder\Exceptions;
 
 use InvalidArgumentException;
 
-class InvalidArgumentColumnException extends InvalidArgumentException
+class InvalidArgumentOperatorException extends InvalidArgumentException
 {
     public function __construct(string $message = '')
     {

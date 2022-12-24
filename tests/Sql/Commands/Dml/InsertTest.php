@@ -112,7 +112,9 @@ class InsertTest extends TestCase
     public function testShouldThrowAnErrorIfAnInvalidTableNameIsPassed()
     {
         $this->expectException(InvalidArgumentTableNameException::class);
-        $this->expectExceptionMessage('The table name must be a string of length greater than zero.');
+        $this->expectExceptionMessage(
+            'The table name must be a string of length greater than zero.',
+        );
 
         new Insert('', [
             'name' => 'John',
@@ -122,7 +124,9 @@ class InsertTest extends TestCase
     public function testShouldThrowAnErrorIfAnInvalidDataIsPassed()
     {
         $this->expectException(InvalidArgumentDataException::class);
-        $this->expectExceptionMessage('The array of values ​​must contain at least one value to be inserted.');
+        $this->expectExceptionMessage(
+            'The array of values ​​must contain at least one value to be inserted.',
+        );
 
         new Insert('any-table', []);
     }
