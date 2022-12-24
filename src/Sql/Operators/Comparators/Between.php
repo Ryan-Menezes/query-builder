@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Operators\Comparators;
 
-use InvalidArgumentException;
 use QueryBuilder\Factories\{FieldFactory, ValueFactory};
 use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
 use QueryBuilder\Sql\Values\{CollectionValue, RawValue};
+use QueryBuilder\Exceptions\InvalidArgumentColumnNameException;
+use InvalidArgumentException;
 
 class Between implements FieldInterface
 {
@@ -18,9 +19,15 @@ class Between implements FieldInterface
     private ValueInterface $values;
     private bool $isNotOperator = false;
 
-    public function __construct(string $column, array $values)
+    public function __construct(string $columnName, array $values)
     {
-        $this->column = ValueFactory::createRawValue($column);
+        if (empty($columnName)) {
+            throw new InvalidArgumentColumnNameException(
+                'The column name must be a string of length greater than zero.',
+            );
+        }
+
+        $this->column = ValueFactory::createRawValue($columnName);
         $this->values = $this->formatValues($values);
     }
 

@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Operators\Comparators\Between;
 use QueryBuilder\Sql\Values\CollectionValue;
+use QueryBuilder\Exceptions\InvalidArgumentColumnNameException;
 use InvalidArgumentException;
 
 /**
@@ -18,13 +19,13 @@ class BetweenTest extends TestCase
      * @dataProvider shouldCreateABetweenOperatorCorrectlyProvider
      */
     public function testShouldCreateABetweenOperatorCorrectly(
-        string $column,
+        string $columnName,
         array $values,
         string $expected,
     ) {
-        $between = new Between($column, $values);
+        $between = new Between($columnName, $values);
 
-        $this->assertEquals($column, $between->getColumn());
+        $this->assertEquals($columnName, $between->getColumn());
         $this->assertEquals(new CollectionValue($values), $between->getValue());
         $this->assertEquals($expected, $between);
     }
@@ -95,9 +96,9 @@ class BetweenTest extends TestCase
     }
 
     /**
-     * @dataProvider shouldReturnAnErrorIfWrongParametersArePassedToTheConstructorProvider
+     * @dataProvider shouldThrowAnErrorIfWrongParametersArePassedToTheConstructorProvider
      */
-    public function testShouldReturnAnErrorIfWrongParametersArePassedToTheConstructor(
+    public function testShouldThrowAnErrorIfWrongParametersArePassedToTheConstructor(
         array $values,
     ) {
         $this->expectException(InvalidArgumentException::class);
@@ -105,8 +106,19 @@ class BetweenTest extends TestCase
         new Between('any-column', $values);
     }
 
-    public function shouldReturnAnErrorIfWrongParametersArePassedToTheConstructorProvider()
+    public function shouldThrowAnErrorIfWrongParametersArePassedToTheConstructorProvider()
     {
         return [[[]], [[5]]];
+    }
+
+    public function testShouldThrowAnErrorIfAnInvalidColumnNameIsPassed()
+    {
+        $this->expectException(InvalidArgumentColumnNameException::class);
+        $this->expectExceptionMessage(
+            'The column name must be a string of length greater than zero.',
+        );
+
+        $invalidColumnName = '';
+        new Between($invalidColumnName, [5, 10]);
     }
 }
