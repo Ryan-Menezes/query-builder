@@ -6,6 +6,10 @@ use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Commands\Dml\Insert;
 use QueryBuilder\Sql\Values\{CollectionValue, RawValue};
+use QueryBuilder\Exceptions\{
+    InvalidArgumentTableNameException,
+    InvalidArgumentDataException,
+};
 
 /**
  * @requires PHP 8.1
@@ -90,7 +94,7 @@ class InsertTest extends TestCase
         );
     }
 
-    public function testMustAcceptInsertsWithTheIgnoreStatement()
+    public function testShouldAcceptInsertsWithTheIgnoreStatement()
     {
         $insert = new Insert('any-table', [
             'name' => 'John',
@@ -103,5 +107,23 @@ class InsertTest extends TestCase
             'INSERT IGNORE INTO `any-table` (`name`, `age`, `isStudent`, `height`) VALUES (?, ?, ?, ?)',
             $insert->ignore(),
         );
+    }
+
+    public function testShouldThrowAnErrorIfAnInvalidTableNameIsPassed()
+    {
+        $this->expectException(InvalidArgumentTableNameException::class);
+        $this->expectExceptionMessage('The table name must be a string of length greater than zero.');
+
+        new Insert('', [
+            'name' => 'John',
+        ]);
+    }
+
+    public function testShouldThrowAnErrorIfAnInvalidDataIsPassed()
+    {
+        $this->expectException(InvalidArgumentDataException::class);
+        $this->expectExceptionMessage('The array of values ​​must contain at least one value to be inserted.');
+
+        new Insert('any-table', []);
     }
 }
