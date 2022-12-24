@@ -7,6 +7,7 @@ namespace QueryBuilder\Sql\Operators\Comparators;
 use InvalidArgumentException;
 use QueryBuilder\Factories\{FieldFactory, ValueFactory};
 use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
+use QueryBuilder\Exceptions\InvalidArgumentColumnNameException;
 
 class In implements FieldInterface
 {
@@ -17,19 +18,30 @@ class In implements FieldInterface
     private array $values;
     private bool $isNotOperator = false;
 
-    public function __construct(string $column, array $values)
+    public function __construct(string $columnName, array $values)
     {
-        if ($this->isNotValidValues($values)) {
+        if ($this->isInvalidColumnName($columnName)) {
+            throw new InvalidArgumentColumnNameException(
+                'The column name must be a string of length greater than zero.',
+            );
+        }
+
+        if ($this->isInvalidValues($values)) {
             throw new InvalidArgumentException(
                 'The array of values ​​must not be empty',
             );
         }
 
-        $this->column = ValueFactory::createRawValue($column);
+        $this->column = ValueFactory::createRawValue($columnName);
         $this->values = $values;
     }
 
-    private function isNotValidValues(array $values): bool
+    private function isInvalidColumnName(string $columnName): bool
+    {
+        return empty($columnName);
+    }
+
+    private function isInvalidValues(array $values): bool
     {
         return empty($values);
     }

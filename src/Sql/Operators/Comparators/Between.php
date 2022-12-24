@@ -21,7 +21,7 @@ class Between implements FieldInterface
 
     public function __construct(string $columnName, array $values)
     {
-        if (empty($columnName)) {
+        if ($this->isInvalidColumnName($columnName)) {
             throw new InvalidArgumentColumnNameException(
                 'The column name must be a string of length greater than zero.',
             );
@@ -29,6 +29,11 @@ class Between implements FieldInterface
 
         $this->column = ValueFactory::createRawValue($columnName);
         $this->values = $this->formatValues($values);
+    }
+
+    private function isInvalidColumnName(string $columnName): bool
+    {
+        return empty($columnName);
     }
 
     private function formatValues(array $values): ValueInterface

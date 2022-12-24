@@ -5,8 +5,8 @@ namespace Tests\Sql\Operators\Comparators;
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Sql\Operators\Comparators\Between;
 use QueryBuilder\Sql\Values\CollectionValue;
+use QueryBuilder\Sql\Operators\Comparators\Between;
 use QueryBuilder\Exceptions\InvalidArgumentColumnNameException;
 use InvalidArgumentException;
 

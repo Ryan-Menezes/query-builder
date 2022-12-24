@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Values\CollectionValue;
 use QueryBuilder\Sql\Operators\Comparators\In;
+use QueryBuilder\Exceptions\InvalidArgumentColumnNameException;
 use InvalidArgumentException;
 
 /**
@@ -18,13 +19,13 @@ class InTest extends TestCase
      * @dataProvider shouldCreateAInOperatorCorrectlyProvider
      */
     public function testShouldCreateAInOperatorCorrectly(
-        string $column,
+        string $columnName,
         array $values,
         string $expected,
     ) {
-        $in = new In($column, $values);
+        $in = new In($columnName, $values);
 
-        $this->assertEquals($column, $in->getColumn());
+        $this->assertEquals($columnName, $in->getColumn());
         $this->assertEquals(new CollectionValue($values), $in->getValue());
         $this->assertEquals($expected, $in);
     }
@@ -51,11 +52,11 @@ class InTest extends TestCase
      * @dataProvider shouldCreateANotInOperatorCorrectlyProvider
      */
     public function testShouldCreateANotInOperatorCorrectly(
-        string $column,
+        string $columnName,
         array $values,
         string $expected,
     ) {
-        $in = new In($column, $values);
+        $in = new In($columnName, $values);
 
         $this->assertEquals($expected, $in->not());
     }
@@ -77,10 +78,21 @@ class InTest extends TestCase
             ],
         ];
     }
-    public function testShouldReturnAnErrorIfTheSecondParameterOfTheConstructorIsAnEmptyArray()
+    public function testShouldThrowAnErrorIfTheSecondParameterOfTheConstructorIsAnEmptyArray()
     {
         $this->expectException(InvalidArgumentException::class);
 
         new In('any-column', []);
+    }
+
+    public function testShouldThrowAnErrorIfAnInvalidColumnNameIsPassed()
+    {
+        $this->expectException(InvalidArgumentColumnNameException::class);
+        $this->expectExceptionMessage(
+            'The column name must be a string of length greater than zero.',
+        );
+
+        $invalidColumnName = '';
+        new In($invalidColumnName, [5, 10]);
     }
 }

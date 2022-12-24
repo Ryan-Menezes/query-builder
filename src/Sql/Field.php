@@ -23,13 +23,13 @@ class Field implements FieldInterface
         string $operator,
         ValueInterface $value,
     ) {
-        if (empty($columnName)) {
+        if ($this->isInvalidColumnName($columnName)) {
             throw new InvalidArgumentColumnNameException(
                 'The column name must be a string of length greater than zero.',
             );
         }
 
-        if (empty($operator)) {
+        if ($this->isInvalidOperator($operator)) {
             throw new InvalidArgumentOperatorException(
                 'The operator must be a string of length greater than zero.',
             );
@@ -38,6 +38,16 @@ class Field implements FieldInterface
         $this->column = ValueFactory::createRawValue($columnName);
         $this->operator = $operator;
         $this->value = $value;
+    }
+
+    private function isInvalidColumnName(string $columnName): bool
+    {
+        return empty($columnName);
+    }
+
+    private function isInvalidOperator(string $operator): bool
+    {
+        return empty($operator);
     }
 
     public function __toString(): string
