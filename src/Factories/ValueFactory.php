@@ -45,9 +45,7 @@ abstract class ValueFactory
         }
 
         throw new InvalidArgumentValueException(
-            'The value must be of type string, number, boolean or array, if you want to pass a value if formatting uses the ' .
-                RawValue::class .
-                ' class',
+            'The value must be of type string, number, boolean or array, if you want to pass a value if formatting uses the \QueryBuilder\Sql\Values\RawValue class',
         );
     }
 

@@ -7,8 +7,10 @@ use PHPUnit\Framework\TestCase;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Values\CollectionValue;
 use QueryBuilder\Sql\Operators\Comparators\In;
-use QueryBuilder\Exceptions\InvalidArgumentColumnNameException;
-use InvalidArgumentException;
+use QueryBuilder\Exceptions\{
+    InvalidArgumentColumnNameException,
+    InvalidArgumentValuesException,
+};
 
 /**
  * @requires PHP 8.1
@@ -78,12 +80,6 @@ class InTest extends TestCase
             ],
         ];
     }
-    public function testShouldThrowAnErrorIfTheSecondParameterOfTheConstructorIsAnEmptyArray()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        new In('any-column', []);
-    }
 
     public function testShouldThrowAnErrorIfAnInvalidColumnNameIsPassed()
     {
@@ -94,5 +90,15 @@ class InTest extends TestCase
 
         $invalidColumnName = '';
         new In($invalidColumnName, [5, 10]);
+    }
+
+    public function testShouldThrowAnErrorIfTheSecondParameterOfTheConstructorIsAnEmptyArray()
+    {
+        $this->expectException(InvalidArgumentValuesException::class);
+        $this->expectExceptionMessage(
+            'The array of values ​​must not be empty.',
+        );
+
+        new In('any-column', []);
     }
 }

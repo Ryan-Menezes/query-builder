@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Operators\Comparators;
 
-use InvalidArgumentException;
 use QueryBuilder\Factories\{FieldFactory, ValueFactory};
 use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
-use QueryBuilder\Exceptions\InvalidArgumentColumnNameException;
+use QueryBuilder\Exceptions\{
+    InvalidArgumentColumnNameException,
+    InvalidArgumentValuesException,
+};
 
 class In implements FieldInterface
 {
@@ -27,8 +29,8 @@ class In implements FieldInterface
         }
 
         if ($this->isInvalidValues($values)) {
-            throw new InvalidArgumentException(
-                'The array of values ​​must not be empty',
+            throw new InvalidArgumentValuesException(
+                'The array of values ​​must not be empty.',
             );
         }
 

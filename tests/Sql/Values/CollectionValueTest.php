@@ -12,7 +12,7 @@ use QueryBuilder\Sql\Values\{
     RawValue,
     StringValue,
 };
-use InvalidArgumentException;
+use QueryBuilder\Exceptions\InvalidArgumentValueException;
 
 /**
  * @requires PHP 8.1
@@ -49,7 +49,10 @@ class CollectionValueTest extends TestCase
 
     public function shouldThrowAnErrorIfAnArrayIsPassedTheCollectionOfValues()
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentValueException::class);
+        $this->expectExceptionMessage(
+            'Arrays are not accepted in the value collection.',
+        );
 
         new CollectionValue([[]]);
     }

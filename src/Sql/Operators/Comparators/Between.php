@@ -7,8 +7,10 @@ namespace QueryBuilder\Sql\Operators\Comparators;
 use QueryBuilder\Factories\{FieldFactory, ValueFactory};
 use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
 use QueryBuilder\Sql\Values\{CollectionValue, RawValue};
-use QueryBuilder\Exceptions\InvalidArgumentColumnNameException;
-use InvalidArgumentException;
+use QueryBuilder\Exceptions\{
+    InvalidArgumentColumnNameException,
+    InvalidArgumentValuesException,
+};
 
 class Between implements FieldInterface
 {
@@ -39,8 +41,8 @@ class Between implements FieldInterface
     private function formatValues(array $values): ValueInterface
     {
         if ($this->isNotValidValues($values)) {
-            throw new InvalidArgumentException(
-                'The array of values ​​must contain only two values',
+            throw new InvalidArgumentValuesException(
+                'The array of values ​​must contain only two values.',
             );
         }
 

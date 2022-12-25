@@ -6,7 +6,7 @@ namespace QueryBuilder\Sql\Values;
 
 use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Factories\ValueFactory;
-use InvalidArgumentException;
+use QueryBuilder\Exceptions\InvalidArgumentValueException;
 
 class CollectionValue implements ValueInterface
 {
@@ -31,8 +31,8 @@ class CollectionValue implements ValueInterface
     private function getFormattedValue(mixed $value): ValueInterface
     {
         if (is_array($value)) {
-            throw new InvalidArgumentException(
-                'Arrays are not accepted in the value collection',
+            throw new InvalidArgumentValueException(
+                'Arrays are not accepted in the value collection.',
             );
         }
 

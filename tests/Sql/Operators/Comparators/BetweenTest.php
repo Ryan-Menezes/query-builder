@@ -7,8 +7,10 @@ use PHPUnit\Framework\TestCase;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Values\CollectionValue;
 use QueryBuilder\Sql\Operators\Comparators\Between;
-use QueryBuilder\Exceptions\InvalidArgumentColumnNameException;
-use InvalidArgumentException;
+use QueryBuilder\Exceptions\{
+    InvalidArgumentColumnNameException,
+    InvalidArgumentValuesException,
+};
 
 /**
  * @requires PHP 8.1
@@ -95,22 +97,6 @@ class BetweenTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider shouldThrowAnErrorIfWrongParametersArePassedToTheConstructorProvider
-     */
-    public function testShouldThrowAnErrorIfWrongParametersArePassedToTheConstructor(
-        array $values,
-    ) {
-        $this->expectException(InvalidArgumentException::class);
-
-        new Between('any-column', $values);
-    }
-
-    public function shouldThrowAnErrorIfWrongParametersArePassedToTheConstructorProvider()
-    {
-        return [[[]], [[5]]];
-    }
-
     public function testShouldThrowAnErrorIfAnInvalidColumnNameIsPassed()
     {
         $this->expectException(InvalidArgumentColumnNameException::class);
@@ -120,5 +106,24 @@ class BetweenTest extends TestCase
 
         $invalidColumnName = '';
         new Between($invalidColumnName, [5, 10]);
+    }
+
+    /**
+     * @dataProvider shouldThrowAnErrorIfAnInvalidValuesIsPassedProvider
+     */
+    public function testShouldThrowAnErrorIfAnInvalidValuesIsPassed(
+        array $values,
+    ) {
+        $this->expectException(InvalidArgumentValuesException::class);
+        $this->expectExceptionMessage(
+            'The array of values ​​must contain only two values.',
+        );
+
+        new Between('any-column', $values);
+    }
+
+    public function shouldThrowAnErrorIfAnInvalidValuesIsPassedProvider()
+    {
+        return [[[]], [[5]]];
     }
 }
