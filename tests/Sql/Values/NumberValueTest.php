@@ -10,7 +10,7 @@ use QueryBuilder\Sql\Values\NumberValue;
  */
 class NumberValueTest extends TestCase
 {
-    public function testShouldReturnAFormattedIntegerForASqlStatement()
+    public function testShouldReturnAFormattedPositiveIntegerForASqlStatement()
     {
         $numberValue = new NumberValue(5);
 
@@ -19,11 +19,29 @@ class NumberValueTest extends TestCase
         $this->assertEquals($expected, $numberValue);
     }
 
-    public function testShouldReturnAFormattedFloatForASqlStatement()
+    public function testShouldReturnAFormattedPositiveFloatForASqlStatement()
     {
         $numberValue = new NumberValue(5.5);
 
         $expected = '5.5';
+
+        $this->assertEquals($expected, $numberValue);
+    }
+
+    public function testShouldReturnAFormattedNegativeIntegerForASqlStatement()
+    {
+        $numberValue = new NumberValue(-5);
+
+        $expected = '-5';
+
+        $this->assertEquals($expected, $numberValue);
+    }
+
+    public function testShouldReturnAFormattedNegativeFloatForASqlStatement()
+    {
+        $numberValue = new NumberValue(-5.5);
+
+        $expected = '-5.5';
 
         $this->assertEquals($expected, $numberValue);
     }
