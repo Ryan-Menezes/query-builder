@@ -116,7 +116,8 @@ class InsertTest extends TestCase
             'The table name must be a string of length greater than zero.',
         );
 
-        new Insert('', [
+        $invalidTableName = '';
+        new Insert($invalidTableName, [
             'name' => 'John',
         ]);
     }

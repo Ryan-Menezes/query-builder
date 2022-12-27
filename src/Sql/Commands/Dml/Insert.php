@@ -17,7 +17,7 @@ class Insert implements SqlInterface
     private string $tableName;
     private ValueInterface $columns;
     private array $values;
-    private $isIgnoreStatement = false;
+    private bool $isIgnoreStatement = false;
 
     public function __construct(string $tableName, array $data)
     {
