@@ -10,32 +10,32 @@ use QueryBuilder\Sql\Field;
 abstract class FieldFactory
 {
     public static function createField(
-        string $column,
+        string $columnName,
         string $operator,
         mixed $value,
     ): FieldInterface {
         $value = ValueFactory::createValue($value);
 
-        return new Field($column, $operator, $value);
+        return new Field($columnName, $operator, $value);
     }
 
     public static function createFieldWithRawValue(
-        string $column,
+        string $columnName,
         string $operator,
         string $value,
     ): FieldInterface {
         $value = ValueFactory::createRawValue($value);
 
-        return new Field($column, $operator, $value);
+        return new Field($columnName, $operator, $value);
     }
 
     public static function createFieldOnlyWithColumns(
-        string $column,
+        string $columnName,
         string $operator,
         string $value,
     ): FieldInterface {
         $value = ValueFactory::createRawValue($value);
 
-        return new Field($column, $operator, $value);
+        return new Field($columnName, $operator, $value);
     }
 }
