@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Commands\Dql\Select;
 use QueryBuilder\Sql\Values\{RawValue};
+use QueryBuilder\Interfaces\LogicalInstructionsInterface;
 use QueryBuilder\Exceptions\{
     InvalidArgumentTableNameException,
     InvalidArgumentColumnNameException,
@@ -57,6 +58,24 @@ class SelectTest extends TestCase
         $this->assertEquals(
             [new RawValue('name'), new RawValue('birth')],
             $select->getColumns(),
+        );
+    }
+
+    public function testShouldGenerateASelectCommandWithTheLogicalInstructions()
+    {
+        $select = new Select('any-table', ['name', 'birth']);
+        $logicalInstructions = $this->getMockForAbstractClass(
+            LogicalInstructionsInterface::class,
+        );
+        $logicalInstructions
+            ->method('__toString')
+            ->willReturn('WHERE name = ? AND birth = ?');
+
+        $actual = $select->setLogicalInstructions($logicalInstructions);
+
+        $this->assertEquals(
+            'SELECT name, birth FROM `any-table` WHERE name = ? AND birth = ?',
+            $actual,
         );
     }
 

@@ -15,7 +15,7 @@ class LogicalInstructionsTest extends TestCase
 {
     public function testShouldCreateLogicalAndComparisonOperators()
     {
-        $logicalInstructions = $this->simpleIterator = $this->getMockForAbstractClass(
+        $logicalInstructions = $this->getMockForAbstractClass(
             LogicalInstructions::class,
         );
         $logicalInstructions
@@ -39,7 +39,7 @@ class LogicalInstructionsTest extends TestCase
 
     public function testShouldReturnAnEmptyStringIfThereIsNoLogicalComparison()
     {
-        $logicalInstructions = $this->simpleIterator = $this->getMockForAbstractClass(
+        $logicalInstructions = $this->getMockForAbstractClass(
             LogicalInstructions::class,
         );
 
@@ -48,7 +48,7 @@ class LogicalInstructionsTest extends TestCase
 
     public function testShouldSupportBetweenOperator()
     {
-        $logicalInstructions = $this->simpleIterator = $this->getMockForAbstractClass(
+        $logicalInstructions = $this->getMockForAbstractClass(
             LogicalInstructions::class,
         );
         $logicalInstructions
@@ -69,7 +69,7 @@ class LogicalInstructionsTest extends TestCase
 
     public function testShouldSupportInOperator()
     {
-        $logicalInstructions = $this->simpleIterator = $this->getMockForAbstractClass(
+        $logicalInstructions = $this->getMockForAbstractClass(
             LogicalInstructions::class,
         );
         $logicalInstructions
