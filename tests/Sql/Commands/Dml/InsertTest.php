@@ -16,9 +16,14 @@ use QueryBuilder\Exceptions\{
  */
 class InsertTest extends TestCase
 {
+    private function makeSut(string $tableName, array $data): Insert
+    {
+        return new Insert($tableName, $data);
+    }
+
     public function testShouldCreateASqlInsertCommandCorrectly()
     {
-        $insert = new Insert('any-table', [
+        $sut = $this->makeSut('any-table', [
             'name' => 'John',
             'age' => 18,
             'isStudent' => true,
@@ -29,7 +34,7 @@ class InsertTest extends TestCase
 
         $this->assertEquals(
             'INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW())',
-            $insert,
+            $sut,
         );
         $this->assertEquals(
             [
@@ -42,13 +47,13 @@ class InsertTest extends TestCase
                     new RawValue('NOW()'),
                 ]),
             ],
-            $insert->getValues(),
+            $sut->getValues(),
         );
     }
 
     public function testShouldAcceptAMultiValuedListAndGenerateACorrectInsertQuery()
     {
-        $insert = new Insert('any-table', [
+        $sut = $this->makeSut('any-table', [
             [
                 'name' => 'John',
                 'age' => 18,
@@ -69,7 +74,7 @@ class InsertTest extends TestCase
 
         $this->assertEquals(
             'INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW()), (?, ?, ?, ?, ?, NOW())',
-            $insert,
+            $sut,
         );
         $this->assertEquals(
             [
@@ -90,13 +95,13 @@ class InsertTest extends TestCase
                     new RawValue('NOW()'),
                 ]),
             ],
-            $insert->getValues(),
+            $sut->getValues(),
         );
     }
 
     public function testShouldAcceptInsertsWithTheIgnoreStatement()
     {
-        $insert = new Insert('any-table', [
+        $sut = $this->makeSut('any-table', [
             'name' => 'John',
             'age' => 18,
             'isStudent' => true,
@@ -105,7 +110,7 @@ class InsertTest extends TestCase
 
         $this->assertEquals(
             'INSERT IGNORE INTO `any-table` (`name`, `age`, `isStudent`, `height`) VALUES (?, ?, ?, ?)',
-            $insert->ignore(),
+            $sut->ignore(),
         );
     }
 
@@ -117,7 +122,7 @@ class InsertTest extends TestCase
         );
 
         $invalidTableName = '';
-        new Insert($invalidTableName, [
+        $this->makeSut($invalidTableName, [
             'name' => 'John',
         ]);
     }
@@ -129,6 +134,6 @@ class InsertTest extends TestCase
             'The array of values ​​must contain at least one value to be inserted.',
         );
 
-        new Insert('any-table', []);
+        $this->makeSut('any-table', []);
     }
 }

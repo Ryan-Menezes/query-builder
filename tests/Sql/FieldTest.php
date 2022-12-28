@@ -4,19 +4,35 @@ namespace Tests\Sql;
 
 use PHPUnit\Framework\TestCase;
 
+use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Field;
 use QueryBuilder\Exceptions\{
     InvalidArgumentColumnNameException,
     InvalidArgumentOperatorException,
 };
-use QueryBuilder\Sql\Values\RawValue;
 
 /**
  * @requires PHP 8.1
  */
 class FieldTest extends TestCase
 {
+    private function makeSut(
+        string $columnName,
+        string $operator,
+        mixed $value,
+    ): array {
+        $value = ValueFactory::createValue($value);
+        $field = new Field($columnName, $operator, $value);
+
+        return [$field, $value];
+    }
+
+    private function createRawValue(string $columnName): ValueInterface
+    {
+        return ValueFactory::createRawValue($columnName);
+    }
+
     /**
      * @dataProvider shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider
      */
@@ -25,17 +41,20 @@ class FieldTest extends TestCase
         string $expected,
     ) {
         $columnName = 'any-column';
-        $value = ValueFactory::createValue($value);
-        $field = new Field($columnName, '=', $value);
+        $operator = '=';
+        [$sut, $value] = $this->makeSut($columnName, $operator, $value);
+        $expectedColumn = $this->createRawValue($columnName);
 
-        $this->assertEquals($columnName, $field->getColumn());
-        $this->assertEquals('=', $field->getOperator());
-        $this->assertEquals($value, $field->getValue());
-        $this->assertEquals($expected, $field);
+        $this->assertEquals($expectedColumn, $sut->getColumn());
+        $this->assertEquals($operator, $sut->getOperator());
+        $this->assertEquals($value, $sut->getValue());
+        $this->assertEquals($expected, $sut);
     }
 
     public function shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider()
     {
+        $count = $this->createRawValue('COUNT(*)');
+
         return [
             ['any-string', 'any-column = ?'],
             [5, 'any-column = ?'],
@@ -43,7 +62,7 @@ class FieldTest extends TestCase
             [true, 'any-column = ?'],
             [null, 'any-column = ?'],
             [[1, 2, 3], 'any-column = (?, ?, ?)'],
-            [new RawValue('COUNT(*)'), 'any-column = COUNT(*)'],
+            [$count, 'any-column = COUNT(*)'],
         ];
     }
 
@@ -55,9 +74,10 @@ class FieldTest extends TestCase
         );
 
         $invalidColumnName = '';
-        $value = ValueFactory::createRawValue('any-value');
+        $operator = '=';
+        $value = 'any-value';
 
-        new Field($invalidColumnName, '=', $value);
+        $this->makeSut($invalidColumnName, $operator, $value);
     }
 
     public function testShouldThrowAnErrorIfAnInvalidOperatorIsPassed()
@@ -69,8 +89,8 @@ class FieldTest extends TestCase
 
         $columnName = 'any-column';
         $invalidOperator = '';
-        $value = ValueFactory::createRawValue('any-value');
+        $value = 'any-value';
 
-        new Field($columnName, $invalidOperator, $value);
+        $this->makeSut($columnName, $invalidOperator, $value);
     }
 }

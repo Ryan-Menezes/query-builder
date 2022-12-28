@@ -3,6 +3,7 @@
 namespace Tests\Sql\Values;
 
 use PHPUnit\Framework\TestCase;
+use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Sql\Values\BooleanValue;
 
 /**
@@ -10,21 +11,26 @@ use QueryBuilder\Sql\Values\BooleanValue;
  */
 class BooleanValueTest extends TestCase
 {
+    private function makeSut(bool $value): ValueInterface
+    {
+        return new BooleanValue($value);
+    }
+
     public function testShouldReturnATrueAndValidBooleanValueForAnSqlStatement()
     {
-        $booleanValue = new BooleanValue(true);
+        $sut = $this->makeSut(true);
 
         $expected = '1';
 
-        $this->assertEquals($expected, $booleanValue);
+        $this->assertEquals($expected, $sut);
     }
 
     public function testShouldReturnAFalseAndValidBooleanValueForAnSqlStatement()
     {
-        $booleanValue = new BooleanValue(false);
+        $sut = $this->makeSut(false);
 
         $expected = '0';
 
-        $this->assertEquals($expected, $booleanValue);
+        $this->assertEquals($expected, $sut);
     }
 }

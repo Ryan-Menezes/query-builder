@@ -28,9 +28,9 @@ class ValueFactoryTest extends TestCase
         mixed $value,
         ValueInterface $expected,
     ) {
-        $actual = ValueFactory::createValue($value);
+        $sut = ValueFactory::createValue($value);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $sut);
     }
 
     public function shouldReturnTheClassCorrespondingToThatTypeProvider()
@@ -48,10 +48,10 @@ class ValueFactoryTest extends TestCase
 
     public function testShouldCreateARawValueClass()
     {
-        $actual = ValueFactory::createRawValue('NOW()');
+        $sut = ValueFactory::createRawValue('NOW()');
         $expected = new RawValue('NOW()');
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $sut);
     }
 
     /**

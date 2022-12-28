@@ -4,6 +4,7 @@ namespace Tests\Sql\Operators\Comparators;
 
 use PHPUnit\Framework\TestCase;
 
+use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Values\CollectionValue;
 use QueryBuilder\Sql\Operators\Comparators\Between;
@@ -17,6 +18,16 @@ use QueryBuilder\Exceptions\{
  */
 class BetweenTest extends TestCase
 {
+    private function makeSut(string $columnName, array $values): Between
+    {
+        return new Between($columnName, $values);
+    }
+
+    private function createRawValue(string $columnName): ValueInterface
+    {
+        return ValueFactory::createRawValue($columnName);
+    }
+
     /**
      * @dataProvider shouldCreateABetweenOperatorCorrectlyProvider
      */
@@ -25,18 +36,18 @@ class BetweenTest extends TestCase
         array $values,
         string $expected,
     ) {
-        $between = new Between($columnName, $values);
+        $sut = $this->makeSut($columnName, $values);
 
-        $this->assertEquals($columnName, $between->getColumn());
-        $this->assertEquals(new CollectionValue($values), $between->getValue());
-        $this->assertEquals($expected, $between);
+        $this->assertEquals($columnName, $sut->getColumn());
+        $this->assertEquals(new CollectionValue($values), $sut->getValue());
+        $this->assertEquals($expected, $sut);
     }
 
     public function shouldCreateABetweenOperatorCorrectlyProvider()
     {
-        $columnA = ValueFactory::createRawValue('a');
-        $columnB = ValueFactory::createRawValue('b');
-        $now = ValueFactory::createRawValue('NOW()');
+        $columnA = $this->createRawValue('a');
+        $columnB = $this->createRawValue('b');
+        $now = $this->createRawValue('NOW()');
 
         return [
             ['any-column', [5, 10], 'any-column BETWEEN ? AND ?'],
@@ -60,20 +71,20 @@ class BetweenTest extends TestCase
      * @dataProvider shouldCreateANotBetweenOperatorCorrectlyProvider
      */
     public function testShouldCreateANotBetweenOperatorCorrectly(
-        string $column,
+        string $columnName,
         array $values,
         string $expected,
     ) {
-        $between = new Between($column, $values);
+        $sut = $this->makeSut($columnName, $values);
 
-        $this->assertEquals($expected, $between->not());
+        $this->assertEquals($expected, $sut->not());
     }
 
     public function shouldCreateANotBetweenOperatorCorrectlyProvider()
     {
-        $columnA = ValueFactory::createRawValue('a');
-        $columnB = ValueFactory::createRawValue('b');
-        $now = ValueFactory::createRawValue('NOW()');
+        $columnA = $this->createRawValue('a');
+        $columnB = $this->createRawValue('b');
+        $now = $this->createRawValue('NOW()');
 
         return [
             ['any-column', [5, 10], 'any-column NOT BETWEEN ? AND ?'],
@@ -105,7 +116,7 @@ class BetweenTest extends TestCase
         );
 
         $invalidColumnName = '';
-        new Between($invalidColumnName, [5, 10]);
+        $this->makeSut($invalidColumnName, [5, 10]);
     }
 
     /**
@@ -119,7 +130,7 @@ class BetweenTest extends TestCase
             'The array of values ​​must contain only two values.',
         );
 
-        new Between('any-column', $values);
+        $this->makeSut('any-column', $values);
     }
 
     public function shouldThrowAnErrorIfAnInvalidValuesIsPassedProvider()

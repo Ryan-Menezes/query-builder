@@ -4,6 +4,7 @@ namespace Tests\Sql\Operators\Comparators;
 
 use PHPUnit\Framework\TestCase;
 
+use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Values\CollectionValue;
 use QueryBuilder\Sql\Operators\Comparators\In;
@@ -17,6 +18,16 @@ use QueryBuilder\Exceptions\{
  */
 class InTest extends TestCase
 {
+    private function makeSut(string $columnName, array $values): In
+    {
+        return new In($columnName, $values);
+    }
+
+    private function createRawValue(string $columnName): ValueInterface
+    {
+        return ValueFactory::createRawValue($columnName);
+    }
+
     /**
      * @dataProvider shouldCreateAInOperatorCorrectlyProvider
      */
@@ -25,15 +36,17 @@ class InTest extends TestCase
         array $values,
         string $expected,
     ) {
-        $in = new In($columnName, $values);
+        $sut = $this->makeSut($columnName, $values);
 
-        $this->assertEquals($columnName, $in->getColumn());
-        $this->assertEquals(new CollectionValue($values), $in->getValue());
-        $this->assertEquals($expected, $in);
+        $this->assertEquals($columnName, $sut->getColumn());
+        $this->assertEquals(new CollectionValue($values), $sut->getValue());
+        $this->assertEquals($expected, $sut);
     }
 
     public function shouldCreateAInOperatorCorrectlyProvider()
     {
+        $now = $this->createRawValue('NOW()');
+
         return [
             ['any-column', [5, 10, 20.5], 'any-column IN (?, ?, ?)'],
             [
@@ -42,11 +55,7 @@ class InTest extends TestCase
                 'any-column IN (?, ?)',
             ],
             ['any-column', [true], 'any-column IN (?)'],
-            [
-                'any-column',
-                [ValueFactory::createRawValue('NOW()')],
-                'any-column IN (NOW())',
-            ],
+            ['any-column', [$now], 'any-column IN (NOW())'],
         ];
     }
 
@@ -58,13 +67,15 @@ class InTest extends TestCase
         array $values,
         string $expected,
     ) {
-        $in = new In($columnName, $values);
+        $sut = $this->makeSut($columnName, $values);
 
-        $this->assertEquals($expected, $in->not());
+        $this->assertEquals($expected, $sut->not());
     }
 
     public function shouldCreateANotInOperatorCorrectlyProvider()
     {
+        $now = $this->createRawValue('NOW()');
+
         return [
             ['any-column', [5, 10, 20.5], 'any-column NOT IN (?, ?, ?)'],
             [
@@ -73,11 +84,7 @@ class InTest extends TestCase
                 'any-column NOT IN (?, ?)',
             ],
             ['any-column', [true], 'any-column NOT IN (?)'],
-            [
-                'any-column',
-                [ValueFactory::createRawValue('NOW()')],
-                'any-column NOT IN (NOW())',
-            ],
+            ['any-column', [$now], 'any-column NOT IN (NOW())'],
         ];
     }
 
@@ -89,7 +96,7 @@ class InTest extends TestCase
         );
 
         $invalidColumnName = '';
-        new In($invalidColumnName, [5, 10]);
+        $this->makeSut($invalidColumnName, [5, 10]);
     }
 
     public function testShouldThrowAnErrorIfTheSecondParameterOfTheConstructorIsAnEmptyArray()
@@ -99,6 +106,6 @@ class InTest extends TestCase
             'The array of values ​​must not be empty.',
         );
 
-        new In('any-column', []);
+        $this->makeSut('any-column', []);
     }
 }

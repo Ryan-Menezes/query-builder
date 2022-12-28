@@ -4,6 +4,7 @@ namespace Tests\Sql\Values;
 
 use PHPUnit\Framework\TestCase;
 
+use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Sql\Values\{
     BooleanValue,
     CollectionValue,
@@ -19,9 +20,14 @@ use QueryBuilder\Exceptions\InvalidArgumentValueException;
  */
 class CollectionValueTest extends TestCase
 {
+    private function makeSut(array $value): ValueInterface
+    {
+        return new CollectionValue($value);
+    }
+
     public function testShouldReturnAFormattedStringForASqlStatement()
     {
-        $collectionValue = new CollectionValue([
+        $sut = $this->makeSut([
             true,
             null,
             5,
@@ -30,10 +36,7 @@ class CollectionValueTest extends TestCase
             new RawValue('any-column'),
         ]);
 
-        $this->assertEquals(
-            '(?, ?, ?, NOW(), ?, any-column)',
-            $collectionValue,
-        );
+        $this->assertEquals('(?, ?, ?, NOW(), ?, any-column)', $sut);
         $this->assertEquals(
             [
                 new BooleanValue(true),
@@ -43,7 +46,7 @@ class CollectionValueTest extends TestCase
                 new StringValue('any-string'),
                 new RawValue('any-column'),
             ],
-            $collectionValue->getValue(),
+            $sut->getValue(),
         );
     }
 
@@ -54,6 +57,6 @@ class CollectionValueTest extends TestCase
             'Arrays are not accepted in the value collection.',
         );
 
-        new CollectionValue([[]]);
+        $this->makeSut([[]]);
     }
 }

@@ -17,17 +17,33 @@ use QueryBuilder\Exceptions\{
  */
 class SelectTest extends TestCase
 {
+    private function makeSut(string $tableName, array $columns = ['*']): Select
+    {
+        return new Select($tableName, $columns);
+    }
+
+    private function makeLogicalInstructionsMock(
+        string $toStringReturn,
+    ): LogicalInstructionsInterface {
+        $logicalInstructions = $this->getMockForAbstractClass(
+            LogicalInstructionsInterface::class,
+        );
+        $logicalInstructions->method('__toString')->willReturn($toStringReturn);
+
+        return $logicalInstructions;
+    }
+
     public function testShouldCreateASqlSelectCommandCorrectly()
     {
-        $select = new Select('any-table');
+        $sut = $this->makeSut('any-table');
 
-        $this->assertEquals('SELECT * FROM `any-table`', $select);
-        $this->assertEquals(['*'], $select->getColumns());
+        $this->assertEquals('SELECT * FROM `any-table`', $sut);
+        $this->assertEquals(['*'], $sut->getColumns());
     }
 
     public function testShouldCreateASqlSelectCommandWithColumnsCorrectly()
     {
-        $select = new Select('any-table', [
+        $sut = $this->makeSut('any-table', [
             'name',
             'birth',
             'email AS user_email',
@@ -35,7 +51,7 @@ class SelectTest extends TestCase
 
         $this->assertEquals(
             'SELECT name, birth, email AS user_email FROM `any-table`',
-            $select,
+            $sut,
         );
         $this->assertEquals(
             [
@@ -43,39 +59,36 @@ class SelectTest extends TestCase
                 new RawValue('birth'),
                 new RawValue('email AS user_email'),
             ],
-            $select->getColumns(),
+            $sut->getColumns(),
         );
     }
 
     public function testShouldCreateASqlSelectCommandWithDistinctStatementCorrectly()
     {
-        $select = new Select('any-table', ['name', 'birth']);
+        $sut = $this->makeSut('any-table', ['name', 'birth']);
 
         $this->assertEquals(
             'SELECT DISTINCT name, birth FROM `any-table`',
-            $select->distinct(),
+            $sut->distinct(),
         );
         $this->assertEquals(
             [new RawValue('name'), new RawValue('birth')],
-            $select->getColumns(),
+            $sut->getColumns(),
         );
     }
 
     public function testShouldGenerateASelectCommandWithTheLogicalInstructions()
     {
-        $select = new Select('any-table', ['name', 'birth']);
-        $logicalInstructions = $this->getMockForAbstractClass(
-            LogicalInstructionsInterface::class,
+        $sut = $this->makeSut('any-table', ['name', 'birth']);
+        $logicalInstructions = $this->makeLogicalInstructionsMock(
+            'WHERE name = ? AND birth = ?',
         );
-        $logicalInstructions
-            ->method('__toString')
-            ->willReturn('WHERE name = ? AND birth = ?');
 
-        $actual = $select->setLogicalInstructions($logicalInstructions);
+        $sut->setLogicalInstructions($logicalInstructions);
 
         $this->assertEquals(
             'SELECT name, birth FROM `any-table` WHERE name = ? AND birth = ?',
-            $actual,
+            $sut,
         );
     }
 
@@ -87,7 +100,7 @@ class SelectTest extends TestCase
         );
 
         $invalidTableName = '';
-        new Select($invalidTableName);
+        $this->makeSut($invalidTableName);
     }
 
     /**
@@ -101,7 +114,7 @@ class SelectTest extends TestCase
             'The column name must be a string of length greater than zero.',
         );
 
-        new Select('any-table', [$column]);
+        $this->makeSut('any-table', [$column]);
     }
 
     public function shouldThrowAnErrorIfAnInvalidColumnsIsPassedProvider()

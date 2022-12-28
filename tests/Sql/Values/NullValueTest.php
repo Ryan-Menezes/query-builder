@@ -2,6 +2,7 @@
 
 namespace Tests\Sql\Values;
 
+use QueryBuilder\Interfaces\ValueInterface;
 use PHPUnit\Framework\TestCase;
 use QueryBuilder\Sql\Values\NullValue;
 
@@ -10,12 +11,17 @@ use QueryBuilder\Sql\Values\NullValue;
  */
 class NullValueTest extends TestCase
 {
+    private function makeSut(): ValueInterface
+    {
+        return new NullValue();
+    }
+
     public function testShouldReturnAnUnformattedRawValueToASqlStatement()
     {
-        $rawValue = new NullValue();
+        $sut = $this->makeSut();
 
         $expected = 'NULL';
 
-        $this->assertEquals($expected, $rawValue);
+        $this->assertEquals($expected, $sut);
     }
 }

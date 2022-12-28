@@ -14,41 +14,47 @@ class FieldFactoryTest extends TestCase
 {
     public function testShouldCreateAnObjectOfTheFieldClass()
     {
-        $field = FieldFactory::createField('any-column', '=', 'any-value');
+        $columnName = 'any-column';
+        $operator = '=';
+        $value = 'any-value';
+        $sut = FieldFactory::createField($columnName, $operator, $value);
 
-        $column = 'any-column';
-        $value = ValueFactory::createValue('any-value');
-        $expect = new Field($column, '=', $value);
+        $valueExpected = ValueFactory::createValue($value);
+        $expect = new Field($columnName, $operator, $valueExpected);
 
-        $this->assertEquals($expect, $field);
+        $this->assertEquals($expect, $sut);
     }
 
     public function testShouldCreateAnObjectOfTheFieldClassWithRawValue()
     {
-        $field = FieldFactory::createFieldWithRawValue(
-            'any-column',
-            '=',
-            'COUNT(*)',
+        $columnName = 'any-column';
+        $operator = '=';
+        $value = 'COUNT(*)';
+        $sut = FieldFactory::createFieldWithRawValue(
+            $columnName,
+            $operator,
+            $value,
         );
 
-        $column = 'any-column';
-        $value = ValueFactory::createRawValue('COUNT(*)');
-        $expect = new Field($column, '=', $value);
+        $valueExpected = ValueFactory::createRawValue($value);
+        $expect = new Field($columnName, $operator, $valueExpected);
 
-        $this->assertEquals($expect, $field);
+        $this->assertEquals($expect, $sut);
     }
 
     public function testShouldCreateAnObjectOfTheFieldClassOnlyWithColumns()
     {
+        $columnName = 'any-column';
+        $operator = '=';
+        $value = 'other-column';
         $field = FieldFactory::createFieldOnlyWithColumns(
-            'any-column',
-            '=',
-            'other-column',
+            $columnName,
+            $operator,
+            $value,
         );
 
-        $column = 'any-column';
-        $value = ValueFactory::createRawValue('other-column');
-        $expect = new Field($column, '=', $value);
+        $valueExpected = ValueFactory::createRawValue($value);
+        $expect = new Field($columnName, $operator, $valueExpected);
 
         $this->assertEquals($expect, $field);
     }
