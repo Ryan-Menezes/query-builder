@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Operators\Logical;
 
-use QueryBuilder\Interfaces\SqlInterface;
+use QueryBuilder\Interfaces\LogicalInstructionsInterface;
 
-class Having extends LogicalInstructions implements SqlInterface
+class Having extends LogicalInstructions implements LogicalInstructionsInterface
 {
     public function __toString(): string
     {

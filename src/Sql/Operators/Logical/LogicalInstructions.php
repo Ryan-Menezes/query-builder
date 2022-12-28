@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Operators\Logical;
 
-use QueryBuilder\Interfaces\{FieldInterface, SqlInterface};
+use QueryBuilder\Interfaces\{FieldInterface, LogicalInstructionsInterface};
 
-abstract class LogicalInstructions implements SqlInterface
+abstract class LogicalInstructions implements LogicalInstructionsInterface
 {
     private array $logicalInstructions = [];
 
