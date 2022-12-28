@@ -3,29 +3,65 @@
 namespace Tests\Sql\Operators\Logical;
 
 use PHPUnit\Framework\TestCase;
-
-use QueryBuilder\Factories\FieldFactory;
 use QueryBuilder\Sql\Operators\Logical\Having;
+use QueryBuilder\Interfaces\{LogicalInstructionsInterface, FieldInterface};
 
 /**
  * @requires PHP 8.1
  */
 class HavingTest extends TestCase
 {
-    public function testShouldCreateHAVINGStatementsWithLogicalAndComparisonOperators()
-    {
-        $where = new Having();
-        $where
-            ->and(FieldFactory::createField('name', 'LIKE', '%any-name%'))
-            ->or(FieldFactory::createField('salary', '>', 800));
+    private LogicalInstructionsInterface $logicalInstructions;
 
-        $this->assertEquals('HAVING name LIKE ? OR salary > ?', $where);
+    public function setUp(): void
+    {
+        $this->logicalInstructions = new Having();
+    }
+
+    private function createFieldMock(string $toStringReturn): FieldInterface
+    {
+        $fieldMock = $this->createMock(FieldInterface::class);
+        $fieldMock->method('__toString')->willReturn($toStringReturn);
+
+        return $fieldMock;
+    }
+
+    public function testShouldNotAddALogicalStatementAtTheBeginningIfTheFirstMethodToBeCalledIsMethodAnd()
+    {
+        $fieldMock = $this->createFieldMock('name = ?');
+
+        $this->logicalInstructions->and($fieldMock);
+
+        $this->assertEquals('HAVING name = ?', $this->logicalInstructions);
+    }
+
+    public function testShouldNotAddALogicalStatementAtTheBeginningIfTheFirstMethodToBeCalledIsMethodOr()
+    {
+        $fieldMock = $this->createFieldMock('name = ?');
+
+        $this->logicalInstructions->or($fieldMock);
+
+        $this->assertEquals('HAVING name = ?', $this->logicalInstructions);
+    }
+
+    public function testShouldStackStatementsNextToEachOther()
+    {
+        $fieldMock1 = $this->createFieldMock('name = ?');
+        $fieldMock2 = $this->createFieldMock('age = ?');
+        $fieldMock3 = $this->createFieldMock('birth = ?');
+
+        $this->logicalInstructions->or($fieldMock1);
+        $this->logicalInstructions->and($fieldMock2);
+        $this->logicalInstructions->or($fieldMock3);
+
+        $this->assertEquals(
+            'HAVING name = ? AND age = ? OR birth = ?',
+            $this->logicalInstructions,
+        );
     }
 
     public function testShouldReturnAnEmptyStringIfThereIsNoLogicalComparison()
     {
-        $where = new Having();
-
-        $this->assertEquals('', $where);
+        $this->assertEquals('', $this->logicalInstructions);
     }
 }
