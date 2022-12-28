@@ -10,6 +10,7 @@ use QueryBuilder\Exceptions\{
     InvalidArgumentColumnNameException,
     InvalidArgumentOperatorException,
 };
+use QueryBuilder\Sql\Values\RawValue;
 
 /**
  * @requires PHP 8.1
@@ -42,19 +43,8 @@ class FieldTest extends TestCase
             [true, 'any-column = ?'],
             [null, 'any-column = ?'],
             [[1, 2, 3], 'any-column = (?, ?, ?)'],
+            [new RawValue('COUNT(*)'), 'any-column = COUNT(*)'],
         ];
-    }
-
-    public function testShouldAcceptARawValue()
-    {
-        $columnName = 'any-column';
-        $value = ValueFactory::createRawValue('COUNT(*)');
-        $field = new Field($columnName, '=', $value);
-
-        $this->assertEquals($columnName, $field->getColumn());
-        $this->assertEquals('=', $field->getOperator());
-        $this->assertEquals($value, $field->getValue());
-        $this->assertEquals('any-column = COUNT(*)', $field);
     }
 
     public function testShouldThrowAnErrorIfAnInvalidColumnNameIsPassed()
@@ -65,7 +55,8 @@ class FieldTest extends TestCase
         );
 
         $invalidColumnName = '';
-        $value = ValueFactory::createRawValue('COUNT(*)');
+        $value = ValueFactory::createRawValue('any-value');
+
         new Field($invalidColumnName, '=', $value);
     }
 
@@ -78,7 +69,8 @@ class FieldTest extends TestCase
 
         $columnName = 'any-column';
         $invalidOperator = '';
-        $value = ValueFactory::createRawValue('COUNT(*)');
+        $value = ValueFactory::createRawValue('any-value');
+
         new Field($columnName, $invalidOperator, $value);
     }
 }
