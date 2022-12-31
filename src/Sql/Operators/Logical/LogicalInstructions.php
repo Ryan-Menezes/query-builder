@@ -14,6 +14,9 @@ use QueryBuilder\Interfaces\{
 abstract class LogicalInstructions extends Sql implements
     LogicalInstructionsInterface
 {
+    private const SQL_AND_OPERATOR = 'AND';
+    private const SQL_OR_OPERATOR = 'OR';
+
     protected SqlInterface $sql;
     private array $logicalInstructions;
 
@@ -25,13 +28,13 @@ abstract class LogicalInstructions extends Sql implements
 
     public function and(FieldInterface $field): self
     {
-        $this->addLogicalInstruction('AND', $field);
+        $this->addLogicalInstruction(self::SQL_AND_OPERATOR, $field);
         return $this;
     }
 
     public function or(FieldInterface $field): self
     {
-        $this->addLogicalInstruction('OR', $field);
+        $this->addLogicalInstruction(self::SQL_OR_OPERATOR, $field);
         return $this;
     }
 
