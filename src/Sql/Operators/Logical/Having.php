@@ -8,13 +8,13 @@ use QueryBuilder\Interfaces\LogicalInstructionsInterface;
 
 class Having extends LogicalInstructions implements LogicalInstructionsInterface
 {
-    public function __toString(): string
+    public function toSql(): string
     {
         if ($this->isEmptyLogicalInstructions()) {
             return '';
         }
 
-        $sqlFields = parent::__toString();
+        $sqlFields = parent::toSql();
         return "HAVING {$sqlFields}";
     }
 }

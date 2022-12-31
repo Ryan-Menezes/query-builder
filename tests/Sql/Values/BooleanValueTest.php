@@ -22,7 +22,7 @@ class BooleanValueTest extends TestCase
 
         $expected = '1';
 
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 
     public function testShouldReturnAFalseAndValidBooleanValueForAnSqlStatement()
@@ -31,6 +31,6 @@ class BooleanValueTest extends TestCase
 
         $expected = '0';
 
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 }

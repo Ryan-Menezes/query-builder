@@ -40,7 +40,7 @@ class InTest extends TestCase
 
         $this->assertEquals($columnName, $sut->getColumn());
         $this->assertEquals(new CollectionValue($values), $sut->getValue());
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 
     public function shouldCreateAInOperatorCorrectlyProvider()
@@ -69,7 +69,7 @@ class InTest extends TestCase
     ) {
         $sut = $this->makeSut($columnName, $values);
 
-        $this->assertEquals($expected, $sut->not());
+        $this->assertEquals($expected, $sut->not()->toSql());
     }
 
     public function shouldCreateANotInOperatorCorrectlyProvider()

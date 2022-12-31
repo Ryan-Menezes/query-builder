@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Values;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Interfaces\ValueInterface;
 
-class BooleanValue implements ValueInterface
+class BooleanValue extends Sql implements ValueInterface
 {
     private bool $value;
 
@@ -15,7 +16,7 @@ class BooleanValue implements ValueInterface
         $this->value = $value;
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
         return $this->getValue() ? '1' : '0';
     }

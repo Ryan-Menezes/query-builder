@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Operators\Comparators;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Factories\{FieldFactory, ValueFactory};
 use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
 use QueryBuilder\Sql\Values\{CollectionValue, RawValue};
@@ -12,7 +13,7 @@ use QueryBuilder\Exceptions\{
     InvalidArgumentValuesException,
 };
 
-class Between implements FieldInterface
+class Between extends Sql implements FieldInterface
 {
     private const SQL_BETWEEN_OPERATOR = 'BETWEEN';
     private const SQL_NOT_BETWEEN_OPERATOR = 'NOT BETWEEN';
@@ -64,10 +65,9 @@ class Between implements FieldInterface
         return $this;
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
-        $field = $this->getField(self::SQL_BETWEEN_OPERATOR);
-
+        $field = $this->getField();
         return "${field}";
     }
 

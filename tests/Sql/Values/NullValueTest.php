@@ -22,6 +22,6 @@ class NullValueTest extends TestCase
 
         $expected = 'NULL';
 
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 }

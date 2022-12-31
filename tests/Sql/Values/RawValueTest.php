@@ -23,6 +23,6 @@ class RawValueTest extends TestCase
 
         $expected = 'any-value';
 
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 }

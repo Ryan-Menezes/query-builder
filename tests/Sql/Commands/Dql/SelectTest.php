@@ -28,6 +28,7 @@ class SelectTest extends TestCase
         $logicalInstructions = $this->getMockForAbstractClass(
             LogicalInstructionsInterface::class,
         );
+        $logicalInstructions->method('toSql')->willReturn($toStringReturn);
         $logicalInstructions->method('__toString')->willReturn($toStringReturn);
 
         return $logicalInstructions;
@@ -37,7 +38,7 @@ class SelectTest extends TestCase
     {
         $sut = $this->makeSut('any-table');
 
-        $this->assertEquals('SELECT * FROM `any-table`', $sut);
+        $this->assertEquals('SELECT * FROM `any-table`', $sut->toSql());
         $this->assertEquals(['*'], $sut->getColumns());
     }
 
@@ -51,7 +52,7 @@ class SelectTest extends TestCase
 
         $this->assertEquals(
             'SELECT name, birth, email AS user_email FROM `any-table`',
-            $sut,
+            $sut->toSql(),
         );
         $this->assertEquals(
             [
@@ -69,7 +70,7 @@ class SelectTest extends TestCase
 
         $this->assertEquals(
             'SELECT DISTINCT name, birth FROM `any-table`',
-            $sut->distinct(),
+            $sut->distinct()->toSql(),
         );
         $this->assertEquals(
             [new RawValue('name'), new RawValue('birth')],
@@ -88,7 +89,7 @@ class SelectTest extends TestCase
 
         $this->assertEquals(
             'SELECT name, birth FROM `any-table` WHERE name = ? AND birth = ?',
-            $sut,
+            $sut->toSql(),
         );
     }
 

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Values;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Interfaces\ValueInterface;
 
-class NullValue implements ValueInterface
+class NullValue extends Sql implements ValueInterface
 {
-    public function __toString(): string
+    public function toSql(): string
     {
         return 'NULL';
     }

@@ -21,6 +21,7 @@ class HavingTest extends TestCase
     private function createFieldMock(string $toStringReturn): FieldInterface
     {
         $fieldMock = $this->createMock(FieldInterface::class);
+        $fieldMock->method('toSql')->willReturn($toStringReturn);
         $fieldMock->method('__toString')->willReturn($toStringReturn);
 
         return $fieldMock;
@@ -32,7 +33,10 @@ class HavingTest extends TestCase
 
         $this->logicalInstructions->and($fieldMock);
 
-        $this->assertEquals('HAVING name = ?', $this->logicalInstructions);
+        $this->assertEquals(
+            'HAVING name = ?',
+            $this->logicalInstructions->toSql(),
+        );
     }
 
     public function testShouldNotAddALogicalStatementAtTheBeginningIfTheFirstMethodToBeCalledIsMethodOr()
@@ -41,7 +45,10 @@ class HavingTest extends TestCase
 
         $this->logicalInstructions->or($fieldMock);
 
-        $this->assertEquals('HAVING name = ?', $this->logicalInstructions);
+        $this->assertEquals(
+            'HAVING name = ?',
+            $this->logicalInstructions->toSql(),
+        );
     }
 
     public function testShouldStackStatementsNextToEachOther()
@@ -56,12 +63,12 @@ class HavingTest extends TestCase
 
         $this->assertEquals(
             'HAVING name = ? AND age = ? OR birth = ?',
-            $this->logicalInstructions,
+            $this->logicalInstructions->toSql(),
         );
     }
 
     public function testShouldReturnAnEmptyStringIfThereIsNoLogicalComparison()
     {
-        $this->assertEquals('', $this->logicalInstructions);
+        $this->assertEquals('', $this->logicalInstructions->toSql());
     }
 }

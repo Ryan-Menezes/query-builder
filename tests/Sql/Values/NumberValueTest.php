@@ -22,7 +22,7 @@ class NumberValueTest extends TestCase
 
         $expected = '5';
 
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 
     public function testShouldReturnAFormattedPositiveFloatForASqlStatement()
@@ -31,7 +31,7 @@ class NumberValueTest extends TestCase
 
         $expected = '5.5';
 
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 
     public function testShouldReturnAFormattedNegativeIntegerForASqlStatement()
@@ -40,7 +40,7 @@ class NumberValueTest extends TestCase
 
         $expected = '-5';
 
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 
     public function testShouldReturnAFormattedNegativeFloatForASqlStatement()
@@ -49,6 +49,6 @@ class NumberValueTest extends TestCase
 
         $expected = '-5.5';
 
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 }

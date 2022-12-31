@@ -34,7 +34,7 @@ class InsertTest extends TestCase
 
         $this->assertEquals(
             'INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW())',
-            $sut,
+            $sut->toSql(),
         );
         $this->assertEquals(
             [
@@ -74,7 +74,7 @@ class InsertTest extends TestCase
 
         $this->assertEquals(
             'INSERT INTO `any-table` (`name`, `age`, `isStudent`, `height`, `token`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW()), (?, ?, ?, ?, ?, NOW())',
-            $sut,
+            $sut->toSql(),
         );
         $this->assertEquals(
             [
@@ -110,7 +110,7 @@ class InsertTest extends TestCase
 
         $this->assertEquals(
             'INSERT IGNORE INTO `any-table` (`name`, `age`, `isStudent`, `height`) VALUES (?, ?, ?, ?)',
-            $sut->ignore(),
+            $sut->ignore()->toSql(),
         );
     }
 

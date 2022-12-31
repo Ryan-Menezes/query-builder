@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Operators\Comparators;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Factories\{FieldFactory, ValueFactory};
 use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
 use QueryBuilder\Exceptions\{
@@ -11,7 +12,7 @@ use QueryBuilder\Exceptions\{
     InvalidArgumentValuesException,
 };
 
-class In implements FieldInterface
+class In extends Sql implements FieldInterface
 {
     private const SQL_IN_OPERATOR = 'IN';
     private const SQL_NOT_IN_OPERATOR = 'NOT IN';
@@ -54,10 +55,9 @@ class In implements FieldInterface
         return $this;
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
         $field = $this->getField();
-
         return "${field}";
     }
 

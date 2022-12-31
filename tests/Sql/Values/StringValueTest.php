@@ -23,6 +23,6 @@ class StringValueTest extends TestCase
 
         $expected = '\'any-string\'';
 
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 }

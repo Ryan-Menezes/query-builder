@@ -48,7 +48,7 @@ class FieldTest extends TestCase
         $this->assertEquals($expectedColumn, $sut->getColumn());
         $this->assertEquals($operator, $sut->getOperator());
         $this->assertEquals($value, $sut->getValue());
-        $this->assertEquals($expected, $sut);
+        $this->assertEquals($expected, $sut->toSql());
     }
 
     public function shouldReturnAFormattedStringAndItsRespectiveAssignmentOrComparisonValueProvider()

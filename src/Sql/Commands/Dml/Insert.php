@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Commands\Dml;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\{SqlInterface, ValueInterface};
 use QueryBuilder\Sql\Values\CollectionValue;
@@ -12,7 +13,7 @@ use QueryBuilder\Exceptions\{
     InvalidArgumentDataException,
 };
 
-class Insert implements SqlInterface
+class Insert extends Sql implements SqlInterface
 {
     private string $tableName;
     private ValueInterface $columns;
@@ -101,7 +102,7 @@ class Insert implements SqlInterface
         return ValueFactory::createRawValue("`${column}`");
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
         if ($this->isIgnoreStatement) {
             return "INSERT IGNORE INTO `{$this->getTableName()}` {$this->getColumns()} VALUES {$this->getValuesToSql()}";

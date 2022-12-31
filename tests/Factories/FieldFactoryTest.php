@@ -47,7 +47,7 @@ class FieldFactoryTest extends TestCase
         $columnName = 'any-column';
         $operator = '=';
         $value = 'other-column';
-        $field = FieldFactory::createFieldOnlyWithColumns(
+        $sut = FieldFactory::createFieldOnlyWithColumns(
             $columnName,
             $operator,
             $value,
@@ -56,6 +56,6 @@ class FieldFactoryTest extends TestCase
         $valueExpected = ValueFactory::createRawValue($value);
         $expect = new Field($columnName, $operator, $valueExpected);
 
-        $this->assertEquals($expect, $field);
+        $this->assertEquals($expect, $sut);
     }
 }

@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Values;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Interfaces\ValueInterface;
 use Stringable;
 
-class RawValue implements ValueInterface
+class RawValue extends Sql implements ValueInterface
 {
     private string $value;
 
@@ -16,7 +17,7 @@ class RawValue implements ValueInterface
         $this->value = (string) $value;
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
         return $this->getValue();
     }

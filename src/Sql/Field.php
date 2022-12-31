@@ -12,7 +12,7 @@ use QueryBuilder\Exceptions\{
     InvalidArgumentOperatorException,
 };
 
-class Field implements FieldInterface
+class Field extends Sql implements FieldInterface
 {
     private ValueInterface $column;
     private string $operator;
@@ -50,7 +50,7 @@ class Field implements FieldInterface
         return empty($operator);
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
         return "{$this->getColumn()} {$this->getOperator()} {$this->getFormattedValue()}";
     }

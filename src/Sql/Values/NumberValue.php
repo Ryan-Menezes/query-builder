@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Values;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Interfaces\ValueInterface;
 
-class NumberValue implements ValueInterface
+class NumberValue extends Sql implements ValueInterface
 {
     private int|float $value;
 
@@ -15,7 +16,7 @@ class NumberValue implements ValueInterface
         $this->value = $value;
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
         return (string) $this->getValue();
     }

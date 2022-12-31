@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Values;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Interfaces\ValueInterface;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Exceptions\InvalidArgumentValueException;
 
-class CollectionValue implements ValueInterface
+class CollectionValue extends Sql implements ValueInterface
 {
     private array $value;
 
@@ -39,7 +40,7 @@ class CollectionValue implements ValueInterface
         return ValueFactory::createValue($value);
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
         $valueToSql = $this->formatValueToSql();
         return $valueToSql;

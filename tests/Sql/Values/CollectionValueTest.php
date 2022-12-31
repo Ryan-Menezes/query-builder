@@ -36,7 +36,7 @@ class CollectionValueTest extends TestCase
             new RawValue('any-column'),
         ]);
 
-        $this->assertEquals('(?, ?, ?, NOW(), ?, any-column)', $sut);
+        $this->assertEquals('(?, ?, ?, NOW(), ?, any-column)', $sut->toSql());
         $this->assertEquals(
             [
                 new BooleanValue(true),

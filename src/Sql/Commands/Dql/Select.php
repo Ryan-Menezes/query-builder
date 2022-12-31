@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Commands\Dql;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Interfaces\{LogicalInstructionsInterface, SqlInterface};
 use QueryBuilder\Exceptions\{
@@ -11,7 +12,7 @@ use QueryBuilder\Exceptions\{
     InvalidArgumentColumnNameException,
 };
 
-class Select implements SqlInterface
+class Select extends Sql implements SqlInterface
 {
     private string $tableName;
     private array $columns;
@@ -50,7 +51,7 @@ class Select implements SqlInterface
         return !is_string($column) || empty($column);
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
         $toString = 'SELECT';
 

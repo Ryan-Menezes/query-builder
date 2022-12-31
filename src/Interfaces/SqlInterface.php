@@ -8,4 +8,5 @@ use Stringable;
 
 interface SqlInterface extends Stringable
 {
+    public function toSql(): string;
 }

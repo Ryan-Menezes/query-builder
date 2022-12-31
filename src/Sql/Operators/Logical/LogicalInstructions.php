@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Operators\Logical;
 
+use QueryBuilder\Sql\Sql;
 use QueryBuilder\Interfaces\{FieldInterface, LogicalInstructionsInterface};
 
-abstract class LogicalInstructions implements LogicalInstructionsInterface
+abstract class LogicalInstructions extends Sql implements
+    LogicalInstructionsInterface
 {
     private array $logicalInstructions = [];
 
@@ -35,7 +37,7 @@ abstract class LogicalInstructions implements LogicalInstructionsInterface
         $this->logicalInstructions[] = $field;
     }
 
-    public function __toString(): string
+    public function toSql(): string
     {
         if ($this->isEmptyLogicalInstructions()) {
             return '';
