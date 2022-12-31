@@ -8,5 +8,4 @@ interface LogicalInstructionsInterface extends SqlInterface
 {
     public function and(FieldInterface $field): self;
     public function or(FieldInterface $field): self;
-    public function getLogicalInstructions(): array;
 }

@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Commands\Dql\Select;
 use QueryBuilder\Sql\Values\{RawValue};
-use QueryBuilder\Interfaces\LogicalInstructionsInterface;
 use QueryBuilder\Exceptions\{
     InvalidArgumentTableNameException,
     InvalidArgumentColumnNameException,
@@ -20,18 +19,6 @@ class SelectTest extends TestCase
     private function makeSut(string $tableName, array $columns = ['*']): Select
     {
         return new Select($tableName, $columns);
-    }
-
-    private function makeLogicalInstructionsMock(
-        string $toStringReturn,
-    ): LogicalInstructionsInterface {
-        $logicalInstructions = $this->getMockForAbstractClass(
-            LogicalInstructionsInterface::class,
-        );
-        $logicalInstructions->method('toSql')->willReturn($toStringReturn);
-        $logicalInstructions->method('__toString')->willReturn($toStringReturn);
-
-        return $logicalInstructions;
     }
 
     public function testShouldCreateASqlSelectCommandCorrectly()
@@ -75,21 +62,6 @@ class SelectTest extends TestCase
         $this->assertEquals(
             [new RawValue('name'), new RawValue('birth')],
             $sut->getColumns(),
-        );
-    }
-
-    public function testShouldGenerateASelectCommandWithTheLogicalInstructions()
-    {
-        $sut = $this->makeSut('any-table', ['name', 'birth']);
-        $logicalInstructions = $this->makeLogicalInstructionsMock(
-            'WHERE name = ? AND birth = ?',
-        );
-
-        $sut->setLogicalInstructions($logicalInstructions);
-
-        $this->assertEquals(
-            'SELECT name, birth FROM `any-table` WHERE name = ? AND birth = ?',
-            $sut->toSql(),
         );
     }
 

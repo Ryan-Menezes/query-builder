@@ -4,18 +4,24 @@ namespace Tests\Sql\Operators\Logical;
 
 use PHPUnit\Framework\TestCase;
 use QueryBuilder\Sql\Operators\Logical\Where;
-use QueryBuilder\Interfaces\{LogicalInstructionsInterface, FieldInterface};
+use QueryBuilder\Interfaces\{
+    LogicalInstructionsInterface,
+    FieldInterface,
+    SqlInterface,
+};
 
 /**
  * @requires PHP 8.1
  */
 class WhereTest extends TestCase
 {
-    private LogicalInstructionsInterface $logicalInstructions;
-
-    public function setUp(): void
+    public function makeSut(): LogicalInstructionsInterface
     {
-        $this->logicalInstructions = new Where();
+        $sqlMock = $this->createMock(SqlInterface::class);
+        $sqlMock->method('__toString')->willReturn('SELECT * FROM `any-table`');
+        $sqlMock->method('toSql')->willReturn('SELECT * FROM `any-table`');
+
+        return new Where($sqlMock);
     }
 
     private function createFieldMock(string $toStringReturn): FieldInterface
@@ -29,46 +35,51 @@ class WhereTest extends TestCase
 
     public function testShouldNotAddALogicalStatementAtTheBeginningIfTheFirstMethodToBeCalledIsMethodAnd()
     {
+        $sut = $this->makeSut();
         $fieldMock = $this->createFieldMock('name = ?');
 
-        $this->logicalInstructions->and($fieldMock);
+        $sut->and($fieldMock);
 
         $this->assertEquals(
-            'WHERE name = ?',
-            $this->logicalInstructions->toSql(),
+            'SELECT * FROM `any-table` WHERE name = ?',
+            $sut->toSql(),
         );
     }
 
     public function testShouldNotAddALogicalStatementAtTheBeginningIfTheFirstMethodToBeCalledIsMethodOr()
     {
+        $sut = $this->makeSut();
         $fieldMock = $this->createFieldMock('name = ?');
 
-        $this->logicalInstructions->or($fieldMock);
+        $sut->or($fieldMock);
 
         $this->assertEquals(
-            'WHERE name = ?',
-            $this->logicalInstructions->toSql(),
+            'SELECT * FROM `any-table` WHERE name = ?',
+            $sut->toSql(),
         );
     }
 
     public function testShouldStackStatementsNextToEachOther()
     {
+        $sut = $this->makeSut();
+
         $fieldMock1 = $this->createFieldMock('name = ?');
         $fieldMock2 = $this->createFieldMock('age = ?');
         $fieldMock3 = $this->createFieldMock('birth = ?');
 
-        $this->logicalInstructions->or($fieldMock1);
-        $this->logicalInstructions->and($fieldMock2);
-        $this->logicalInstructions->or($fieldMock3);
+        $sut->or($fieldMock1);
+        $sut->and($fieldMock2);
+        $sut->or($fieldMock3);
 
         $this->assertEquals(
-            'WHERE name = ? AND age = ? OR birth = ?',
-            $this->logicalInstructions->toSql(),
+            'SELECT * FROM `any-table` WHERE name = ? AND age = ? OR birth = ?',
+            $sut->toSql(),
         );
     }
 
     public function testShouldReturnAnEmptyStringIfThereIsNoLogicalComparison()
     {
-        $this->assertEquals('', $this->logicalInstructions->toSql());
+        $sut = $this->makeSut();
+        $this->assertEquals('', $sut->toSql());
     }
 }

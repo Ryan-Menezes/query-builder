@@ -6,7 +6,7 @@ namespace QueryBuilder\Sql\Commands\Dql;
 
 use QueryBuilder\Sql\Sql;
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\{LogicalInstructionsInterface, SqlInterface};
+use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Exceptions\{
     InvalidArgumentTableNameException,
     InvalidArgumentColumnNameException,
@@ -16,8 +16,7 @@ class Select extends Sql implements SqlInterface
 {
     private string $tableName;
     private array $columns;
-    private bool $isDistinctStatement = false;
-    private ?LogicalInstructionsInterface $logicalInstructions = null;
+    private bool $isDistinctStatement;
 
     public function __construct(string $tableName, array $columns = ['*'])
     {
@@ -29,6 +28,7 @@ class Select extends Sql implements SqlInterface
 
         $this->tableName = $tableName;
         $this->columns = $this->formatAndValidateColumns($columns);
+        $this->isDistinctStatement = false;
     }
 
     private function formatAndValidateColumns(array $columns): array
@@ -61,10 +61,6 @@ class Select extends Sql implements SqlInterface
 
         $toString = "${toString} {$this->getColumnsToString()} FROM `{$this->getTableName()}`";
 
-        if ($this->hasLogicalInstructions()) {
-            $toString = "${toString} {$this->getLogicalInstructions()}";
-        }
-
         return $toString;
     }
 
@@ -72,11 +68,6 @@ class Select extends Sql implements SqlInterface
     {
         $columns = $this->getColumns();
         return implode(', ', $columns);
-    }
-
-    private function hasLogicalInstructions(): bool
-    {
-        return (bool) $this->getLogicalInstructions();
     }
 
     public function getTableName(): string
@@ -92,18 +83,6 @@ class Select extends Sql implements SqlInterface
     public function distinct(): self
     {
         $this->isDistinctStatement = true;
-        return $this;
-    }
-
-    public function getLogicalInstructions(): ?LogicalInstructionsInterface
-    {
-        return $this->logicalInstructions;
-    }
-
-    public function setLogicalInstructions(
-        LogicalInstructionsInterface $logicalInstructions,
-    ): self {
-        $this->logicalInstructions = $logicalInstructions;
         return $this;
     }
 }

@@ -5,12 +5,23 @@ declare(strict_types=1);
 namespace QueryBuilder\Sql\Operators\Logical;
 
 use QueryBuilder\Sql\Sql;
-use QueryBuilder\Interfaces\{FieldInterface, LogicalInstructionsInterface};
+use QueryBuilder\Interfaces\{
+    FieldInterface,
+    LogicalInstructionsInterface,
+    SqlInterface,
+};
 
 abstract class LogicalInstructions extends Sql implements
     LogicalInstructionsInterface
 {
-    private array $logicalInstructions = [];
+    protected SqlInterface $sql;
+    private array $logicalInstructions;
+
+    public function __construct(SqlInterface $sql)
+    {
+        $this->sql = $sql;
+        $this->logicalInstructions = [];
+    }
 
     public function and(FieldInterface $field): self
     {
@@ -43,16 +54,11 @@ abstract class LogicalInstructions extends Sql implements
             return '';
         }
 
-        return implode(' ', $this->getLogicalInstructions());
+        return implode(' ', $this->logicalInstructions);
     }
 
     protected function isEmptyLogicalInstructions(): bool
     {
-        return empty($this->getLogicalInstructions());
-    }
-
-    public function getLogicalInstructions(): array
-    {
-        return $this->logicalInstructions;
+        return empty($this->logicalInstructions);
     }
 }
