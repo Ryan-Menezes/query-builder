@@ -4,27 +4,34 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Commands\Dql;
 
-use QueryBuilder\Sql\Sql;
+use QueryBuilder\Sql\SqlWithValues;
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\SqlInterface;
+use QueryBuilder\Interfaces\{SqlInterface, SqlWithValuesInterface};
 use QueryBuilder\Exceptions\{
     InvalidArgumentTableNameException,
     InvalidArgumentColumnNameException,
 };
 
-class Select extends Sql implements SqlInterface
+class Select extends SqlWithValues implements
+    SqlInterface,
+    SqlWithValuesInterface
 {
     private string $tableName;
     private array $columns;
     private bool $isDistinctStatement;
 
-    public function __construct(string $tableName, array $columns = ['*'])
-    {
+    public function __construct(
+        string $tableName,
+        array $columns = ['*'],
+        array $values = [],
+    ) {
         if (empty($tableName)) {
             throw new InvalidArgumentTableNameException(
                 'The table name must be a string of length greater than zero.',
             );
         }
+
+        parent::__construct($values);
 
         $this->tableName = $tableName;
         $this->columns = $this->formatAndValidateColumns($columns);

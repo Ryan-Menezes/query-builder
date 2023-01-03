@@ -5,7 +5,7 @@ namespace Tests\Sql\Commands\Dql;
 use PHPUnit\Framework\TestCase;
 
 use QueryBuilder\Sql\Commands\Dql\Select;
-use QueryBuilder\Sql\Values\{RawValue};
+use QueryBuilder\Sql\Values\{RawValue, StringValue};
 use QueryBuilder\Exceptions\{
     InvalidArgumentTableNameException,
     InvalidArgumentColumnNameException,
@@ -16,9 +16,12 @@ use QueryBuilder\Exceptions\{
  */
 class SelectTest extends TestCase
 {
-    private function makeSut(string $tableName, array $columns = ['*']): Select
-    {
-        return new Select($tableName, $columns);
+    private function makeSut(
+        string $tableName,
+        array $columns = ['*'],
+        array $values = [],
+    ): Select {
+        return new Select($tableName, $columns, $values);
     }
 
     public function testShouldCreateASqlSelectCommandCorrectly()
@@ -63,6 +66,21 @@ class SelectTest extends TestCase
             [new RawValue('name'), new RawValue('birth')],
             $sut->getColumns(),
         );
+    }
+
+    public function testShouldCreateASqlSelectCommandWithValues()
+    {
+        $sut = $this->makeSut('any-table', ['CONTACT(name, ?)'], ['any-value']);
+
+        $this->assertEquals(
+            'SELECT CONTACT(name, ?) FROM `any-table`',
+            $sut->toSql(),
+        );
+        $this->assertEquals(
+            [new RawValue('CONTACT(name, ?)')],
+            $sut->getColumns(),
+        );
+        $this->assertEquals([new StringValue('any-value')], $sut->getValues());
     }
 
     public function testShouldThrowAnErrorIfAnInvalidTableNameIsPassed()

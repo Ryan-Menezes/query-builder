@@ -12,6 +12,4 @@ abstract class Sql implements SqlInterface
     {
         return $this->toSql();
     }
-
-    abstract public function toSql(): string;
 }

@@ -54,4 +54,9 @@ abstract class ValueFactory
     ): ValueInterface {
         return new RawValue($value);
     }
+
+    public static function createCollectionValue(array $value): ValueInterface
+    {
+        return new CollectionValue($value);
+    }
 }

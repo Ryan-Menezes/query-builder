@@ -7,7 +7,7 @@ namespace QueryBuilder\Sql\Operators\Comparators;
 use QueryBuilder\Sql\Sql;
 use QueryBuilder\Factories\{FieldFactory, ValueFactory};
 use QueryBuilder\Interfaces\{FieldInterface, ValueInterface};
-use QueryBuilder\Sql\Values\{CollectionValue, RawValue};
+use QueryBuilder\Sql\Values\{RawValue};
 use QueryBuilder\Exceptions\{
     InvalidArgumentColumnNameException,
     InvalidArgumentValuesException,
@@ -51,7 +51,7 @@ class Between extends Sql implements FieldInterface
             $values[$key] = ValueFactory::createValue($value);
         }
 
-        return new CollectionValue($values);
+        return ValueFactory::createCollectionValue($values);
     }
 
     private function isNotValidValues(array $values): bool

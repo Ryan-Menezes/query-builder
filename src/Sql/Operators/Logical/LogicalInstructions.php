@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Operators\Logical;
 
-use QueryBuilder\Sql\Sql;
+use QueryBuilder\Sql\SqlWithValues;
 use QueryBuilder\Interfaces\{
     FieldInterface,
     LogicalInstructionsInterface,
-    SqlInterface,
+    SqlWithValuesInterface,
 };
 
-abstract class LogicalInstructions extends Sql implements
+abstract class LogicalInstructions extends SqlWithValues implements
     LogicalInstructionsInterface
 {
     private const SQL_AND_OPERATOR = 'AND';
     private const SQL_OR_OPERATOR = 'OR';
 
-    protected SqlInterface $sql;
+    protected SqlWithValuesInterface $sql;
     private array $logicalInstructions;
 
-    public function __construct(SqlInterface $sql)
+    public function __construct(SqlWithValuesInterface $sql)
     {
+        parent::__construct($sql->getValues());
+
         $this->sql = $sql;
         $this->logicalInstructions = [];
     }
@@ -42,6 +44,8 @@ abstract class LogicalInstructions extends Sql implements
         string $conditional,
         FieldInterface $field,
     ): void {
+        $this->addValue($field->getValue());
+
         if ($this->isEmptyLogicalInstructions()) {
             $this->logicalInstructions[] = $field;
             return;

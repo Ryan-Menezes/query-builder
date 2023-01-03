@@ -15,11 +15,13 @@ class Where extends LogicalInstructions implements LogicalInstructionsInterface
 
     public function toSql(): string
     {
+        $parentToSql = $this->sql->toSql();
+        $sqlFields = parent::toSql();
+
         if ($this->isEmptyLogicalInstructions()) {
-            return '';
+            return $parentToSql;
         }
 
-        $sqlFields = parent::toSql();
-        return "{$this->sql->toSql()} WHERE {$sqlFields}";
+        return "${parentToSql} WHERE ${sqlFields}";
     }
 }

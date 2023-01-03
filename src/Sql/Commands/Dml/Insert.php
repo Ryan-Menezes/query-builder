@@ -6,14 +6,17 @@ namespace QueryBuilder\Sql\Commands\Dml;
 
 use QueryBuilder\Sql\Sql;
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\{SqlInterface, ValueInterface};
-use QueryBuilder\Sql\Values\CollectionValue;
+use QueryBuilder\Interfaces\{
+    SqlInterface,
+    SqlWithValuesInterface,
+    ValueInterface,
+};
 use QueryBuilder\Exceptions\{
     InvalidArgumentTableNameException,
     InvalidArgumentDataException,
 };
 
-class Insert extends Sql implements SqlInterface
+class Insert extends Sql implements SqlInterface, SqlWithValuesInterface
 {
     private string $tableName;
     private ValueInterface $columns;
@@ -46,7 +49,7 @@ class Insert extends Sql implements SqlInterface
         $values = [];
 
         foreach ($data as $value) {
-            $values[] = new CollectionValue($value);
+            $values[] = ValueFactory::createCollectionValue($value);
         }
 
         return $values;
@@ -94,7 +97,7 @@ class Insert extends Sql implements SqlInterface
         $columns = array_unique($columns);
         $columns = array_map($this->getFormattedColumn(...), $columns);
 
-        return new CollectionValue($columns);
+        return ValueFactory::createCollectionValue($columns);
     }
 
     private function getFormattedColumn(string $column): ValueInterface

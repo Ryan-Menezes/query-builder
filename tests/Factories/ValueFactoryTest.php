@@ -54,6 +54,15 @@ class ValueFactoryTest extends TestCase
         $this->assertEquals($expected, $sut);
     }
 
+    public function testShouldCreateACollectionValueClass()
+    {
+        $values = ['any-value', 23, null];
+        $sut = ValueFactory::createCollectionValue($values);
+        $expected = new CollectionValue($values);
+
+        $this->assertEquals($expected, $sut);
+    }
+
     /**
      * @dataProvider shouldThrowAnExceptionIfValueIsInvalidProvider
      */

@@ -3,11 +3,13 @@
 namespace Tests\Sql\Operators\Logical;
 
 use PHPUnit\Framework\TestCase;
+use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Sql\Operators\Logical\Where;
+use QueryBuilder\Sql\Values\{StringValue, NumberValue};
 use QueryBuilder\Interfaces\{
     LogicalInstructionsInterface,
     FieldInterface,
-    SqlInterface,
+    SqlWithValuesInterface,
 };
 
 /**
@@ -17,18 +19,29 @@ class WhereTest extends TestCase
 {
     public function makeSut(): LogicalInstructionsInterface
     {
-        $sqlMock = $this->createMock(SqlInterface::class);
-        $sqlMock->method('__toString')->willReturn('SELECT * FROM `any-table`');
-        $sqlMock->method('toSql')->willReturn('SELECT * FROM `any-table`');
+        $sqlMock = $this->createMock(SqlWithValuesInterface::class);
+        $sqlMock
+            ->method('__toString')
+            ->willReturn('SELECT CONTACT(name, ?) FROM `any-table`');
+        $sqlMock
+            ->method('toSql')
+            ->willReturn('SELECT CONTACT(name, ?) FROM `any-table`');
+        $sqlMock
+            ->method('getValues')
+            ->willReturn([new StringValue('any-value-sql')]);
 
         return new Where($sqlMock);
     }
 
-    private function createFieldMock(string $toStringReturn): FieldInterface
-    {
+    private function createFieldMock(
+        string $toStringReturn,
+        mixed $value,
+    ): FieldInterface {
+        $value = ValueFactory::createValue($value);
         $fieldMock = $this->createMock(FieldInterface::class);
         $fieldMock->method('toSql')->willReturn($toStringReturn);
         $fieldMock->method('__toString')->willReturn($toStringReturn);
+        $fieldMock->method('getValue')->willReturn($value);
 
         return $fieldMock;
     }
@@ -36,26 +49,34 @@ class WhereTest extends TestCase
     public function testShouldNotAddALogicalStatementAtTheBeginningIfTheFirstMethodToBeCalledIsMethodAnd()
     {
         $sut = $this->makeSut();
-        $fieldMock = $this->createFieldMock('name = ?');
+        $fieldMock = $this->createFieldMock('name = ?', 'any-value');
 
         $sut->and($fieldMock);
 
         $this->assertEquals(
-            'SELECT * FROM `any-table` WHERE name = ?',
+            'SELECT CONTACT(name, ?) FROM `any-table` WHERE name = ?',
             $sut->toSql(),
+        );
+        $this->assertEquals(
+            [new StringValue('any-value-sql'), new StringValue('any-value')],
+            $sut->getValues(),
         );
     }
 
     public function testShouldNotAddALogicalStatementAtTheBeginningIfTheFirstMethodToBeCalledIsMethodOr()
     {
         $sut = $this->makeSut();
-        $fieldMock = $this->createFieldMock('name = ?');
+        $fieldMock = $this->createFieldMock('name = ?', 'any-value');
 
         $sut->or($fieldMock);
 
         $this->assertEquals(
-            'SELECT * FROM `any-table` WHERE name = ?',
+            'SELECT CONTACT(name, ?) FROM `any-table` WHERE name = ?',
             $sut->toSql(),
+        );
+        $this->assertEquals(
+            [new StringValue('any-value-sql'), new StringValue('any-value')],
+            $sut->getValues(),
         );
     }
 
@@ -63,23 +84,35 @@ class WhereTest extends TestCase
     {
         $sut = $this->makeSut();
 
-        $fieldMock1 = $this->createFieldMock('name = ?');
-        $fieldMock2 = $this->createFieldMock('age = ?');
-        $fieldMock3 = $this->createFieldMock('birth = ?');
+        $fieldMock1 = $this->createFieldMock('name = ?', 'any-value');
+        $fieldMock2 = $this->createFieldMock('age = ?', 23);
+        $fieldMock3 = $this->createFieldMock('birth = ?', '2000-01-01');
 
         $sut->or($fieldMock1);
         $sut->and($fieldMock2);
         $sut->or($fieldMock3);
 
         $this->assertEquals(
-            'SELECT * FROM `any-table` WHERE name = ? AND age = ? OR birth = ?',
+            'SELECT CONTACT(name, ?) FROM `any-table` WHERE name = ? AND age = ? OR birth = ?',
             $sut->toSql(),
+        );
+        $this->assertEquals(
+            [
+                new StringValue('any-value-sql'),
+                new StringValue('any-value'),
+                new NumberValue(23),
+                new StringValue('2000-01-01'),
+            ],
+            $sut->getValues(),
         );
     }
 
     public function testShouldReturnAnEmptyStringIfThereIsNoLogicalComparison()
     {
         $sut = $this->makeSut();
-        $this->assertEquals('', $sut->toSql());
+        $this->assertEquals(
+            'SELECT CONTACT(name, ?) FROM `any-table`',
+            $sut->toSql(),
+        );
     }
 }
