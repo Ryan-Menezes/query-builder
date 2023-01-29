@@ -6,17 +6,13 @@ namespace QueryBuilder\Sql\Commands\Dml;
 
 use QueryBuilder\Sql\Sql;
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\{
-    SqlInterface,
-    SqlWithValuesInterface,
-    ValueInterface,
-};
+use QueryBuilder\Interfaces\{SqlWithValuesInterface, ValueInterface};
 use QueryBuilder\Exceptions\{
     InvalidArgumentTableNameException,
     InvalidArgumentDataException,
 };
 
-class Insert extends Sql implements SqlInterface, SqlWithValuesInterface
+class Insert extends Sql implements SqlWithValuesInterface
 {
     private string $tableName;
     private ValueInterface $columns;

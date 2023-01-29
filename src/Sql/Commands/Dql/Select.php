@@ -6,15 +6,13 @@ namespace QueryBuilder\Sql\Commands\Dql;
 
 use QueryBuilder\Sql\SqlWithValues;
 use QueryBuilder\Factories\ValueFactory;
-use QueryBuilder\Interfaces\{SqlInterface, SqlWithValuesInterface};
+use QueryBuilder\Interfaces\SqlWithValuesInterface;
 use QueryBuilder\Exceptions\{
     InvalidArgumentTableNameException,
     InvalidArgumentColumnNameException,
 };
 
-class Select extends SqlWithValues implements
-    SqlInterface,
-    SqlWithValuesInterface
+class Select extends SqlWithValues implements SqlWithValuesInterface
 {
     private string $tableName;
     private array $columns;

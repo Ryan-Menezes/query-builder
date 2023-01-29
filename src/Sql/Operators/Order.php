@@ -15,7 +15,7 @@ class Order extends SqlWithValues implements SqlWithValuesInterface
         'DESC' => 'DESC',
     ];
 
-    protected SqlWithValuesInterface $sql;
+    private SqlWithValuesInterface $sql;
     private array $columns;
 
     public function __construct(SqlWithValuesInterface $sql, array $columns)
