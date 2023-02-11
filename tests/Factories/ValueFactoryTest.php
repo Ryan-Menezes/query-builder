@@ -69,7 +69,7 @@ class ValueFactoryTest extends TestCase
     public function testShouldThrowAnExceptionIfValueIsInvalid($invalidValue)
     {
         $this->expectException(InvalidArgumentValueException::class);
-        $this->expectErrorMessage(
+        $this->expectExceptionMessage(
             'The value must be of type string, number, boolean or array, if you want to pass a value if formatting uses the \QueryBuilder\Sql\Values\RawValue class',
         );
 
