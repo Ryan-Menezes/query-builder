@@ -98,7 +98,7 @@ class Insert extends Sql implements SqlWithValuesInterface
 
     private function getFormattedColumn(string $column): ValueInterface
     {
-        return ValueFactory::createRawValue("`${column}`");
+        return ValueFactory::createRawValue("`{$column}`");
     }
 
     public function toSql(): string

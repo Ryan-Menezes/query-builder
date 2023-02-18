@@ -79,7 +79,7 @@ class Order extends SqlWithValues implements SqlWithValuesInterface
         $columns = $this->getColumnsWithSortStatement($this->columns);
         $columnsToSql = implode(', ', $columns);
 
-        return "{$this->sql->toSql()} ORDER BY ${columnsToSql}";
+        return "{$this->sql->toSql()} ORDER BY {$columnsToSql}";
     }
 
     private function getColumnsWithSortStatement(array $columns): array
@@ -87,7 +87,7 @@ class Order extends SqlWithValues implements SqlWithValuesInterface
         $columnsSql = [];
 
         foreach ($columns as $columnName => $sort) {
-            $columnsSql[] = "${columnName} ${sort}";
+            $columnsSql[] = "{$columnName} {$sort}";
         }
 
         return $columnsSql;

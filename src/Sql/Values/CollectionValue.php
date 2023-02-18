@@ -55,7 +55,7 @@ class CollectionValue extends Sql implements ValueInterface
         }
 
         $valueToSql = implode(', ', $value);
-        return "(${valueToSql})";
+        return "({$valueToSql})";
     }
 
     private function getValueCorrespondingToItsType(

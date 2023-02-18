@@ -61,10 +61,10 @@ class Select extends SqlWithValues implements SqlWithValuesInterface
         $toString = 'SELECT';
 
         if ($this->isDistinctStatement) {
-            $toString = "${toString} DISTINCT";
+            $toString = "{$toString} DISTINCT";
         }
 
-        $toString = "${toString} {$this->getColumnsToString()} FROM `{$this->getTableName()}`";
+        $toString = "{$toString} {$this->getColumnsToString()} FROM `{$this->getTableName()}`";
 
         return $toString;
     }

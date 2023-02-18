@@ -58,7 +58,7 @@ class In extends Sql implements FieldInterface
     public function toSql(): string
     {
         $field = $this->getField();
-        return "${field}";
+        return "{$field}";
     }
 
     private function getField(): FieldInterface
