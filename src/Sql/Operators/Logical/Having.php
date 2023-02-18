@@ -22,6 +22,6 @@ class Having extends LogicalInstructions implements LogicalInstructionsInterface
             return $parentToSql;
         }
 
-        return "${parentToSql} HAVING ${sqlFields}";
+        return "{$parentToSql} HAVING {$sqlFields}";
     }
 }

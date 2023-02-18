@@ -22,6 +22,6 @@ class Where extends LogicalInstructions implements LogicalInstructionsInterface
             return $parentToSql;
         }
 
-        return "${parentToSql} WHERE ${sqlFields}";
+        return "{$parentToSql} WHERE {$sqlFields}";
     }
 }
