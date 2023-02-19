@@ -8,7 +8,7 @@ use QueryBuilder\Interfaces\{SqlInterface, LogicalInstructionsInterface};
 
 class Having extends LogicalInstructions implements LogicalInstructionsInterface
 {
-    public function __construct(SqlInterface $sql)
+    public function __construct(?SqlInterface $sql = null)
     {
         parent::__construct($sql);
     }
@@ -22,6 +22,6 @@ class Having extends LogicalInstructions implements LogicalInstructionsInterface
             return $parentToSql;
         }
 
-        return "{$parentToSql} HAVING {$sqlFields}";
+        return trim("{$parentToSql} HAVING {$sqlFields}");
     }
 }

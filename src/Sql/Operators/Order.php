@@ -20,7 +20,7 @@ class Order extends SqlWithValues implements SqlWithValuesInterface
 
     public function __construct(SqlWithValuesInterface $sql, array $columns)
     {
-        parent::__construct($sql->getValues());
+        parent::__construct($sql?->getValues() ?? []);
 
         if (empty($columns)) {
             throw new InvalidArgumentColumnsException(
@@ -79,7 +79,7 @@ class Order extends SqlWithValues implements SqlWithValuesInterface
         $columns = $this->getColumnsWithSortStatement($this->columns);
         $columnsToSql = implode(', ', $columns);
 
-        return "{$this->sql->toSql()} ORDER BY {$columnsToSql}";
+        return trim("{$this->sql->toSql()} ORDER BY {$columnsToSql}");
     }
 
     private function getColumnsWithSortStatement(array $columns): array

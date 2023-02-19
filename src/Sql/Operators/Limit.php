@@ -14,7 +14,7 @@ class Limit extends SqlWithValues implements SqlWithValuesInterface
 
     public function __construct(SqlWithValuesInterface $sql, int $value)
     {
-        parent::__construct($sql->getValues());
+        parent::__construct($sql?->getValues() ?? []);
 
         $this->sql = $sql;
         $this->value = $value;
@@ -22,6 +22,6 @@ class Limit extends SqlWithValues implements SqlWithValuesInterface
 
     public function toSql(): string
     {
-        return "{$this->sql->toSql()} LIMIT {$this->value}";
+        return trim("{$this->sql->toSql()} LIMIT {$this->value}");
     }
 }

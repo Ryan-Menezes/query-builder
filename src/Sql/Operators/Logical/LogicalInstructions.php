@@ -22,7 +22,7 @@ abstract class LogicalInstructions extends SqlWithValues implements
 
     public function __construct(SqlWithValuesInterface $sql)
     {
-        parent::__construct($sql->getValues());
+        parent::__construct($sql?->getValues() ?? []);
 
         $this->sql = $sql;
         $this->logicalInstructions = [];
