@@ -12,7 +12,7 @@ trait HasLimit
 
     public function limit(int $limit): self
     {
-        $this->limit = new Limit(null, $limit);
+        $this->limit = new Limit($limit);
         return $this;
     }
 }

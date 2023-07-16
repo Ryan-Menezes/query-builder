@@ -12,7 +12,7 @@ class Offset extends SqlWithValues implements SqlWithValuesInterface
     private ?SqlWithValuesInterface $sql;
     private int $value;
 
-    public function __construct(?SqlWithValuesInterface $sql = null, int $value)
+    public function __construct(int $value, ?SqlWithValuesInterface $sql = null)
     {
         parent::__construct($sql?->getValues() ?? []);
 

@@ -25,7 +25,7 @@ class OffsetTest extends TestCase
             ->method('getValues')
             ->willReturn([new StringValue('any-value-sql')]);
 
-        return new Offset($sqlMock, $value);
+        return new Offset($value, $sqlMock);
     }
 
     public function testShouldCreateAnOffsetStatementCorrectly()

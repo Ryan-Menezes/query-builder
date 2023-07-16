@@ -25,7 +25,7 @@ class LimitTest extends TestCase
             ->method('getValues')
             ->willReturn([new StringValue('any-value-sql')]);
 
-        return new Limit($sqlMock, $value);
+        return new Limit($value, $sqlMock);
     }
 
     public function testShouldCreateAnLimitStatementCorrectly()

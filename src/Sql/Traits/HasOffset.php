@@ -12,7 +12,7 @@ trait HasOffset
 
     public function offset(int $offset)
     {
-        $this->offset = new Offset(null, $offset);
+        $this->offset = new Offset($offset);
         return $this;
     }
 }
