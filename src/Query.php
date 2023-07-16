@@ -4,55 +4,56 @@ declare(strict_types=1);
 
 namespace QueryBuilder;
 
-use QueryBuilder\Factories\FieldFactory;
-use QueryBuilder\Interfaces\LogicalInstructionsInterface;
 use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Sql\Operators\Logical\Where;
 use QueryBuilder\Sql\Sql;
-
 use QueryBuilder\Sql\Commands\Dql\Select;
+use QueryBuilder\Sql\Traits\HasLimit;
+use QueryBuilder\Sql\Traits\HasOffset;
+use QueryBuilder\Sql\Traits\HasWhere;
 
 class Query extends Sql implements SqlInterface
 {
+    use HasWhere, HasLimit, HasOffset;
+
     private string $tableName;
     private SqlInterface $sql;
-    private LogicalInstructionsInterface $where;
 
     public function __construct(string $tableName)
     {
         $this->tableName = $tableName;
         $this->sql = new Select($tableName);
+        $this->where = new Where();
+        $this->offset = null;
     }
 
     public function toSql(): string
     {
-        return $this->sql->toSql();
+        $sql = $this->sql->toSql();
+        $where = $this->where->toSql();
+        $limit = $this->limit?->toSql() ?? '';
+        $offset = $this->offset?->toSql() ?? '';
+
+        if ($where) {
+            $sql .= " {$where}";
+        }
+
+        if ($limit) {
+            $sql .= " {$limit}";
+        }
+
+        $sql = trim($sql);
+
+        if ($offset) {
+            $sql .= " {$offset}";
+        }
+
+        return trim($sql);
     }
 
     public function select(array $columns = ['*'], array $values = []): self
     {
         $this->sql = new Select($this->tableName, $columns, $values);
-        return $this;
-    }
-
-    public function where(string $column, string $operator, mixed $value): self
-    {
-        $field = FieldFactory::createField($column, $operator, $value);
-        $where = new Where($this->sql);
-        $this->sql = $where->and($field);
-
-        return $this;
-    }
-
-    public function orWhere(
-        string $column,
-        string $operator,
-        mixed $value,
-    ): self {
-        $field = FieldFactory::createField($column, $operator, $value);
-        $this->where = new Where($this->sql);
-        $this->where->or($field);
-
         return $this;
     }
 }

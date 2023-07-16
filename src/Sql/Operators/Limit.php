@@ -9,10 +9,10 @@ use QueryBuilder\Interfaces\SqlWithValuesInterface;
 
 class Limit extends SqlWithValues implements SqlWithValuesInterface
 {
-    private SqlWithValuesInterface $sql;
+    private ?SqlWithValuesInterface $sql;
     private int $value;
 
-    public function __construct(SqlWithValuesInterface $sql, int $value)
+    public function __construct(?SqlWithValuesInterface $sql, int $value)
     {
         parent::__construct($sql?->getValues() ?? []);
 
@@ -22,6 +22,8 @@ class Limit extends SqlWithValues implements SqlWithValuesInterface
 
     public function toSql(): string
     {
-        return trim("{$this->sql->toSql()} LIMIT {$this->value}");
+        $sql = $this->sql?->toSql() ?? '';
+
+        return trim("{$sql} LIMIT {$this->value}");
     }
 }

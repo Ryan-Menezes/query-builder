@@ -8,14 +8,14 @@ use QueryBuilder\Interfaces\{SqlInterface, LogicalInstructionsInterface};
 
 class Where extends LogicalInstructions implements LogicalInstructionsInterface
 {
-    public function __construct(SqlInterface $sql)
+    public function __construct(?SqlInterface $sql = null)
     {
         parent::__construct($sql);
     }
 
     public function toSql(): string
     {
-        $parentToSql = $this->sql->toSql();
+        $parentToSql = $this->sql?->toSql() ?? '';
         $sqlFields = parent::toSql();
 
         if ($this->isEmptyLogicalInstructions()) {
