@@ -479,4 +479,72 @@ class QueryTest extends TestCase
             $queryIn->getValues(),
         );
     }
+
+    public function testShouldCorrectlyCreateAnSelectCommandWithWhereNull()
+    {
+        $query = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->whereNull('deleted_at');
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? AND deleted_at IS NULL',
+            $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new RawValue('NULL')],
+            $query->getValues(),
+        );
+    }
+
+    public function testShouldCorrectlyCreateAnSelectCommandWithWhereNotNull()
+    {
+        $query = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->whereNotNull('deleted_at');
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? AND deleted_at IS NOT NULL',
+            $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new RawValue('NULL')],
+            $query->getValues(),
+        );
+    }
+
+    public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNull()
+    {
+        $query = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->orWhereNull('deleted_at');
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? OR deleted_at IS NULL',
+            $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new RawValue('NULL')],
+            $query->getValues(),
+        );
+    }
+
+    public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNotNull()
+    {
+        $query = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->orWhereNotNull('deleted_at');
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? OR deleted_at IS NOT NULL',
+            $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new RawValue('NULL')],
+            $query->getValues(),
+        );
+    }
 }

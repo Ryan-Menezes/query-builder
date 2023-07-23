@@ -8,7 +8,6 @@ use QueryBuilder\Factories\FieldFactory;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Query;
 use QueryBuilder\Sql\Operators\Logical\Where;
-use QueryBuilder\Sql\Values\RawValue;
 
 trait HasWhere
 {
@@ -167,6 +166,58 @@ trait HasWhere
         $in = FieldFactory::createNotIn($columnName, $values);
 
         $this->where->or($in);
+
+        return $this;
+    }
+
+    public function whereNull(string $columnName): self
+    {
+        $field = FieldFactory::createFieldWithRawValue(
+            $columnName,
+            'IS',
+            'NULL',
+        );
+
+        $this->where->and($field);
+
+        return $this;
+    }
+
+    public function whereNotNull(string $columnName): self
+    {
+        $field = FieldFactory::createFieldWithRawValue(
+            $columnName,
+            'IS NOT',
+            'NULL',
+        );
+
+        $this->where->and($field);
+
+        return $this;
+    }
+
+    public function orWhereNull(string $columnName): self
+    {
+        $field = FieldFactory::createFieldWithRawValue(
+            $columnName,
+            'IS',
+            'NULL',
+        );
+
+        $this->where->or($field);
+
+        return $this;
+    }
+
+    public function orWhereNotNull(string $columnName): self
+    {
+        $field = FieldFactory::createFieldWithRawValue(
+            $columnName,
+            'IS NOT',
+            'NULL',
+        );
+
+        $this->where->or($field);
 
         return $this;
     }
