@@ -7,6 +7,7 @@ namespace QueryBuilder\Factories;
 use QueryBuilder\Interfaces\FieldInterface;
 use QueryBuilder\Sql\Field;
 use QueryBuilder\Sql\Operators\Comparators\Between;
+use QueryBuilder\Sql\Operators\Comparators\In;
 
 abstract class FieldFactory
 {
@@ -52,5 +53,19 @@ abstract class FieldFactory
         array $values,
     ): FieldInterface {
         return (new Between($columnName, $values))->not();
+    }
+
+    public static function createIn(
+        string $columnName,
+        array $values,
+    ): FieldInterface {
+        return new In($columnName, $values);
+    }
+
+    public static function createNotIn(
+        string $columnName,
+        array $values,
+    ): FieldInterface {
+        return (new In($columnName, $values))->not();
     }
 }

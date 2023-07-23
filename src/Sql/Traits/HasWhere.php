@@ -6,6 +6,7 @@ namespace QueryBuilder\Sql\Traits;
 
 use QueryBuilder\Factories\FieldFactory;
 use QueryBuilder\Factories\ValueFactory;
+use QueryBuilder\Query;
 use QueryBuilder\Sql\Operators\Logical\Where;
 
 trait HasWhere
@@ -127,5 +128,54 @@ trait HasWhere
         $this->where->or($between);
 
         return $this;
+    }
+
+    public function whereIn(string $columnName, array|Query $values): self
+    {
+        $values = $this->parseInValues($values);
+        $in = FieldFactory::createIn($columnName, $values);
+
+        $this->where->and($in);
+
+        return $this;
+    }
+
+    public function orWhereIn(string $columnName, array|Query $values): self
+    {
+        $values = $this->parseInValues($values);
+        $in = FieldFactory::createIn($columnName, $values);
+
+        $this->where->or($in);
+
+        return $this;
+    }
+
+    public function whereNotIn(string $columnName, array|Query $values): self
+    {
+        $values = $this->parseInValues($values);
+        $in = FieldFactory::createNotIn($columnName, $values);
+
+        $this->where->and($in);
+
+        return $this;
+    }
+
+    public function orWhereNotIn(string $columnName, array|Query $values): self
+    {
+        $values = $this->parseInValues($values);
+        $in = FieldFactory::createNotIn($columnName, $values);
+
+        $this->where->or($in);
+
+        return $this;
+    }
+
+    private function parseInValues(array|Query $values): array
+    {
+        if ($values instanceof Query) {
+            return [ValueFactory::createRawValue($values)];
+        }
+
+        return $values;
     }
 }

@@ -189,4 +189,116 @@ class QueryTest extends TestCase
             $query->toSql(),
         );
     }
+
+    public function testShouldCorrectlyCreateAnSelectCommandWithWhereIn()
+    {
+        $query = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->whereIn('id', [1, 2, 3]);
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? AND id IN (?, ?, ?)',
+            $query->toSql(),
+        );
+    }
+
+    public function testTheSecondParameterOfTheWhereInMethodShouldAlsoReceiceAQueryInstance()
+    {
+        $query = (new Query('users'))
+            ->select(['id'])
+            ->where('is_active', '=', 1);
+
+        $queryIn = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->whereIn('id', $query);
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? AND id IN (SELECT id FROM `users` WHERE is_active = ?)',
+            $queryIn->toSql(),
+        );
+    }
+
+    public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereIn()
+    {
+        $query = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->orWhereIn('id', [1, 2, 3]);
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? OR id IN (?, ?, ?)',
+            $query->toSql(),
+        );
+    }
+
+    public function testTheSecondParameterOfTheOrWhereInMethodShouldAlsoReceiceAQueryInstance()
+    {
+        $query = (new Query('users'))
+            ->select(['id'])
+            ->where('is_active', '=', 1);
+
+        $queryIn = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->orWhereIn('id', $query);
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? OR id IN (SELECT id FROM `users` WHERE is_active = ?)',
+            $queryIn->toSql(),
+        );
+    }
+
+    public function testShouldCorrectlyCreateAnSelectCommandWithWhereNotIn()
+    {
+        $query = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->whereNotIn('id', [1, 2, 3]);
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? AND id NOT IN (?, ?, ?)',
+            $query->toSql(),
+        );
+    }
+
+    public function testTheSecondParameterOfTheWhereNotInMethodShouldAlsoReceiceAQueryInstance()
+    {
+        $query = (new Query('users'))
+            ->select(['id'])
+            ->where('is_active', '=', 1);
+
+        $queryIn = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->whereNotIn('id', $query);
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? AND id NOT IN (SELECT id FROM `users` WHERE is_active = ?)',
+            $queryIn->toSql(),
+        );
+    }
+
+    public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNotIn()
+    {
+        $query = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->orWhereNotIn('id', [1, 2, 3]);
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? OR id NOT IN (?, ?, ?)',
+            $query->toSql(),
+        );
+    }
+
+    public function testTheSecondParameterOfTheOrWhereNotInMethodShouldAlsoReceiceAQueryInstance()
+    {
+        $query = (new Query('users'))
+            ->select(['id'])
+            ->where('is_active', '=', 1);
+
+        $queryIn = (new Query('users'))
+            ->where('name', '=', 'any-name')
+            ->orWhereNotIn('id', $query);
+
+        $this->assertEquals(
+            'SELECT * FROM `users` WHERE name = ? OR id NOT IN (SELECT id FROM `users` WHERE is_active = ?)',
+            $queryIn->toSql(),
+        );
+    }
 }
