@@ -22,7 +22,7 @@ abstract class SqlWithValues extends Sql implements
         $this->values = $values;
     }
 
-    protected function addValue(mixed $value): void
+    public function addValue(mixed $value): void
     {
         $this->values[] = ValueFactory::createValue($value);
     }

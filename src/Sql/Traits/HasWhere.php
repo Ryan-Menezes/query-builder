@@ -8,6 +8,7 @@ use QueryBuilder\Factories\FieldFactory;
 use QueryBuilder\Factories\ValueFactory;
 use QueryBuilder\Query;
 use QueryBuilder\Sql\Operators\Logical\Where;
+use QueryBuilder\Sql\Values\RawValue;
 
 trait HasWhere
 {
@@ -132,7 +133,7 @@ trait HasWhere
 
     public function whereIn(string $columnName, array|Query $values): self
     {
-        $values = $this->parseInValues($values);
+        $values = $this->parseValues($values);
         $in = FieldFactory::createIn($columnName, $values);
 
         $this->where->and($in);
@@ -142,7 +143,7 @@ trait HasWhere
 
     public function orWhereIn(string $columnName, array|Query $values): self
     {
-        $values = $this->parseInValues($values);
+        $values = $this->parseValues($values);
         $in = FieldFactory::createIn($columnName, $values);
 
         $this->where->or($in);
@@ -152,7 +153,7 @@ trait HasWhere
 
     public function whereNotIn(string $columnName, array|Query $values): self
     {
-        $values = $this->parseInValues($values);
+        $values = $this->parseValues($values);
         $in = FieldFactory::createNotIn($columnName, $values);
 
         $this->where->and($in);
@@ -162,7 +163,7 @@ trait HasWhere
 
     public function orWhereNotIn(string $columnName, array|Query $values): self
     {
-        $values = $this->parseInValues($values);
+        $values = $this->parseValues($values);
         $in = FieldFactory::createNotIn($columnName, $values);
 
         $this->where->or($in);
@@ -170,12 +171,20 @@ trait HasWhere
         return $this;
     }
 
-    private function parseInValues(array|Query $values): array
+    private function parseValues(array|Query $values): array
     {
         if ($values instanceof Query) {
+            $this->addWhereValues($values->getValues());
             return [ValueFactory::createRawValue($values)];
         }
 
         return $values;
+    }
+
+    private function addWhereValues(array $values): void
+    {
+        foreach ($values as $value) {
+            $this->where->addValue($value);
+        }
     }
 }

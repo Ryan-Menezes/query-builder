@@ -51,6 +51,15 @@ class Query extends Sql implements SqlInterface
         return trim($sql);
     }
 
+    public function getValues(): array
+    {
+        return [
+            ...$this->where->getValues(),
+            ...$this->limit?->getValues() ?? [],
+            ...$this->offset?->getValues() ?? [],
+        ];
+    }
+
     public function select(array $columns = ['*'], array $values = []): self
     {
         $this->sql = new Select($this->tableName, $columns, $values);

@@ -3,6 +3,12 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
+use QueryBuilder\Sql\Values\{
+    RawValue,
+    StringValue,
+    NumberValue,
+    CollectionValue,
+};
 use QueryBuilder\Query;
 
 /**
@@ -20,65 +26,109 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhere()
     {
+        $queryOne = (new Query('users'))->where('id', '=', 1);
+
+        $queryTwo = (new Query('users'))
+            ->where('id', '=', 1)
+            ->orWhere('name', '=', 'any-name');
+
+        $queryThree = (new Query('users'))
+            ->where('id', '=', 1)
+            ->orWhere('name', '=', 'any-name')
+            ->where('age', '>=', 18);
+
         $this->assertEquals(
             'SELECT * FROM `users` WHERE id = ?',
-            (new Query('users'))->where('id', '=', 1),
+            $queryOne->toSql(),
         );
+
+        $this->assertEquals([new NumberValue(1)], $queryOne->getValues());
 
         $this->assertEquals(
             'SELECT * FROM `users` WHERE id = ? OR name = ?',
-            (new Query('users'))
-                ->where('id', '=', 1)
-                ->orWhere('name', '=', 'any-name'),
+            $queryTwo->toSql(),
+        );
+
+        $this->assertEquals(
+            [new NumberValue(1), new StringValue('any-name')],
+            $queryTwo->getValues(),
         );
 
         $this->assertEquals(
             'SELECT * FROM `users` WHERE id = ? OR name = ? AND age >= ?',
-            (new Query('users'))
-                ->where('id', '=', 1)
-                ->orWhere('name', '=', 'any-name')
-                ->where('age', '>=', '18'),
+            $queryThree->toSql(),
+        );
+
+        $this->assertEquals(
+            [
+                new NumberValue(1),
+                new StringValue('any-name'),
+                new NumberValue(18),
+            ],
+            $queryThree->getValues(),
         );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithLimit()
     {
-        $this->assertEquals(
-            'SELECT * FROM `users` LIMIT 10',
-            (new Query('users'))->limit(10),
-        );
+        $query = (new Query('users'))->limit(10);
+        $queryTwo = (new Query('users'))
+            ->where('id', '=', 1)
+            ->orWhere('name', '=', 'any-name')
+            ->limit(10);
+
+        $this->assertEquals('SELECT * FROM `users` LIMIT 10', $query->toSql());
+
+        $this->assertEquals([], $query->getValues());
 
         $this->assertEquals(
             'SELECT * FROM `users` WHERE id = ? OR name = ? LIMIT 10',
-            (new Query('users'))
-                ->where('id', '=', 1)
-                ->orWhere('name', '=', 'any-name')
-                ->limit(10),
+            $queryTwo->toSql(),
+        );
+
+        $this->assertEquals(
+            [new NumberValue(1), new StringValue('any-name')],
+            $queryTwo->getValues(),
         );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOffset()
     {
-        $this->assertEquals(
-            'SELECT * FROM `users` OFFSET 5',
-            (new Query('users'))->offset(5),
-        );
+        $query = (new Query('users'))->offset(5);
+
+        $queryTwo = (new Query('users'))
+            ->where('id', '=', 1)
+            ->orWhere('name', '=', 'any-name')
+            ->offset(5);
+
+        $queryThree = (new Query('users'))
+            ->where('id', '=', 1)
+            ->orWhere('name', '=', 'any-name')
+            ->offset(5)
+            ->limit(10);
+
+        $this->assertEquals('SELECT * FROM `users` OFFSET 5', $query->toSql());
+
+        $this->assertEquals([], $query->getValues());
 
         $this->assertEquals(
             'SELECT * FROM `users` WHERE id = ? OR name = ? OFFSET 5',
-            (new Query('users'))
-                ->where('id', '=', 1)
-                ->orWhere('name', '=', 'any-name')
-                ->offset(5),
+            $queryTwo->toSql(),
+        );
+
+        $this->assertEquals(
+            [new NumberValue(1), new StringValue('any-name')],
+            $queryTwo->getValues(),
         );
 
         $this->assertEquals(
             'SELECT * FROM `users` WHERE id = ? OR name = ? LIMIT 10 OFFSET 5',
-            (new Query('users'))
-                ->where('id', '=', 1)
-                ->orWhere('name', '=', 'any-name')
-                ->offset(5)
-                ->limit(10),
+            $queryThree->toSql(),
+        );
+
+        $this->assertEquals(
+            [new NumberValue(1), new StringValue('any-name')],
+            $queryThree->getValues(),
         );
     }
 
@@ -92,6 +142,11 @@ class QueryTest extends TestCase
             'SELECT * FROM `users` WHERE name = ? AND id BETWEEN ? AND ?',
             $query->toSql(),
         );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new CollectionValue([10, 30])],
+            $query->getValues(),
+        );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereBetween()
@@ -103,6 +158,11 @@ class QueryTest extends TestCase
         $this->assertEquals(
             'SELECT * FROM `users` WHERE name = ? OR id BETWEEN ? AND ?',
             $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new CollectionValue([10, 30])],
+            $query->getValues(),
         );
     }
 
@@ -116,6 +176,11 @@ class QueryTest extends TestCase
             'SELECT * FROM `users` WHERE name = ? AND id NOT BETWEEN ? AND ?',
             $query->toSql(),
         );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new CollectionValue([10, 30])],
+            $query->getValues(),
+        );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNotBetween()
@@ -127,6 +192,11 @@ class QueryTest extends TestCase
         $this->assertEquals(
             'SELECT * FROM `users` WHERE name = ? OR id NOT BETWEEN ? AND ?',
             $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new CollectionValue([10, 30])],
+            $query->getValues(),
         );
     }
 
@@ -143,6 +213,17 @@ class QueryTest extends TestCase
             'SELECT * FROM `users` WHERE name = ? AND weight BETWEEN minimum_allowed_weight AND maximum_allowed_weight',
             $query->toSql(),
         );
+
+        $this->assertEquals(
+            [
+                new StringValue('any-name'),
+                new CollectionValue([
+                    new RawValue('minimum_allowed_weight'),
+                    new RawValue('maximum_allowed_weight'),
+                ]),
+            ],
+            $query->getValues(),
+        );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereBetweenColumns()
@@ -157,6 +238,17 @@ class QueryTest extends TestCase
         $this->assertEquals(
             'SELECT * FROM `users` WHERE name = ? OR weight BETWEEN minimum_allowed_weight AND maximum_allowed_weight',
             $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [
+                new StringValue('any-name'),
+                new CollectionValue([
+                    new RawValue('minimum_allowed_weight'),
+                    new RawValue('maximum_allowed_weight'),
+                ]),
+            ],
+            $query->getValues(),
         );
     }
 
@@ -173,6 +265,17 @@ class QueryTest extends TestCase
             'SELECT * FROM `users` WHERE name = ? AND weight NOT BETWEEN minimum_allowed_weight AND maximum_allowed_weight',
             $query->toSql(),
         );
+
+        $this->assertEquals(
+            [
+                new StringValue('any-name'),
+                new CollectionValue([
+                    new RawValue('minimum_allowed_weight'),
+                    new RawValue('maximum_allowed_weight'),
+                ]),
+            ],
+            $query->getValues(),
+        );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNotBetweenColumns()
@@ -188,6 +291,17 @@ class QueryTest extends TestCase
             'SELECT * FROM `users` WHERE name = ? OR weight NOT BETWEEN minimum_allowed_weight AND maximum_allowed_weight',
             $query->toSql(),
         );
+
+        $this->assertEquals(
+            [
+                new StringValue('any-name'),
+                new CollectionValue([
+                    new RawValue('minimum_allowed_weight'),
+                    new RawValue('maximum_allowed_weight'),
+                ]),
+            ],
+            $query->getValues(),
+        );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereIn()
@@ -199,6 +313,11 @@ class QueryTest extends TestCase
         $this->assertEquals(
             'SELECT * FROM `users` WHERE name = ? AND id IN (?, ?, ?)',
             $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new CollectionValue([1, 2, 3])],
+            $query->getValues(),
         );
     }
 
@@ -216,6 +335,17 @@ class QueryTest extends TestCase
             'SELECT * FROM `users` WHERE name = ? AND id IN (SELECT id FROM `users` WHERE is_active = ?)',
             $queryIn->toSql(),
         );
+
+        $this->assertEquals(
+            [
+                new StringValue('any-name'),
+                new NumberValue(1),
+                new CollectionValue([
+                    new RawValue('SELECT id FROM `users` WHERE is_active = ?'),
+                ]),
+            ],
+            $queryIn->getValues(),
+        );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereIn()
@@ -227,6 +357,11 @@ class QueryTest extends TestCase
         $this->assertEquals(
             'SELECT * FROM `users` WHERE name = ? OR id IN (?, ?, ?)',
             $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new CollectionValue([1, 2, 3])],
+            $query->getValues(),
         );
     }
 
@@ -244,6 +379,17 @@ class QueryTest extends TestCase
             'SELECT * FROM `users` WHERE name = ? OR id IN (SELECT id FROM `users` WHERE is_active = ?)',
             $queryIn->toSql(),
         );
+
+        $this->assertEquals(
+            [
+                new StringValue('any-name'),
+                new NumberValue(1),
+                new CollectionValue([
+                    new RawValue('SELECT id FROM `users` WHERE is_active = ?'),
+                ]),
+            ],
+            $queryIn->getValues(),
+        );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereNotIn()
@@ -255,6 +401,11 @@ class QueryTest extends TestCase
         $this->assertEquals(
             'SELECT * FROM `users` WHERE name = ? AND id NOT IN (?, ?, ?)',
             $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new CollectionValue([1, 2, 3])],
+            $query->getValues(),
         );
     }
 
@@ -272,6 +423,17 @@ class QueryTest extends TestCase
             'SELECT * FROM `users` WHERE name = ? AND id NOT IN (SELECT id FROM `users` WHERE is_active = ?)',
             $queryIn->toSql(),
         );
+
+        $this->assertEquals(
+            [
+                new StringValue('any-name'),
+                new NumberValue(1),
+                new CollectionValue([
+                    new RawValue('SELECT id FROM `users` WHERE is_active = ?'),
+                ]),
+            ],
+            $queryIn->getValues(),
+        );
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNotIn()
@@ -283,6 +445,11 @@ class QueryTest extends TestCase
         $this->assertEquals(
             'SELECT * FROM `users` WHERE name = ? OR id NOT IN (?, ?, ?)',
             $query->toSql(),
+        );
+
+        $this->assertEquals(
+            [new StringValue('any-name'), new CollectionValue([1, 2, 3])],
+            $query->getValues(),
         );
     }
 
@@ -299,6 +466,17 @@ class QueryTest extends TestCase
         $this->assertEquals(
             'SELECT * FROM `users` WHERE name = ? OR id NOT IN (SELECT id FROM `users` WHERE is_active = ?)',
             $queryIn->toSql(),
+        );
+
+        $this->assertEquals(
+            [
+                new StringValue('any-name'),
+                new NumberValue(1),
+                new CollectionValue([
+                    new RawValue('SELECT id FROM `users` WHERE is_active = ?'),
+                ]),
+            ],
+            $queryIn->getValues(),
         );
     }
 }
