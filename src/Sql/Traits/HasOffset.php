@@ -10,9 +10,14 @@ trait HasOffset
 {
     private ?Offset $offset;
 
-    public function offset(int $offset)
+    public function offset(int $value)
     {
-        $this->offset = new Offset($offset);
+        $this->offset = new Offset($value);
         return $this;
+    }
+
+    public function skip(int $value): self
+    {
+        return $this->offset($value);
     }
 }
