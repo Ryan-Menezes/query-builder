@@ -24,112 +24,166 @@ class QueryTest extends TestCase
         $this->assertEquals('SELECT * FROM `users`', $query->select());
     }
 
-    public function testShouldCorrectlyCreateAnSelectCommandWithWhere()
+    /**
+     * @dataProvider shouldCorrectlyCreateAnSelectCommandWithWhereProvider
+     */
+    public function testShouldCorrectlyCreateAnSelectCommandWithWhere(
+        $query,
+        $expectedSql,
+        $expectedValues,
+    ) {
+        $this->assertEquals($expectedSql, $query->toSql());
+
+        $this->assertEquals($expectedValues, $query->getValues());
+    }
+
+    public function shouldCorrectlyCreateAnSelectCommandWithWhereProvider()
     {
-        $queryOne = (new Query('users'))->where('id', '=', 1);
-
-        $queryTwo = (new Query('users'))
-            ->where('id', '=', 1)
-            ->orWhere('name', '=', 'any-name');
-
-        $queryThree = (new Query('users'))
-            ->where('id', '=', 1)
-            ->orWhere('name', '=', 'any-name')
-            ->where('age', '>=', 18);
-
-        $this->assertEquals(
-            'SELECT * FROM `users` WHERE id = ?',
-            $queryOne->toSql(),
-        );
-
-        $this->assertEquals([new NumberValue(1)], $queryOne->getValues());
-
-        $this->assertEquals(
-            'SELECT * FROM `users` WHERE id = ? OR name = ?',
-            $queryTwo->toSql(),
-        );
-
-        $this->assertEquals(
-            [new NumberValue(1), new StringValue('any-name')],
-            $queryTwo->getValues(),
-        );
-
-        $this->assertEquals(
-            'SELECT * FROM `users` WHERE id = ? OR name = ? AND age >= ?',
-            $queryThree->toSql(),
-        );
-
-        $this->assertEquals(
+        return [
             [
-                new NumberValue(1),
-                new StringValue('any-name'),
-                new NumberValue(18),
+                (new Query('users'))->where('id', '=', 1),
+                'SELECT * FROM `users` WHERE id = ?',
+                [new NumberValue(1)],
             ],
-            $queryThree->getValues(),
-        );
+            [
+                (new Query('users'))
+                    ->where('id', '=', 1)
+                    ->orWhere('name', '=', 'any-name'),
+                'SELECT * FROM `users` WHERE id = ? OR name = ?',
+                [new NumberValue(1), new StringValue('any-name')],
+            ],
+            [
+                (new Query('users'))
+                    ->where('id', '=', 1)
+                    ->orWhere('name', '=', 'any-name')
+                    ->where('age', '>=', 18),
+                'SELECT * FROM `users` WHERE id = ? OR name = ? AND age >= ?',
+                [
+                    new NumberValue(1),
+                    new StringValue('any-name'),
+                    new NumberValue(18),
+                ],
+            ],
+            [
+                (new Query('users'))->where([
+                    ['id', '=', 1],
+                    ['name', '=', 'any-name'],
+                    ['age', '>=', 18],
+                ]),
+                'SELECT * FROM `users` WHERE id = ? AND name = ? AND age >= ?',
+                [
+                    new NumberValue(1),
+                    new StringValue('any-name'),
+                    new NumberValue(18),
+                ],
+            ],
+            [
+                (new Query('users'))->orWhere([
+                    ['id', '=', 1],
+                    ['name', '=', 'any-name'],
+                    ['age', '>=', 18],
+                ]),
+                'SELECT * FROM `users` WHERE id = ? OR name = ? OR age >= ?',
+                [
+                    new NumberValue(1),
+                    new StringValue('any-name'),
+                    new NumberValue(18),
+                ],
+            ],
+            [
+                (new Query('users'))
+                    ->where([
+                        ['id', '=', 1],
+                        ['name', '=', 'any-name'],
+                        ['age', '>=', 18],
+                    ])
+                    ->orWhere([
+                        ['name', '=', 'other-any-name'],
+                        ['email', '=', 'john@mail.com'],
+                    ]),
+                'SELECT * FROM `users` WHERE id = ? AND name = ? AND age >= ? OR name = ? OR email = ?',
+                [
+                    new NumberValue(1),
+                    new StringValue('any-name'),
+                    new NumberValue(18),
+                    new StringValue('other-any-name'),
+                    new StringValue('john@mail.com'),
+                ],
+            ],
+        ];
     }
 
-    public function testShouldCorrectlyCreateAnSelectCommandWithLimit()
-    {
-        $query = (new Query('users'))->limit(10);
-        $queryTwo = (new Query('users'))
-            ->where('id', '=', 1)
-            ->orWhere('name', '=', 'any-name')
-            ->limit(10);
+    /**
+     * @dataProvider shouldCorrectlyCreateAnSelectCommandWithLimitProvider
+     */
+    public function testShouldCorrectlyCreateAnSelectCommandWithLimit(
+        $query,
+        $expectedSql,
+        $expectedValues,
+    ) {
+        $this->assertEquals($expectedSql, $query->toSql());
 
-        $this->assertEquals('SELECT * FROM `users` LIMIT 10', $query->toSql());
-
-        $this->assertEquals([], $query->getValues());
-
-        $this->assertEquals(
-            'SELECT * FROM `users` WHERE id = ? OR name = ? LIMIT 10',
-            $queryTwo->toSql(),
-        );
-
-        $this->assertEquals(
-            [new NumberValue(1), new StringValue('any-name')],
-            $queryTwo->getValues(),
-        );
+        $this->assertEquals($expectedValues, $query->getValues());
     }
 
-    public function testShouldCorrectlyCreateAnSelectCommandWithOffset()
+    public function shouldCorrectlyCreateAnSelectCommandWithLimitProvider()
     {
-        $query = (new Query('users'))->offset(5);
+        return [
+            [
+                (new Query('users'))->limit(10),
+                'SELECT * FROM `users` LIMIT 10',
+                [],
+            ],
+            [
+                (new Query('users'))
+                    ->where('id', '=', 1)
+                    ->orWhere('name', '=', 'any-name')
+                    ->limit(10),
+                'SELECT * FROM `users` WHERE id = ? OR name = ? LIMIT 10',
+                [new NumberValue(1), new StringValue('any-name')],
+            ],
+        ];
+    }
 
-        $queryTwo = (new Query('users'))
-            ->where('id', '=', 1)
-            ->orWhere('name', '=', 'any-name')
-            ->offset(5);
+    /**
+     * @dataProvider shouldCorrectlyCreateAnSelectCommandWithOffsetProvider
+     */
+    public function testShouldCorrectlyCreateAnSelectCommandWithOffset(
+        $query,
+        $expectedSql,
+        $expectedValues,
+    ) {
+        $this->assertEquals($expectedSql, $query->toSql());
 
-        $queryThree = (new Query('users'))
-            ->where('id', '=', 1)
-            ->orWhere('name', '=', 'any-name')
-            ->offset(5)
-            ->limit(10);
+        $this->assertEquals($expectedValues, $query->getValues());
+    }
 
-        $this->assertEquals('SELECT * FROM `users` OFFSET 5', $query->toSql());
-
-        $this->assertEquals([], $query->getValues());
-
-        $this->assertEquals(
-            'SELECT * FROM `users` WHERE id = ? OR name = ? OFFSET 5',
-            $queryTwo->toSql(),
-        );
-
-        $this->assertEquals(
-            [new NumberValue(1), new StringValue('any-name')],
-            $queryTwo->getValues(),
-        );
-
-        $this->assertEquals(
-            'SELECT * FROM `users` WHERE id = ? OR name = ? LIMIT 10 OFFSET 5',
-            $queryThree->toSql(),
-        );
-
-        $this->assertEquals(
-            [new NumberValue(1), new StringValue('any-name')],
-            $queryThree->getValues(),
-        );
+    public function shouldCorrectlyCreateAnSelectCommandWithOffsetProvider()
+    {
+        return [
+            [
+                (new Query('users'))->offset(5),
+                'SELECT * FROM `users` OFFSET 5',
+                [],
+            ],
+            [
+                (new Query('users'))
+                    ->where('id', '=', 1)
+                    ->orWhere('name', '=', 'any-name')
+                    ->offset(5),
+                'SELECT * FROM `users` WHERE id = ? OR name = ? OFFSET 5',
+                [new NumberValue(1), new StringValue('any-name')],
+            ],
+            [
+                (new Query('users'))
+                    ->where('id', '=', 1)
+                    ->orWhere('name', '=', 'any-name')
+                    ->offset(5)
+                    ->limit(10),
+                'SELECT * FROM `users` WHERE id = ? OR name = ? LIMIT 10 OFFSET 5',
+                [new NumberValue(1), new StringValue('any-name')],
+            ],
+        ];
     }
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereBetween()

@@ -13,21 +13,50 @@ trait HasWhere
 {
     private Where $where;
 
-    public function where(string $column, string $operator, mixed $value): self
-    {
+    public function where(
+        array|string $column,
+        string $operator = null,
+        mixed $value = null,
+    ): self {
+        if (is_array($column)) {
+            return $this->treatWheresArrayParam($column);
+        }
+
         $field = FieldFactory::createField($column, $operator, $value);
         $this->where->and($field);
 
         return $this;
     }
 
+    private function treatWheresArrayParam(array $fields): self
+    {
+        foreach ($fields as $params) {
+            $this->where(...$params);
+        }
+
+        return $this;
+    }
+
     public function orWhere(
-        string $column,
-        string $operator,
-        mixed $value,
+        array|string $column,
+        string $operator = null,
+        mixed $value = null,
     ): self {
+        if (is_array($column)) {
+            return $this->treatOrWheresArrayParam($column);
+        }
+
         $field = FieldFactory::createField($column, $operator, $value);
         $this->where->or($field);
+
+        return $this;
+    }
+
+    private function treatOrWheresArrayParam(array $fields): self
+    {
+        foreach ($fields as $params) {
+            $this->orWhere(...$params);
+        }
 
         return $this;
     }
