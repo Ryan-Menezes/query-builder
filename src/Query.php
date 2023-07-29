@@ -24,7 +24,11 @@ class Query extends Sql implements SqlInterface
         $this->tableName = $tableName;
         $this->sql = new Select($tableName);
         $this->where = new Where();
-        $this->offset = null;
+    }
+
+    public static function table(string $tableName): self
+    {
+        return new self($tableName);
     }
 
     public function toSql(): string

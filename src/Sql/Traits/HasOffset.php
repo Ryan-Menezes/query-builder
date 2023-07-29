@@ -8,7 +8,7 @@ use QueryBuilder\Sql\Operators\Offset;
 
 trait HasOffset
 {
-    private ?Offset $offset;
+    private ?Offset $offset = null;
 
     public function offset(int $value)
     {

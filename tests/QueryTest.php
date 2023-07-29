@@ -18,7 +18,7 @@ class QueryTest extends TestCase
 {
     public function testShouldCorrectlyCreateAnSelectCommand()
     {
-        $query = new Query('users');
+        $query = Query::table('users');
 
         $this->assertEquals('SELECT * FROM `users`', $query->toSql());
         $this->assertEquals('SELECT * FROM `users`', $query->select()->toSql());
@@ -42,21 +42,21 @@ class QueryTest extends TestCase
     {
         return [
             [
-                (new Query('users'))->where('id', '=', 1),
+                Query::table('users')->where('id', 1),
                 'SELECT * FROM `users` WHERE id = ?',
                 [new NumberValue(1)],
             ],
             [
-                (new Query('users'))
-                    ->where('id', '=', 1)
-                    ->orWhere('name', '=', 'any-name'),
+                Query::table('users')
+                    ->where('id', 1)
+                    ->orWhere('name', 'any-name'),
                 'SELECT * FROM `users` WHERE id = ? OR name = ?',
                 [new NumberValue(1), new StringValue('any-name')],
             ],
             [
-                (new Query('users'))
-                    ->where('id', '=', 1)
-                    ->orWhere('name', '=', 'any-name')
+                Query::table('users')
+                    ->where('id', 1)
+                    ->orWhere('name', 'any-name')
                     ->where('age', '>=', 18),
                 'SELECT * FROM `users` WHERE id = ? OR name = ? AND age >= ?',
                 [
@@ -66,9 +66,9 @@ class QueryTest extends TestCase
                 ],
             ],
             [
-                (new Query('users'))->where([
-                    ['id', '=', 1],
-                    ['name', '=', 'any-name'],
+                Query::table('users')->where([
+                    ['id', 1],
+                    ['name', 'any-name'],
                     ['age', '>=', 18],
                 ]),
                 'SELECT * FROM `users` WHERE id = ? AND name = ? AND age >= ?',
@@ -79,9 +79,9 @@ class QueryTest extends TestCase
                 ],
             ],
             [
-                (new Query('users'))->orWhere([
-                    ['id', '=', 1],
-                    ['name', '=', 'any-name'],
+                Query::table('users')->orWhere([
+                    ['id', 1],
+                    ['name', 'any-name'],
                     ['age', '>=', 18],
                 ]),
                 'SELECT * FROM `users` WHERE id = ? OR name = ? OR age >= ?',
@@ -92,15 +92,15 @@ class QueryTest extends TestCase
                 ],
             ],
             [
-                (new Query('users'))
+                Query::table('users')
                     ->where([
-                        ['id', '=', 1],
-                        ['name', '=', 'any-name'],
+                        ['id', 1],
+                        ['name', 'any-name'],
                         ['age', '>=', 18],
                     ])
                     ->orWhere([
-                        ['name', '=', 'other-any-name'],
-                        ['email', '=', 'john@mail.com'],
+                        ['name', 'other-any-name'],
+                        ['email', 'john@mail.com'],
                     ]),
                 'SELECT * FROM `users` WHERE id = ? AND name = ? AND age >= ? OR name = ? OR email = ?',
                 [
@@ -131,14 +131,14 @@ class QueryTest extends TestCase
     {
         return [
             [
-                (new Query('users'))->limit(10),
+                Query::table('users')->limit(10),
                 'SELECT * FROM `users` LIMIT 10',
                 [],
             ],
             [
-                (new Query('users'))
-                    ->where('id', '=', 1)
-                    ->orWhere('name', '=', 'any-name')
+                Query::table('users')
+                    ->where('id', 1)
+                    ->orWhere('name', 'any-name')
                     ->limit(10),
                 'SELECT * FROM `users` WHERE id = ? OR name = ? LIMIT 10',
                 [new NumberValue(1), new StringValue('any-name')],
@@ -163,22 +163,22 @@ class QueryTest extends TestCase
     {
         return [
             [
-                (new Query('users'))->offset(5),
+                Query::table('users')->offset(5),
                 'SELECT * FROM `users` OFFSET 5',
                 [],
             ],
             [
-                (new Query('users'))
-                    ->where('id', '=', 1)
-                    ->orWhere('name', '=', 'any-name')
+                Query::table('users')
+                    ->where('id', 1)
+                    ->orWhere('name', 'any-name')
                     ->offset(5),
                 'SELECT * FROM `users` WHERE id = ? OR name = ? OFFSET 5',
                 [new NumberValue(1), new StringValue('any-name')],
             ],
             [
-                (new Query('users'))
-                    ->where('id', '=', 1)
-                    ->orWhere('name', '=', 'any-name')
+                Query::table('users')
+                    ->where('id', 1)
+                    ->orWhere('name', 'any-name')
                     ->offset(5)
                     ->limit(10),
                 'SELECT * FROM `users` WHERE id = ? OR name = ? LIMIT 10 OFFSET 5',
@@ -189,8 +189,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereBetween()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->whereBetween('id', [10, 30]);
 
         $this->assertEquals(
@@ -206,8 +206,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereBetween()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereBetween('id', [10, 30]);
 
         $this->assertEquals(
@@ -223,8 +223,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereNotBetween()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->whereNotBetween('id', [10, 30]);
 
         $this->assertEquals(
@@ -240,8 +240,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNotBetween()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereNotBetween('id', [10, 30]);
 
         $this->assertEquals(
@@ -257,8 +257,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereBetweenColumns()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->whereBetweenColumns('weight', [
                 'minimum_allowed_weight',
                 'maximum_allowed_weight',
@@ -283,8 +283,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereBetweenColumns()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereBetweenColumns('weight', [
                 'minimum_allowed_weight',
                 'maximum_allowed_weight',
@@ -309,8 +309,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereNotBetweenColumns()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->whereNotBetweenColumns('weight', [
                 'minimum_allowed_weight',
                 'maximum_allowed_weight',
@@ -335,8 +335,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNotBetweenColumns()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereNotBetweenColumns('weight', [
                 'minimum_allowed_weight',
                 'maximum_allowed_weight',
@@ -361,8 +361,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereIn()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->whereIn('id', [1, 2, 3]);
 
         $this->assertEquals(
@@ -378,12 +378,12 @@ class QueryTest extends TestCase
 
     public function testTheSecondParameterOfTheWhereInMethodShouldAlsoReceiceAQueryInstance()
     {
-        $query = (new Query('users'))
+        $query = Query::table('users')
             ->select(['id'])
-            ->where('is_active', '=', 1);
+            ->where('is_active', 1);
 
-        $queryIn = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $queryIn = Query::table('users')
+            ->where('name', 'any-name')
             ->whereIn('id', $query);
 
         $this->assertEquals(
@@ -405,8 +405,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereIn()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereIn('id', [1, 2, 3]);
 
         $this->assertEquals(
@@ -422,12 +422,12 @@ class QueryTest extends TestCase
 
     public function testTheSecondParameterOfTheOrWhereInMethodShouldAlsoReceiceAQueryInstance()
     {
-        $query = (new Query('users'))
+        $query = Query::table('users')
             ->select(['id'])
-            ->where('is_active', '=', 1);
+            ->where('is_active', 1);
 
-        $queryIn = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $queryIn = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereIn('id', $query);
 
         $this->assertEquals(
@@ -449,8 +449,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereNotIn()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->whereNotIn('id', [1, 2, 3]);
 
         $this->assertEquals(
@@ -466,12 +466,12 @@ class QueryTest extends TestCase
 
     public function testTheSecondParameterOfTheWhereNotInMethodShouldAlsoReceiceAQueryInstance()
     {
-        $query = (new Query('users'))
+        $query = Query::table('users')
             ->select(['id'])
-            ->where('is_active', '=', 1);
+            ->where('is_active', 1);
 
-        $queryIn = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $queryIn = Query::table('users')
+            ->where('name', 'any-name')
             ->whereNotIn('id', $query);
 
         $this->assertEquals(
@@ -493,8 +493,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNotIn()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereNotIn('id', [1, 2, 3]);
 
         $this->assertEquals(
@@ -510,12 +510,12 @@ class QueryTest extends TestCase
 
     public function testTheSecondParameterOfTheOrWhereNotInMethodShouldAlsoReceiceAQueryInstance()
     {
-        $query = (new Query('users'))
+        $query = Query::table('users')
             ->select(['id'])
-            ->where('is_active', '=', 1);
+            ->where('is_active', 1);
 
-        $queryIn = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $queryIn = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereNotIn('id', $query);
 
         $this->assertEquals(
@@ -537,8 +537,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereNull()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->whereNull('deleted_at');
 
         $this->assertEquals(
@@ -554,8 +554,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithWhereNotNull()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->whereNotNull('deleted_at');
 
         $this->assertEquals(
@@ -571,8 +571,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNull()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereNull('deleted_at');
 
         $this->assertEquals(
@@ -588,8 +588,8 @@ class QueryTest extends TestCase
 
     public function testShouldCorrectlyCreateAnSelectCommandWithOrWhereNotNull()
     {
-        $query = (new Query('users'))
-            ->where('name', '=', 'any-name')
+        $query = Query::table('users')
+            ->where('name', 'any-name')
             ->orWhereNotNull('deleted_at');
 
         $this->assertEquals(

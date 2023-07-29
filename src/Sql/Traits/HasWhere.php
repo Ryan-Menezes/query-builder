@@ -15,12 +15,14 @@ trait HasWhere
 
     public function where(
         array|string $column,
-        string $operator = null,
+        mixed $operator = null,
         mixed $value = null,
     ): self {
         if (is_array($column)) {
             return $this->treatWheresArrayParam($column);
         }
+
+        [$operator, $value] = $this->parseOperatorAndValue($operator, $value);
 
         $field = FieldFactory::createField($column, $operator, $value);
         $this->where->and($field);
@@ -28,26 +30,39 @@ trait HasWhere
         return $this;
     }
 
-    private function treatWheresArrayParam(array $fields): self
-    {
-        foreach ($fields as $params) {
-            $this->where(...$params);
-        }
-
-        return $this;
-    }
-
     public function orWhere(
         array|string $column,
-        string $operator = null,
+        mixed $operator = null,
         mixed $value = null,
     ): self {
         if (is_array($column)) {
             return $this->treatOrWheresArrayParam($column);
         }
 
+        [$operator, $value] = $this->parseOperatorAndValue($operator, $value);
+
         $field = FieldFactory::createField($column, $operator, $value);
         $this->where->or($field);
+
+        return $this;
+    }
+
+    private function parseOperatorAndValue(mixed $operator, mixed $value): array
+    {
+        if (is_null($value))
+        {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        return [$operator, $value];
+    }
+
+    private function treatWheresArrayParam(array $fields): self
+    {
+        foreach ($fields as $params) {
+            $this->where(...$params);
+        }
 
         return $this;
     }
