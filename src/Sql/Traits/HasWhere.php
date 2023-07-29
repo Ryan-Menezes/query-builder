@@ -49,8 +49,7 @@ trait HasWhere
 
     private function parseOperatorAndValue(mixed $operator, mixed $value): array
     {
-        if (is_null($value))
-        {
+        if (is_null($value)) {
             $value = $operator;
             $operator = '=';
         }

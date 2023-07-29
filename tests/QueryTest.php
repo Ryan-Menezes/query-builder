@@ -22,7 +22,10 @@ class QueryTest extends TestCase
 
         $this->assertEquals('SELECT * FROM `users`', $query->toSql());
         $this->assertEquals('SELECT * FROM `users`', $query->select()->toSql());
-        $this->assertEquals('SELECT id, name FROM `users`', $query->select(['id', 'name'])->toSql());
+        $this->assertEquals(
+            'SELECT id, name FROM `users`',
+            $query->select(['id', 'name'])->toSql(),
+        );
     }
 
     /**
