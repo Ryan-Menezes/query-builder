@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Traits;
 
-use QueryBuilder\Factories\FieldFactory;
-use QueryBuilder\Factories\ValueFactory;
+use QueryBuilder\Exceptions\{
+    InvalidArgumentArrayException,
+    InvalidArgumentOperatorException,
+};
+use QueryBuilder\Factories\{FieldFactory, ValueFactory};
 use QueryBuilder\Query;
 use QueryBuilder\Sql\Operators\Logical\Where;
 
@@ -47,19 +50,10 @@ trait HasWhere
         return $this;
     }
 
-    private function parseOperatorAndValue(mixed $operator, mixed $value): array
-    {
-        if (is_null($value)) {
-            $value = $operator;
-            $operator = '=';
-        }
-
-        return [$operator, $value];
-    }
-
     private function treatWheresArrayParam(array $fields): self
     {
         foreach ($fields as $params) {
+            $this->throwErrorIfIsAnInvalidArrayParams($params);
             $this->where(...$params);
         }
 
@@ -73,6 +67,36 @@ trait HasWhere
         }
 
         return $this;
+    }
+
+    private function throwErrorIfIsAnInvalidArrayParams(mixed $params): void
+    {
+        if (!is_array($params) || count($params) <= 1 || count($params) > 3) {
+            throw new InvalidArgumentArrayException(
+                'The first parameter should be of type string or array, and each element of the array must be another array with 2 or 3 elements.',
+            );
+        }
+    }
+
+    private function parseOperatorAndValue(mixed $operator, mixed $value): array
+    {
+        $this->throwIfIsAnInvalidOperator($operator);
+
+        if (is_null($value)) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        return [$operator, $value];
+    }
+
+    private function throwIfIsAnInvalidOperator(mixed $operator): void
+    {
+        if (is_null($operator)) {
+            throw new InvalidArgumentOperatorException(
+                'The operator must be a string of length greater than zero.',
+            );
+        }
     }
 
     public function whereBetween(string $columnName, array $values): self

@@ -8,9 +8,7 @@ use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Sql\Operators\Logical\Where;
 use QueryBuilder\Sql\Sql;
 use QueryBuilder\Sql\Commands\Dql\Select;
-use QueryBuilder\Sql\Traits\HasLimit;
-use QueryBuilder\Sql\Traits\HasOffset;
-use QueryBuilder\Sql\Traits\HasWhere;
+use QueryBuilder\Sql\Traits\{HasWhere, HasLimit, HasOffset};
 
 class Query extends Sql implements SqlInterface
 {

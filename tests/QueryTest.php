@@ -3,6 +3,8 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
+use QueryBuilder\Exceptions\InvalidArgumentArrayException;
+use QueryBuilder\Exceptions\InvalidArgumentOperatorException;
 use QueryBuilder\Sql\Values\{
     RawValue,
     StringValue,
@@ -114,6 +116,68 @@ class QueryTest extends TestCase
                     new StringValue('john@mail.com'),
                 ],
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider shouldThrowAnErrorIfAnInvalidOperatorIsPassedForWhereMethodProvider
+     */
+    public function testShouldThrowAnErrorIfAnInvalidOperatorIsPassedForWhereMethod(
+        mixed $operator,
+    ) {
+        $this->expectException(InvalidArgumentOperatorException::class);
+        $this->expectExceptionMessage(
+            'The operator must be a string of length greater than zero.',
+        );
+
+        Query::table('users')->where('id', $operator, 1);
+    }
+
+    public function shouldThrowAnErrorIfAnInvalidOperatorIsPassedForWhereMethodProvider()
+    {
+        return [[null], ['']];
+    }
+
+    /**
+     * @dataProvider shouldThrowAnErrorIfAnInvalidOperatorIsPassedForOrWhereMethodProvider
+     */
+    public function testShouldThrowAnErrorIfAnInvalidOperatorIsPassedForOrWhereMethod(
+        mixed $operator,
+    ) {
+        $this->expectException(InvalidArgumentOperatorException::class);
+        $this->expectExceptionMessage(
+            'The operator must be a string of length greater than zero.',
+        );
+
+        Query::table('users')->orWhere('id', $operator, 1);
+    }
+
+    public function shouldThrowAnErrorIfAnInvalidOperatorIsPassedForOrWhereMethodProvider()
+    {
+        return [[null], ['']];
+    }
+
+    /**
+     * @dataProvider shouldThrowAnErrorIfAnInvalidArrayIsPassedToFirstParamOfTheWhereMethodProvider
+     */
+    public function testShouldThrowAnErrorIfAnInvalidArrayIsPassedToFirstParamOfTheWhereMethod(
+        array $fields,
+    ) {
+        $this->expectException(InvalidArgumentArrayException::class);
+        $this->expectExceptionMessage(
+            'The first parameter should be of type string or array, and each element of the array must be another array with 2 or 3 elements.',
+        );
+
+        Query::table('users')->where($fields);
+    }
+
+    public function shouldThrowAnErrorIfAnInvalidArrayIsPassedToFirstParamOfTheWhereMethodProvider()
+    {
+        return [
+            [[[null]]],
+            [[['']]],
+            [[['any-column']]],
+            [[['any-column', '=', 1, 'invalid-param']]],
         ];
     }
 
