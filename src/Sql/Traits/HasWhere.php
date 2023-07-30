@@ -63,6 +63,7 @@ trait HasWhere
     private function treatOrWheresArrayParam(array $fields): self
     {
         foreach ($fields as $params) {
+            $this->throwErrorIfIsAnInvalidArrayParams($params);
             $this->orWhere(...$params);
         }
 

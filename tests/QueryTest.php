@@ -182,6 +182,30 @@ class QueryTest extends TestCase
     }
 
     /**
+     * @dataProvider shouldThrowAnErrorIfAnInvalidArrayIsPassedToFirstParamOfTheOrWhereMethodProvider
+     */
+    public function testShouldThrowAnErrorIfAnInvalidArrayIsPassedToFirstParamOfTheOrWhereMethod(
+        array $fields,
+    ) {
+        $this->expectException(InvalidArgumentArrayException::class);
+        $this->expectExceptionMessage(
+            'The first parameter should be of type string or array, and each element of the array must be another array with 2 or 3 elements.',
+        );
+
+        Query::table('users')->orWhere($fields);
+    }
+
+    public function shouldThrowAnErrorIfAnInvalidArrayIsPassedToFirstParamOfTheOrWhereMethodProvider()
+    {
+        return [
+            [[[null]]],
+            [[['']]],
+            [[['any-column']]],
+            [[['any-column', '=', 1, 'invalid-param']]],
+        ];
+    }
+
+    /**
      * @dataProvider shouldCorrectlyCreateAnSelectCommandWithLimitProvider
      */
     public function testShouldCorrectlyCreateAnSelectCommandWithLimit(
