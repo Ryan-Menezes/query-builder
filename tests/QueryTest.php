@@ -18,15 +18,60 @@ use QueryBuilder\Query;
  */
 class QueryTest extends TestCase
 {
-    public function testShouldCorrectlyCreateAnSelectCommand()
-    {
-        $query = Query::table('users');
+    /**
+     * @dataProvider shouldCorrectlyCreateAnSelectCommandProvider
+     */
+    public function testShouldCorrectlyCreateAnSelectCommand(
+        $query,
+        $expectedSql,
+    ) {
+        $this->assertEquals($expectedSql, $query->toSql());
+    }
 
-        $this->assertEquals('SELECT * FROM `users`', $query->toSql());
-        $this->assertEquals('SELECT * FROM `users`', $query->select()->toSql());
+    public function shouldCorrectlyCreateAnSelectCommandProvider()
+    {
+        return [
+            [Query::table('users'), 'SELECT * FROM `users`'],
+            [Query::table('users')->select(), 'SELECT * FROM `users`'],
+            [Query::table('users')->select('id'), 'SELECT id FROM `users`'],
+            [
+                Query::table('users')
+                    ->select('id')
+                    ->distinct(),
+                'SELECT DISTINCT id FROM `users`',
+            ],
+            [
+                Query::table('users')->select(['id', 'name as user_name']),
+                'SELECT id, name as user_name FROM `users`',
+            ],
+            [
+                Query::table('users')
+                    ->select(['id', 'name as user_name'])
+                    ->distinct(),
+                'SELECT DISTINCT id, name as user_name FROM `users`',
+            ],
+        ];
+    }
+
+    public function testShouldAddNewColumnsInAQueryInstance()
+    {
+        $query = Query::table('users')->select(['id', 'name']);
+
+        $this->assertEquals('SELECT id, name FROM `users`', $query->toSql());
+
+        $query->addSelect('email');
+
         $this->assertEquals(
-            'SELECT id, name FROM `users`',
-            $query->select(['id', 'name'])->toSql(),
+            'SELECT id, name, email FROM `users`',
+            $query->toSql(),
+        );
+
+        $query->distinct();
+        $query->addSelect(['birth', 'gender']);
+
+        $this->assertEquals(
+            'SELECT DISTINCT id, name, email, birth, gender FROM `users`',
+            $query->toSql(),
         );
     }
 

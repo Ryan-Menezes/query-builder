@@ -60,7 +60,7 @@ class Select extends SqlWithValues implements SqlWithValuesInterface
     {
         $toString = 'SELECT';
 
-        if ($this->isDistinctStatement) {
+        if ($this->isDistinct()) {
             $toString = "{$toString} DISTINCT";
         }
 
@@ -89,5 +89,10 @@ class Select extends SqlWithValues implements SqlWithValuesInterface
     {
         $this->isDistinctStatement = true;
         return $this;
+    }
+
+    public function isDistinct(): bool
+    {
+        return $this->isDistinctStatement;
     }
 }

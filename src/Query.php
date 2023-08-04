@@ -5,23 +5,23 @@ declare(strict_types=1);
 namespace QueryBuilder;
 
 use QueryBuilder\Interfaces\SqlInterface;
-use QueryBuilder\Sql\Operators\Logical\Where;
 use QueryBuilder\Sql\Sql;
-use QueryBuilder\Sql\Commands\Dql\Select;
-use QueryBuilder\Sql\Traits\{HasWhere, HasLimit, HasOffset, HasOrderBy};
+use QueryBuilder\Sql\Traits\{
+    HasSelect,
+    HasWhere,
+    HasLimit,
+    HasOffset,
+    HasOrderBy,
+};
 
 class Query extends Sql implements SqlInterface
 {
-    use HasWhere, HasLimit, HasOffset, HasOrderBy;
-
-    private string $tableName;
-    private SqlInterface $sql;
+    use HasSelect, HasWhere, HasOrderBy, HasLimit, HasOffset;
 
     public function __construct(string $tableName)
     {
-        $this->tableName = $tableName;
-        $this->sql = new Select($tableName);
-        $this->where = new Where();
+        $this->startSelect($tableName);
+        $this->startWhere($tableName);
     }
 
     public static function table(string $tableName): self
@@ -31,7 +31,7 @@ class Query extends Sql implements SqlInterface
 
     public function toSql(): string
     {
-        $sql = $this->sql->toSql();
+        $sql = $this->select->toSql();
         $where = $this->where->toSql();
         $orderBy = $this->orderBy?->toSql() ?? '';
         $limit = $this->limit?->toSql() ?? '';
@@ -69,11 +69,5 @@ class Query extends Sql implements SqlInterface
             ...$this->limit?->getValues() ?? [],
             ...$this->offset?->getValues() ?? [],
         ];
-    }
-
-    public function select(array $columns = ['*'], array $values = []): self
-    {
-        $this->sql = new Select($this->tableName, $columns, $values);
-        return $this;
     }
 }

@@ -16,6 +16,11 @@ trait HasWhere
 {
     private Where $where;
 
+    private function startWhere(): void
+    {
+        $this->where = new Where();
+    }
+
     public function where(
         array|string $column,
         mixed $operator = null,
