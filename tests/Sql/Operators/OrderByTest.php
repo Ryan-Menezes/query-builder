@@ -4,16 +4,16 @@ namespace Tests\Sql\Operators\Logical;
 
 use PHPUnit\Framework\TestCase;
 use QueryBuilder\Sql\Values\StringValue;
-use QueryBuilder\Sql\Operators\Order;
+use QueryBuilder\Sql\Operators\OrderBy;
 use QueryBuilder\Interfaces\SqlWithValuesInterface;
 use QueryBuilder\Exceptions\InvalidArgumentColumnsException;
 
 /**
  * @requires PHP 8.1
  */
-class OrderTest extends TestCase
+class OrderByTest extends TestCase
 {
-    public function makeSut(array $columns): Order
+    public function makeSut(array $columns): OrderBy
     {
         $sqlMock = $this->createMock(SqlWithValuesInterface::class);
         $sqlMock
@@ -26,7 +26,7 @@ class OrderTest extends TestCase
             ->method('getValues')
             ->willReturn([new StringValue('any-value-sql')]);
 
-        return new Order($sqlMock, $columns);
+        return new OrderBy($columns, $sqlMock);
     }
 
     /**

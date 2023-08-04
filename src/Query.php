@@ -8,11 +8,11 @@ use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Sql\Operators\Logical\Where;
 use QueryBuilder\Sql\Sql;
 use QueryBuilder\Sql\Commands\Dql\Select;
-use QueryBuilder\Sql\Traits\{HasWhere, HasLimit, HasOffset};
+use QueryBuilder\Sql\Traits\{HasWhere, HasLimit, HasOffset, HasOrderBy};
 
 class Query extends Sql implements SqlInterface
 {
-    use HasWhere, HasLimit, HasOffset;
+    use HasWhere, HasLimit, HasOffset, HasOrderBy;
 
     private string $tableName;
     private SqlInterface $sql;
@@ -33,12 +33,21 @@ class Query extends Sql implements SqlInterface
     {
         $sql = $this->sql->toSql();
         $where = $this->where->toSql();
+        $orderBy = $this->orderBy?->toSql() ?? '';
         $limit = $this->limit?->toSql() ?? '';
         $offset = $this->offset?->toSql() ?? '';
 
         if ($where) {
             $sql .= " {$where}";
         }
+
+        $sql = trim($sql);
+
+        if ($orderBy) {
+            $sql .= " {$orderBy}";
+        }
+
+        $sql = trim($sql);
 
         if ($limit) {
             $sql .= " {$limit}";

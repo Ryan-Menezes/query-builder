@@ -8,18 +8,20 @@ use QueryBuilder\Sql\SqlWithValues;
 use QueryBuilder\Interfaces\SqlWithValuesInterface;
 use QueryBuilder\Exceptions\InvalidArgumentColumnsException;
 
-class Order extends SqlWithValues implements SqlWithValuesInterface
+class OrderBy extends SqlWithValues implements SqlWithValuesInterface
 {
     private const SQL_SORT_OPERATORS = [
         'ASC' => 'ASC',
         'DESC' => 'DESC',
     ];
 
-    private SqlWithValuesInterface $sql;
+    private ?SqlWithValuesInterface $sql;
     private array $columns;
 
-    public function __construct(SqlWithValuesInterface $sql, array $columns)
-    {
+    public function __construct(
+        array $columns,
+        ?SqlWithValuesInterface $sql = null,
+    ) {
         parent::__construct($sql?->getValues() ?? []);
 
         if (empty($columns)) {
@@ -76,10 +78,11 @@ class Order extends SqlWithValues implements SqlWithValuesInterface
 
     public function toSql(): string
     {
+        $sql = $this->sql?->toSql() ?? '';
         $columns = $this->getColumnsWithSortStatement($this->columns);
         $columnsToSql = implode(', ', $columns);
 
-        return trim("{$this->sql->toSql()} ORDER BY {$columnsToSql}");
+        return trim("{$sql} ORDER BY {$columnsToSql}");
     }
 
     private function getColumnsWithSortStatement(array $columns): array

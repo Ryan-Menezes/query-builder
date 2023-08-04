@@ -693,4 +693,97 @@ class QueryTest extends TestCase
             $query->getValues(),
         );
     }
+
+    /**
+     * @dataProvider shouldCorrectlyCreateAnSelectCommandWithOrderByProvider
+     */
+    public function testShouldCorrectlyCreateAnSelectCommandWithOrderBy(
+        $query,
+        $expectedSql,
+        $expectedValues,
+    ) {
+        $this->assertEquals($expectedSql, $query->toSql());
+
+        $this->assertEquals($expectedValues, $query->getValues());
+    }
+
+    public function shouldCorrectlyCreateAnSelectCommandWithOrderByProvider()
+    {
+        return [
+            [
+                Query::table('users')->orderBy('name'),
+                'SELECT * FROM `users` ORDER BY name ASC',
+                [],
+            ],
+            [
+                Query::table('users')->orderBy('name', 'DESC'),
+                'SELECT * FROM `users` ORDER BY name DESC',
+                [],
+            ],
+            [
+                Query::table('users')->inRandomOrder(),
+                'SELECT * FROM `users` ORDER BY RAND() ASC',
+                [],
+            ],
+            [
+                Query::table('users')
+                    ->where('name', 'any-name')
+                    ->orderBy('name'),
+                'SELECT * FROM `users` WHERE name = ? ORDER BY name ASC',
+                [new StringValue('any-name')],
+            ],
+            [
+                Query::table('users')
+                    ->where('name', 'any-name')
+                    ->orderBy('name', 'DESC'),
+                'SELECT * FROM `users` WHERE name = ? ORDER BY name DESC',
+                [new StringValue('any-name')],
+            ],
+            [
+                Query::table('users')
+                    ->where('name', 'any-name')
+                    ->inRandomOrder('name', 'DESC'),
+                'SELECT * FROM `users` WHERE name = ? ORDER BY RAND() ASC',
+                [new StringValue('any-name')],
+            ],
+            [
+                Query::table('users')
+                    ->orderBy('name')
+                    ->offset(5)
+                    ->limit(10),
+                'SELECT * FROM `users` ORDER BY name ASC LIMIT 10 OFFSET 5',
+                [],
+            ],
+            [
+                Query::table('users')
+                    ->orderBy('name', 'DESC')
+                    ->offset(5)
+                    ->limit(10),
+                'SELECT * FROM `users` ORDER BY name DESC LIMIT 10 OFFSET 5',
+                [],
+            ],
+            [
+                Query::table('users')
+                    ->inRandomOrder()
+                    ->offset(5)
+                    ->limit(10),
+                'SELECT * FROM `users` ORDER BY RAND() ASC LIMIT 10 OFFSET 5',
+                [],
+            ],
+        ];
+    }
+
+    public function testShouldReorderAnSelectCommandWithOrderBy()
+    {
+        $query = Query::table('users')->orderBy('name');
+
+        $this->assertEquals(
+            'SELECT * FROM `users` ORDER BY name ASC',
+            $query->toSql(),
+        );
+
+        $query = $query->reorder();
+
+        $this->assertEquals('SELECT * FROM `users`', $query->toSql());
+    }
 }
