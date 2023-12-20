@@ -21,7 +21,7 @@ class Query extends Sql implements SqlInterface
     public function __construct(string $tableName)
     {
         $this->startSelect($tableName);
-        $this->startWhere($tableName);
+        $this->startWhere();
     }
 
     public static function table(string $tableName): self
@@ -65,6 +65,7 @@ class Query extends Sql implements SqlInterface
     public function getValues(): array
     {
         return [
+            ...$this->select->getValues(),
             ...$this->where->getValues(),
             ...$this->limit?->getValues() ?? [],
             ...$this->offset?->getValues() ?? [],

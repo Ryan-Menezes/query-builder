@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Sql\Operators\Logical;
+namespace Tests\Sql\Operators;
 
 use PHPUnit\Framework\TestCase;
 use QueryBuilder\Sql\Values\StringValue;
