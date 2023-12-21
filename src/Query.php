@@ -7,6 +7,7 @@ namespace QueryBuilder;
 use QueryBuilder\Interfaces\SqlInterface;
 use QueryBuilder\Sql\Sql;
 use QueryBuilder\Sql\Traits\{
+    HasJoin,
     HasSelect,
     HasWhere,
     HasLimit,
@@ -16,7 +17,7 @@ use QueryBuilder\Sql\Traits\{
 
 class Query extends Sql implements SqlInterface
 {
-    use HasSelect, HasWhere, HasOrderBy, HasLimit, HasOffset;
+    use HasSelect, HasJoin, HasWhere, HasOrderBy, HasLimit, HasOffset;
 
     public function __construct(string $tableName)
     {
@@ -31,35 +32,30 @@ class Query extends Sql implements SqlInterface
 
     public function toSql(): string
     {
-        $sql = $this->select->toSql();
-        $where = $this->where->toSql();
-        $orderBy = $this->orderBy?->toSql() ?? '';
-        $limit = $this->limit?->toSql() ?? '';
-        $offset = $this->offset?->toSql() ?? '';
+        $sqls = [
+            $this->select->toSql(),
+            $this->toSqlJoins(),
+            $this->where->toSql(),
+            $this->orderBy?->toSql() ?? '',
+            $this->limit?->toSql() ?? '',
+            $this->offset?->toSql() ?? '',
+        ];
 
-        if ($where) {
-            $sql .= " {$where}";
-        }
+        $fullSql = (string) array_reduce(
+            $sqls,
+            function ($value, $sql) {
+                $sql = trim($sql);
 
-        $sql = trim($sql);
+                if ($sql) {
+                    $value .= " {$sql}";
+                }
 
-        if ($orderBy) {
-            $sql .= " {$orderBy}";
-        }
+                return $value;
+            },
+            '',
+        );
 
-        $sql = trim($sql);
-
-        if ($limit) {
-            $sql .= " {$limit}";
-        }
-
-        $sql = trim($sql);
-
-        if ($offset) {
-            $sql .= " {$offset}";
-        }
-
-        return trim($sql);
+        return trim($fullSql);
     }
 
     public function getValues(): array

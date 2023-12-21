@@ -831,4 +831,116 @@ class QueryTest extends TestCase
 
         $this->assertEquals('SELECT * FROM `users`', $query->toSql());
     }
+
+    /**
+     * @dataProvider shouldCorrectlyCreateAnSelectCommandWithJoinProvider
+     */
+    public function testShouldCorrectlyCreateAnSelectCommandWithJoin(
+        $query,
+        $expectedSql,
+        $expectedValues,
+    ) {
+        $this->assertEquals($expectedSql, $query->toSql());
+
+        $this->assertEquals($expectedValues, $query->getValues());
+    }
+
+    public function shouldCorrectlyCreateAnSelectCommandWithJoinProvider()
+    {
+        return [
+            [
+                Query::table('users')->join(
+                    'posts',
+                    'posts.id',
+                    '=',
+                    'users.post_id',
+                ),
+                'SELECT * FROM `users` INNER JOIN posts ON posts.id = users.post_id',
+                [],
+            ],
+            [
+                Query::table('users')->fullJoin(
+                    'posts',
+                    'posts.id',
+                    '=',
+                    'users.post_id',
+                ),
+                'SELECT * FROM `users` FULL OUTER JOIN posts ON posts.id = users.post_id',
+                [],
+            ],
+            [
+                Query::table('users')->leftJoin(
+                    'posts',
+                    'posts.id',
+                    '=',
+                    'users.post_id',
+                ),
+                'SELECT * FROM `users` LEFT JOIN posts ON posts.id = users.post_id',
+                [],
+            ],
+            [
+                Query::table('users')->rightJoin(
+                    'posts',
+                    'posts.id',
+                    '=',
+                    'users.post_id',
+                ),
+                'SELECT * FROM `users` RIGHT JOIN posts ON posts.id = users.post_id',
+                [],
+            ],
+            [
+                Query::table('users')->crossJoin('posts'),
+                'SELECT * FROM `users` CROSS JOIN posts',
+                [],
+            ],
+            [
+                Query::table('users')
+                    ->join('posts', 'posts.id', '=', 'users.post_id')
+                    ->where('users.name', '=', 'John'),
+                'SELECT * FROM `users` INNER JOIN posts ON posts.id = users.post_id WHERE users.name = ?',
+                [new StringValue('John')],
+            ],
+            [
+                Query::table('users')
+                    ->fullJoin('posts', 'posts.id', '=', 'users.post_id')
+                    ->where('users.name', '=', 'John'),
+                'SELECT * FROM `users` FULL OUTER JOIN posts ON posts.id = users.post_id WHERE users.name = ?',
+                [new StringValue('John')],
+            ],
+            [
+                Query::table('users')
+                    ->leftJoin('posts', 'posts.id', '=', 'users.post_id')
+                    ->where('users.name', '=', 'John'),
+                'SELECT * FROM `users` LEFT JOIN posts ON posts.id = users.post_id WHERE users.name = ?',
+                [new StringValue('John')],
+            ],
+            [
+                Query::table('users')
+                    ->rightJoin('posts', 'posts.id', '=', 'users.post_id')
+                    ->where('users.name', '=', 'John'),
+                'SELECT * FROM `users` RIGHT JOIN posts ON posts.id = users.post_id WHERE users.name = ?',
+                [new StringValue('John')],
+            ],
+            [
+                Query::table('users')
+                    ->crossJoin('posts')
+                    ->where('users.name', '=', 'John'),
+                'SELECT * FROM `users` CROSS JOIN posts WHERE users.name = ?',
+                [new StringValue('John')],
+            ],
+            [
+                Query::table('users')
+                    ->join('posts', 'posts.id', '=', 'users.post_id')
+                    ->join(
+                        'categories',
+                        'categories.id',
+                        '=',
+                        'posts.category_id',
+                    )
+                    ->where('users.name', '=', 'John'),
+                'SELECT * FROM `users` INNER JOIN posts ON posts.id = users.post_id INNER JOIN categories ON categories.id = posts.category_id WHERE users.name = ?',
+                [new StringValue('John')],
+            ],
+        ];
+    }
 }

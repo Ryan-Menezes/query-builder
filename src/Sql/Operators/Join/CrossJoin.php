@@ -4,22 +4,15 @@ declare(strict_types=1);
 
 namespace QueryBuilder\Sql\Operators\Join;
 
-use QueryBuilder\Sql\SqlWithValues;
 use QueryBuilder\Interfaces\SqlWithValuesInterface;
 
-class CrossJoin extends SqlWithValues implements SqlWithValuesInterface
+class CrossJoin extends Join
 {
-    private ?SqlWithValuesInterface $sql;
-    private string $tableName;
-
     public function __construct(
         string $tableName,
         ?SqlWithValuesInterface $sql = null,
     ) {
-        parent::__construct($sql?->getValues() ?? []);
-
-        $this->sql = $sql;
-        $this->tableName = $tableName;
+        parent::__construct($tableName, $sql);
     }
 
     public function toSql(): string
