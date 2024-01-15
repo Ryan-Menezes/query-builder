@@ -5,6 +5,7 @@ namespace Tests;
 use PHPUnit\Framework\TestCase;
 use QueryBuilder\Exceptions\InvalidArgumentArrayException;
 use QueryBuilder\Exceptions\InvalidArgumentOperatorException;
+use QueryBuilder\Factories\FieldFactory;
 use QueryBuilder\Sql\Values\{
     RawValue,
     StringValue,
@@ -12,6 +13,7 @@ use QueryBuilder\Sql\Values\{
     CollectionValue,
 };
 use QueryBuilder\Query;
+use QueryBuilder\Sql\Operators\Join\Join;
 
 /**
  * @requires PHP 8.1
@@ -939,6 +941,27 @@ class QueryTest extends TestCase
                     )
                     ->where('users.name', '=', 'John'),
                 'SELECT * FROM `users` INNER JOIN posts ON posts.id = users.post_id INNER JOIN categories ON categories.id = posts.category_id WHERE users.name = ?',
+                [new StringValue('John')],
+            ],
+            [
+                Query::table('users')
+                    ->join('posts', 'posts.id', '=', 'users.post_id')
+                    ->join('categories', function (Join $join) {
+                        $field1 = FieldFactory::createFieldWithRawValue(
+                            'categories.id',
+                            '=',
+                            'posts.category_id',
+                        );
+                        $field2 = FieldFactory::createFieldWithRawValue(
+                            'categories.id',
+                            '=',
+                            'posts.id',
+                        );
+
+                        $join->on($field1)->orOn($field2);
+                    })
+                    ->where('users.name', '=', 'John'),
+                'SELECT * FROM `users` INNER JOIN posts ON posts.id = users.post_id INNER JOIN categories ON categories.id = posts.category_id OR categories.id = posts.id WHERE users.name = ?',
                 [new StringValue('John')],
             ],
         ];
